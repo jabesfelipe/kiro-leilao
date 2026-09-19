@@ -6,8 +6,10 @@ Radar Imobiliário — Especificação Completa do Produto (Negócio + Arquitetu
 
 Este documento é a **fonte única de verdade** do produto Radar Imobiliário: uma
 plataforma de inteligência que transforma ofertas de imóveis (inicialmente da CAIXA
-Econômica Federal, em leilão e venda direta) em decisões de investimento
-explicáveis, auditáveis e reproduzíveis.
+Econômica Federal, em **leilão extrajudicial** de alienação fiduciária) em decisões de
+investimento explicáveis, auditáveis e reproduzíveis. Venda direta, leilão judicial,
+execução judicial e arrematação judicial ficam **fora do MVP** (`D56`, `D82`), e o modelo
+permanece extensível a essas modalidades.
 
 ### Fonte única normativa `[CANÔNICO]`
 
@@ -20,9 +22,15 @@ auditada, consolidada e **absorvida**; as especificações canônicas internas a
 também. Nenhuma delas é fonte de trabalho: divergências entre esta spec e qualquer
 material anterior resolvem-se sempre a favor desta spec.
 
-A seção **Decisões de Consolidação** (`D1` a `D55`) é a memória de auditoria dessa
+A seção **Decisões de Consolidação** (`D1` a `D89`) é a memória de auditoria dessa
 absorção: registra cada conflito encontrado, os lados em disputa, a decisão adotada e o
 motivo. É o que permite entender, sem os documentos de origem, por que cada valor é o que é.
+As decisões `D56` a `D80` registram a revisão de produto que trouxe as duas portas de
+entrada, os documentos como entidade, o versionamento de análise e o Fast Radar; as decisões
+`D81` a `D88` registram como os conflitos entre essa revisão e o que já estava fechado foram
+resolvidos; a decisão `D89` registra a correção da contagem de prioridade do Índice de
+Requisitos, defeito herdado da versão anterior. A revisão de produto foi **absorvida** por este
+documento e não é fonte de trabalho.
 
 ### Princípios de resolução de conflitos `[CANÔNICO]`
 
@@ -83,6 +91,37 @@ Nenhuma parametrização, exceção ou score pode contorná-los.
   percentual na interface.
 - Valores monetários em BRL (`GLB-001`).
 
+### Convenção de idioma e nomenclatura `[CANÔNICO]` (`D72`)
+
+O produto é **integralmente em português**, inclusive o que já existe: o que estiver em
+outro idioma é renomeado.
+
+- **Interface, mensagens, rótulos, relatórios e documentação** em português.
+- **Identificadores de implementação** em português: tipos, classes, funções, métodos,
+  variáveis, módulos, pacotes, tabelas, colunas, índices, enums e valores de enum.
+- **Exceções permitidas**, e apenas estas: nomes de tecnologia e de biblioteca externa;
+  identificadores exigidos por API, contrato ou formato de terceiro; e palavras reservadas
+  da linguagem.
+- **Identificadores estáveis que permanecem inalterados**, porque são citados em todo este
+  documento e renomeá-los invalidaria a rastreabilidade sem ganho: códigos de parâmetro
+  (`GLB-*`, `INV-*`, `LOC-*`, `TIP-*`, `PRI-*`, `CUS-*`, `VAL-*`, `CMP-*`, `REN-*`,
+  `LIQ-*`, `RISK-*`, `CONF-*`, `FRESH-*`, `SCORE-*`, `STR-*`, `PORT-*`, `EXC-*`, `ALT-*`,
+  `MON-*`), códigos de regra (`RULE-*`), itens de checklist (`MC-*`, `B-*`, `C-*`), códigos
+  de verificação (`E01` a `E09`, `PL-*`, `RL-*`, `HL-*`, `HS-*`), gates (`G0` a `G7`),
+  níveis de identidade (`I0` a `I4`), princípios (`SAFE-*`, `P-A` a `P-E`), decisões (`D*`),
+  requisitos (`R*`), propriedades (`P*`) e testes de regressão (`REG-*`).
+- **Nomes de sistema do glossário** (`Motor_de_Calculo`, `Gate_Juridico`, `Capturador`,
+  `Conector_de_Fonte`, ...) já estão em português e permanecem como estão.
+- Os vocabulários de estado escritos em inglês neste documento (`PipelinePhase`,
+  `DecisionState`, `CONFIRMED`, `ESTIMATED`, `UNKNOWN`, `BLOCK`, `BUY`, ...) são **rótulos
+  normativos de domínio**: o significado é o declarado aqui, e a implementação os nomeia em
+  português, com a correspondência de um para um declarada no projeto técnico. Os rótulos
+  permanecem escritos como estão neste documento porque são citados em requisitos, anexos,
+  propriedades e testes de regressão, e reescrevê-los aqui romperia a rastreabilidade sem
+  alterar nenhuma regra.
+- O projeto técnico é reescrito com identificadores em português, e os títulos das
+  propriedades de correção e dos artefatos derivados acompanham a convenção.
+
 ### Escopo
 
 **Incluído:** conceito de negócio, atores, jornadas, todos os módulos funcionais,
@@ -92,9 +131,18 @@ portfólio, score, ranking e motor de decisão, monitoramento e alertas, governa
 auditoria, experiência do investidor, interface de programação, parametrização, escopo e
 priorização do MVP, e os guarda-corpos da arquitetura de IA (agentes, RAG, MCP, memória).
 
-**Excluído:** execução automática de arremate/lance; substituição de parecer jurídico,
-engenharia ou contabilidade; garantia de valorização, liquidez ou rentabilidade;
-marketplace; gestão patrimonial completa; automação integral da due diligence.
+**Modalidade do MVP** `[CANÔNICO]` (`D56`, `D82`): o MVP cobre **exclusivamente leilão
+extrajudicial** de imóveis com garantia de alienação fiduciária, regido pela Lei nº 9.514/97,
+tendo a CAIXA como primeira fonte. Venda direta, leilão judicial, execução judicial,
+arrematação judicial e execução automática de lance estão **fora do MVP**. A arquitetura
+permanece extensível a novas modalidades e novas fontes sem alteração estrutural do domínio
+(`R85`).
+
+**Excluído:** venda direta; leilão judicial; execução judicial; arrematação judicial;
+execução automática de arremate/lance; substituição de parecer jurídico, engenharia ou
+contabilidade; garantia de valorização, liquidez ou rentabilidade; marketplace; gestão
+patrimonial completa; automação integral da due diligence; integração automática com bases
+de processos judiciais.
 
 ---
 
@@ -109,6 +157,7 @@ normativa em todos os critérios de aceitação deste documento.
 |------|------------------|
 | **Radar** | O sistema como um todo, quando o requisito é transversal. |
 | **Orquestrador** | Executa as etapas do pipeline na ordem obrigatória, com curto-circuito. |
+| **Conector_de_Fonte** | Implementa o contrato de aquisição de uma fonte específica e entrega payload bruto, documentos e metadados ao Capturador. |
 | **Capturador** | Registra o snapshot bruto e imutável de uma fonte. |
 | **Normalizador** | Converte a captura em visão estruturada comparável, sem inventar dado. |
 | **Resolvedor_de_Identidade** | Determina o nível de identidade (I0–I4) do imóvel. |
@@ -132,6 +181,10 @@ normativa em todos os critérios de aceitação deste documento.
 | **Gestor_de_Governanca** | Versiona regras, parâmetros, exceções e trilha de auditoria. |
 | **Gestor_de_Parametros** | Resolve parâmetros pela hierarquia de escopo. |
 | **Camada_de_Evidencia** | Armazena evidência com proveniência e estado. |
+| **Gestor_de_Documentos** | Guarda o arquivo original de forma permanente, seus metadados, suas versões, a extração derivada e o download. |
+| **Gestor_de_Checklist** | Resolve o checklist aplicável por escopo, fixa a versão usada na execução e registra o resultado item a item. |
+| **Triagem_Rapida** | Avalia candidatos do Radar com os dados já disponíveis, sem emitir decisão de investimento (Fast Radar). |
+| **Comparador_de_Versoes** | Compara duas versões de análise e classifica as diferenças. |
 | **Base_de_Conhecimento** | Recupera conhecimento normativo (regras, definições, casos) para os agentes. |
 | **Interface_do_Investidor** | Apresenta o Radar, a ficha, a explicabilidade e as ações. |
 | **Motor_de_Backtest** | Reproduz decisões históricas e mede acerto das regras. |
@@ -201,6 +254,19 @@ normativa em todos os critérios de aceitação deste documento.
 | **Materialidade** | Limiar a partir do qual uma mudança exige reavaliação. |
 | **Frescor (freshness)** | Prazo de validade de uma informação por categoria. |
 | **Golden Case** | Caso real com resultado esperado conhecido, usado para validar o comportamento do Radar. |
+| **Conector de fonte** | Contrato de aquisição de uma fonte, independente da estratégia usada para obter o dado (página, endpoint, arquivo, API ou varredura). |
+| **Documento** | Arquivo recebido ou capturado, preservado em sua forma original, com metadados, versões e extração derivada. |
+| **Versão de documento** | Nova entrega do mesmo documento lógico, preservando as anteriores; dimensão distinta da versão de análise. |
+| **Extração** | Conteúdo derivado de um documento (texto, páginas, segmentos, representação vetorial); nunca substitui o arquivo original. |
+| **Débito (encargo)** | Obrigação pecuniária vinculada ao imóvel (IPTU, condomínio e demais encargos), com valor, período, fonte, data da consulta, documento e situação. |
+| **Processo judicial** | Ação com número, partes, decisões e andamentos, relevante para o risco de nulidade ou de posse. |
+| **Porta de entrada** | Caminho pelo qual uma oportunidade chega à análise: análise manual ou Radar automático. |
+| **Análise manual** | Porta de entrada em que o usuário cria o imóvel, informa a oportunidade, envia documentos e executa a análise. |
+| **Radar automático** | Porta de entrada em que o Conector_de_Fonte captura ofertas e o Radar as apresenta como candidatos. |
+| **Candidato** | Oportunidade aprovada na triagem rápida e disponível para promoção à análise profunda. |
+| **Triagem rápida (Fast Radar)** | Prefixo do pipeline que qualifica candidatos com os dados já disponíveis, sem valuation, sem TCO e sem decisão. |
+| **Gate de promoção** | Verificação objetiva que autoriza a execução da análise profunda sobre um candidato. |
+| **Comparação de versões** | Confronto entre duas versões de análise da mesma oportunidade, classificando as diferenças e o motivo da alteração. |
 
 ---
 
@@ -257,6 +323,13 @@ persistido, o que tornava o traço de execução incapaz de comprovar que passar
 | 14 | `DECIDED` | Decisão registrada com justificativa e versões. |
 | 15 | `MONITORED` | Gatilhos ativos de reavaliação. |
 | 16 | `CLOSED` | Encerrada (arrematada, perdida, expirada, sem interesse). |
+
+**Triagem rápida e análise profunda são um único pipeline** `[CANÔNICO]` (`D69`, `D84`). A
+triagem rápida (Fast Radar) é o **prefixo** das fases 1 a 5 — `CAPTURED`, `NORMALIZED`,
+`IDENTIFIED`, `DEDUPLICATED` e `QUALIFIED` — seguido do **gate de promoção** `G1-P`. A análise
+profunda é a continuação das fases 6 a 14 sobre o mesmo estado, com o mesmo motor
+determinístico. Não existe segundo pipeline, segundo catálogo de regras nem segundo motor de
+decisão: a triagem apenas decide **quem segue**, nunca **o que vale** (`R93`).
 
 ### Estados de decisão (`DecisionState`) `[CANÔNICO]`
 
@@ -2388,9 +2461,248 @@ mais restritivo.
 6. THE Radar SHALL rejeitar configuração que remova qualquer um dos pontos mínimos do critério 5.
 7. THE Radar SHALL registrar, para cada intervenção humana, o ator, o papel exercido, a data, o objeto afetado e a justificativa.
 
+### Domínio O — Portas de Entrada, Documentos e Ciclo de Produto
+
+Este domínio integra a revisão de produto (`D56` a `D80`) à estrutura normativa. Ele não
+cria motor de decisão, catálogo de regras nem hierarquia normativa paralelos: descreve **como
+a oportunidade chega**, **como a evidência entra** e **como o resultado é revisitado**, sempre
+sobre o mesmo pipeline e o mesmo motor determinístico dos domínios A a N.
+
+### Requirement 84: Duas portas de entrada convergentes
+
+**User Story:** Como investidor, quero analisar tanto um imóvel que eu mesmo cadastrei quanto um que o Radar descobriu, para que a origem da oportunidade não altere o resultado da análise.
+
+#### Acceptance Criteria
+
+1. THE Radar SHALL disponibilizar exatamente **duas** portas de entrada de oportunidade: análise manual e Radar automático.
+2. WHEN o investidor cria um imóvel pela análise manual, THE Radar SHALL exigir a identificação mínima exigida pelo gate `G1` conforme `R4.2` e SHALL registrar autor e data da criação.
+3. WHEN o investidor informa uma oportunidade para um imóvel já existente, THE Radar SHALL vincular a oportunidade ao imóvel existente AND SHALL abster-se de criar novo imóvel.
+4. WHEN o investidor envia documentos, THE Gestor_de_Documentos SHALL registrá-los conforme `R86` e SHALL vinculá-los ao imóvel, à oportunidade e, quando houver, à análise.
+5. WHEN o investidor solicita a execução da análise, THE Orquestrador SHALL executar as fases do pipeline na ordem obrigatória de `R70.1`.
+6. THE Radar SHALL permitir que o investidor complemente informações após a análise concluída e SHALL tratar a complementação conforme `R88`.
+7. THE Radar SHALL tratar o Radar automático como **camada de descoberta**, AND SHALL abster-se de emitir nele qualquer estado de `DecisionState`.
+8. WHEN um candidato do Radar é promovido à análise profunda, THE Orquestrador SHALL aplicar o mesmo pipeline, o mesmo catálogo de regras, os mesmos parâmetros resolvidos e o mesmo Motor_de_Decisao aplicados à análise manual.
+9. THE Motor_de_Decisao SHALL emitir a mesma decisão para entradas equivalentes independentemente da porta de entrada, AND SHALL registrar a porta de entrada apenas como proveniência.
+10. THE Radar SHALL registrar, em cada oportunidade, a porta de entrada, o autor e a data de criação.
+11. THE Radar SHALL manter o modelo conceitual em que o Imóvel é permanente, a Oportunidade é vinculada a exatamente um Imóvel, cada Captura é vinculada a exatamente uma Oportunidade, e Documentos, Evidências e Análises são vinculados ao Imóvel e à Oportunidade correspondentes.
+12. IF uma captura corresponde a imóvel já conhecido conforme `R9`, THEN THE Deduplicador SHALL vinculá-la ao imóvel existente AND SHALL abster-se de criar novo imóvel.
+13. IF a evidência disponível é insuficiente para decidir a identidade conforme `R9.6`, THEN THE Deduplicador SHALL registrar a captura como candidata a vínculo e SHALL registrar pendência, AND SHALL abster-se de criar imóvel definitivo.
+
+### Requirement 85: Contrato de conector de fonte
+
+**User Story:** Como responsável técnico, quero que a aquisição de ofertas seja um contrato, para que uma nova instituição não exija alteração do domínio.
+
+#### Acceptance Criteria
+
+1. THE Radar SHALL definir um contrato único de conector de fonte com as operações de listar ofertas, obter o detalhe de uma oferta, obter os documentos da oferta e declarar a cobertura da fonte.
+2. THE Conector_de_Fonte SHALL entregar ao Capturador o payload bruto, a referência de origem, a data e hora da obtenção, o hash do conteúdo, os documentos e as imagens quando existirem, e a versão da captura.
+3. THE Radar SHALL tratar a estratégia de aquisição — página pública, endpoint, arquivo, interface de programação de terceiro ou varredura — como detalhe de infraestrutura, AND SHALL abster-se de expor a estratégia de aquisição às entidades, regras, parâmetros e motores do domínio.
+4. THE Radar SHALL adotar a CAIXA como **primeira** implementação do contrato.
+5. WHEN uma nova fonte é incorporada, THE Radar SHALL exigir apenas a implementação do contrato e o cadastro da fonte conforme `R1.1`, AND SHALL abster-se de exigir alteração de entidade, de regra, de parâmetro, de motor ou de esquema de dados.
+6. THE Capturador SHALL preservar o payload bruto de forma imutável conforme `R2.1` a `R2.4`, incluindo hash e versão da captura, para toda captura obtida por conector.
+7. WHERE a fonte disponibiliza edital, matrícula, anexos ou imagens, THE Conector_de_Fonte SHALL entregar cada arquivo ao Gestor_de_Documentos com o tipo declarado conforme `R86.4`.
+8. IF o payload obtido não satisfaz o gate `G0` conforme `R4.1`, THEN THE Capturador SHALL registrar a captura com estado `Rejected` e a causa, AND SHALL abster-se de criar oportunidade.
+9. IF o conector falha na obtenção, THEN THE Radar SHALL registrar a falha com fonte, data, hora e causa, SHALL preservar a última captura válida e SHALL abster-se de registrar ausência de oferta como evidência de inexistência da oferta.
+10. THE Radar SHALL registrar, em cada captura, o identificador e a versão do conector que a produziu.
+
+### Requirement 86: Documento como entidade de primeira classe
+
+**User Story:** Como auditor, quero que o arquivo original seja preservado e recuperável, para que toda conclusão possa ser confrontada com o documento que a originou.
+
+#### Acceptance Criteria
+
+1. THE Radar SHALL manter **Documento** como entidade própria do dicionário, vinculável a imóvel, oportunidade e análise.
+2. THE Gestor_de_Documentos SHALL preservar o arquivo original de forma permanente e imutável, AND SHALL abster-se de substituí-lo, sobrescrevê-lo ou removê-lo em razão da extração.
+3. THE Gestor_de_Documentos SHALL registrar, para cada documento, os metadados: tipo; nome original; extensão; tipo MIME; tamanho; hash; origem; data e hora; usuário responsável; imóvel vinculado; oportunidade vinculada; análise vinculada quando houver; versão; texto extraído; quantidade de páginas; segmentos; e representação vetorial quando aplicável.
+4. THE Gestor_de_Documentos SHALL classificar cada documento em exatamente um tipo entre `MATRICULA`, `EDITAL`, `IPTU`, `CONDOMINIO`, `PROCESSO_JUDICIAL`, `LAUDO`, `FOTOS`, `ORCAMENTO_REFORMA` e `OUTRO`.
+5. THE Gestor_de_Documentos SHALL registrar a origem de cada documento em exatamente um valor entre captura automática, envio do investidor ou do analista, e produção interna do Radar.
+6. WHEN a extração é executada, THE Gestor_de_Documentos SHALL registrar o resultado como conteúdo derivado vinculado ao documento AND SHALL manter o hash do arquivo original inalterado.
+7. WHEN o download de um documento é solicitado, THE Gestor_de_Documentos SHALL entregar o arquivo original íntegro, com hash igual ao registrado.
+8. IF o hash recalculado de um arquivo original difere do hash registrado, THEN THE Gestor_de_Documentos SHALL registrar falha de integridade, SHALL registrar pendência de prioridade crítica e SHALL abster-se de apresentar o conteúdo extraído como evidência.
+9. IF um documento é enviado com hash igual ao de documento já registrado no mesmo vínculo, THEN THE Gestor_de_Documentos SHALL tratá-lo como o mesmo documento e SHALL manter um único registro.
+10. THE Camada_de_Evidencia SHALL exigir, para toda evidência derivada de documento, a referência ao documento, à versão do documento e à localização documental exata, conforme `R20.3` e `R83.2`.
+11. IF um documento exigido por item de checklist está ausente, THEN THE Gestor_de_Due_Diligence SHALL registrar pendência com o item correspondente, AND SHALL abster-se de tratar a ausência do documento como conformidade.
+
+### Requirement 87: Versionamento de documento
+
+**User Story:** Como analista, quero que uma nova via do mesmo documento não apague a anterior, para que a evolução da evidência seja auditável.
+
+#### Acceptance Criteria
+
+1. THE Gestor_de_Documentos SHALL numerar as versões de cada documento de forma estritamente crescente e sem lacuna, iniciando em 1.
+2. WHEN uma nova versão de documento é registrada, THE Gestor_de_Documentos SHALL preservar todas as versões anteriores íntegras e consultáveis.
+3. THE Gestor_de_Documentos SHALL manter o versionamento de documento como dimensão **distinta** do versionamento de análise de `R61.1`, AND SHALL abster-se de derivar a numeração de uma dimensão da outra.
+4. THE Radar SHALL registrar, em cada análise, o identificador e a versão de cada documento considerados.
+5. WHEN uma nova versão de documento contradiz evidência vigente, THE Camada_de_Evidencia SHALL preservar as duas evidências e SHALL marcar o fato como conflitante conforme `R20.5`.
+6. WHEN uma nova versão de documento altera informação material conforme os limiares de `MON`, THE Monitor SHALL classificar a materialidade conforme `R57.2` e `R57.3` e SHALL disparar a reavaliação correspondente.
+7. WHEN uma versão anterior é solicitada, THE Gestor_de_Documentos SHALL entregá-la com os metadados vigentes na data em que foi registrada.
+8. THE Gestor_de_Documentos SHALL registrar, para cada versão, o autor, a data, a origem e o motivo da nova versão.
+
+### Requirement 88: Reanálise e comparação de versões de análise
+
+**User Story:** Como investidor, quero comparar a análise de hoje com a de antes, para entender o que mudou, por que mudou e se a decisão mudou.
+
+#### Acceptance Criteria
+
+1. THE Radar SHALL preservar cada análise como snapshot imutável conforme `R61.1` e `R61.2`.
+2. WHEN evidência material nova é registrada, THE Radar SHALL criar nova versão de análise e SHALL preservar as versões anteriores inalteradas.
+3. THE Radar SHALL registrar, em cada versão de análise, a data e hora, o autor ou processo, as evidências consideradas, os parâmetros resolvidos, o checklist e a versão aplicados, os resultados, a decisão e a justificativa.
+4. THE Comparador_de_Versoes SHALL comparar duas versões quaisquer da mesma oportunidade, incluindo o par formado pela primeira versão `V1` e pela versão mais recente `VN`.
+5. THE Comparador_de_Versoes SHALL classificar cada diferença em exatamente uma de **cinco** categorias: nova evidência; valor alterado; risco alterado; pendência resolvida; e decisão alterada.
+6. WHEN a decisão difere entre as duas versões comparadas, THE Comparador_de_Versoes SHALL registrar o motivo da alteração, identificando as evidências, os valores, as pendências e as versões de regra e de parâmetro responsáveis pela mudança.
+7. IF as duas versões comparadas possuem as mesmas evidências, os mesmos parâmetros, as mesmas versões de regra e os mesmos resultados, THEN THE Comparador_de_Versoes SHALL retornar conjunto vazio de diferenças.
+8. THE Interface_do_Investidor SHALL apresentar o histórico de versões navegável, com data, autor, motivo, decisão e camada determinante de cada versão.
+9. THE Comparador_de_Versoes SHALL abster-se de alterar qualquer versão comparada.
+10. IF a reexecução da análise encontra as mesmas entradas da versão vigente, THEN THE Radar SHALL abster-se de criar nova versão e SHALL registrar a reexecução na trilha de auditoria.
+
+### Requirement 89: Evidência de origem manual
+
+**User Story:** Como analista, quero que o que eu informo entre como evidência identificada, para que a origem manual nunca seja confundida com fonte oficial.
+
+#### Acceptance Criteria
+
+1. WHEN o investidor ou o analista registra uma informação, THE Camada_de_Evidencia SHALL registrá-la como evidência explícita com tipo, conteúdo, origem, data, autor, confiança, validade, referência e observação.
+2. THE Camada_de_Evidencia SHALL registrar a origem `USUARIO` em campo próprio da evidência.
+3. THE Camada_de_Evidencia SHALL abster-se de atribuir à evidência de origem `USUARIO` a confiabilidade de fonte oficial, AND SHALL classificá-la no máximo como `C indicado` na escala de `R1.5` quando não houver documento de suporte registrado.
+4. WHERE a evidência de origem `USUARIO` é acompanhada de documento, THE Camada_de_Evidencia SHALL derivar a confiança da classe do documento e SHALL registrar o documento, a versão e a localização documental.
+5. IF uma verificação obrigatória do Gate_Juridico depende exclusivamente de evidência de origem `USUARIO` sem documento de suporte, THEN THE Gate_Juridico SHALL manter o resultado da verificação como `UNKNOWN` e SHALL registrar pendência.
+6. THE Camada_de_Evidencia SHALL registrar a validade da evidência manual conforme a tabela `FRESH` e SHALL marcá-la como expirada ao término do prazo.
+7. WHEN uma evidência manual é alterada, THE Gestor_de_Governanca SHALL registrar autor, data, valor anterior, valor novo e motivo conforme `R64.2`.
+8. THE Motor_de_Explicabilidade SHALL identificar na explicação da decisão cada evidência de origem `USUARIO` utilizada.
+9. THE Camada_de_Evidencia SHALL preservar a evidência manual mesmo quando contrariada por evidência posterior, conforme `R20.5`.
+
+### Requirement 90: Importação manual de processo judicial
+
+**User Story:** Como analista, quero registrar processos judiciais manualmente, para não depender de integração automática para concluir a análise.
+
+#### Acceptance Criteria
+
+1. THE Radar SHALL manter **Processo Judicial** como entidade própria do dicionário, com número, órgão julgador, partes, tipo, situação, decisões, andamentos, data da consulta, documento vinculado e observação.
+2. WHEN o analista importa um processo judicial, THE Radar SHALL aceitar arquivo PDF, captura de tela ou registro do número do processo, e SHALL vincular o processo ao imóvel e à oportunidade.
+3. THE Radar SHALL abster-se de exigir integração automática com base de processos judiciais para concluir a análise.
+4. THE Gate_Juridico SHALL avaliar o impacto material do processo conforme `R16` e SHALL abster-se de emitir `BLOCK` pela simples existência do processo.
+5. IF um processo é registrado sem decisão e sem andamento, THEN THE Gate_Juridico SHALL classificar o impacto como `UNKNOWN` e SHALL registrar pendência.
+6. THE Radar SHALL registrar a data da consulta de cada processo e SHALL marcar a informação como expirada conforme a tabela `FRESH`.
+7. WHERE existe decisão liminar que atinge o leilão ou o procedimento, THE Gate_Juridico SHALL aplicar `R16.8` e SHALL manter `BLOCK` até a resolução ou a mitigação comprovada.
+8. THE Radar SHALL registrar cada andamento com data, descrição e documento de suporte quando houver.
+
+### Requirement 91: Débito como entidade explícita
+
+**User Story:** Como investidor, quero que IPTU, condomínio e demais encargos sejam registrados um a um, para que o custo total não dependa de memória nem de estimativa silenciosa.
+
+#### Acceptance Criteria
+
+1. THE Radar SHALL manter **Débito** como entidade própria do dicionário, com tipo, valor, período de referência, fonte, data da consulta, documento vinculado, situação e responsabilidade atribuída pelo edital.
+2. THE Radar SHALL aceitar os tipos de débito IPTU e taxas municipais, condomínio, concessionárias de serviço público e demais encargos.
+3. WHEN um débito é registrado, THE Motor_de_Calculo SHALL computá-lo nos componentes `CUS-005` e `CUS-006` do custo econômico total conforme `R26.1`.
+4. THE Radar SHALL registrar a situação de cada débito em exatamente um valor entre `em_aberto`, `parcelado`, `quitado`, `em_discussao` e `desconhecido`.
+5. IF nenhum débito foi investigado para um tipo exigido pelo checklist aplicável, THEN THE Motor_de_Calculo SHALL manter o componente correspondente como `UNKNOWN` conforme `R26.7` AND SHALL abster-se de tratá-lo como zero.
+6. WHERE o edital atribui o débito ao adquirente, THE Motor_de_Calculo SHALL computá-lo integralmente no custo econômico total.
+7. WHERE o edital atribui o débito ao vendedor, THE Motor_de_Calculo SHALL excluí-lo do custo econômico total e SHALL registrar a cláusula do edital e a página que sustentam a exclusão.
+8. WHEN o valor de um débito muda de forma material conforme os limiares de `MON`, THE Monitor SHALL classificar a materialidade conforme `R57.2` e `R57.3` e SHALL disparar a reavaliação correspondente.
+9. THE Interface_do_Investidor SHALL apresentar cada débito com tipo, valor, período, fonte, data da consulta, situação e documento vinculado.
+10. THE Motor_de_Explicabilidade SHALL apresentar a composição dos componentes `CUS-005` e `CUS-006` a partir dos débitos registrados.
+
+### Requirement 92: Checklist parametrizável e versionado
+
+**User Story:** Como curador de regras, quero configurar o checklist por escopo sem alterar código, para adaptar a verificação sem enfraquecer a proteção.
+
+#### Acceptance Criteria
+
+1. THE Gestor_de_Checklist SHALL manter cada checklist como configuração versionada, registrando por item a regra, o filtro de aplicabilidade, o peso, a severidade, a ordem, a condição e a ação.
+2. THE Gestor_de_Checklist SHALL adotar o catálogo do Anexo A (`MC-001` a `MC-136`), do Anexo B (`B-01` a `B-27`) e do Anexo C.1 (`C-01` a `C-71`) — **234 itens** — como **versão 1 do checklist padrão**.
+3. THE Gestor_de_Checklist SHALL resolver o checklist aplicável pelo escopo instituição vendedora, estado, cidade, tipo de imóvel, estratégia e oportunidade, com a precedência de escopo de `R54.10`.
+4. WHEN uma execução de checklist ocorre, THE Gestor_de_Checklist SHALL registrar o identificador do checklist, a versão aplicada, o escopo resolvido e o resultado de cada item com evidência e localização documental.
+5. THE Gestor_de_Checklist SHALL rejeitar configuração que remova, desative ou torne não aplicável qualquer item crítico da versão 1.
+6. THE Gestor_de_Checklist SHALL rejeitar configuração que torne o resultado na ausência de evidência mais favorável do que o resultado devido na versão 1, conforme `D49` e `P-E`.
+7. THE Gestor_de_Checklist SHALL manter a cobertura dos 234 itens verificável, exigindo por análise exatamente um resultado registrado para cada item aplicável, ou o valor `nao_aplicavel` com justificativa.
+8. WHEN um checklist é alterado, THE Gestor_de_Governanca SHALL criar nova versão, SHALL registrar autor, data, motivo e diferença em relação à versão anterior, e SHALL preservar as versões anteriores conforme `R62.1`.
+9. THE Gestor_de_Checklist SHALL abster-se de aplicar item de verificação que não esteja declarado em uma versão registrada de checklist.
+10. IF a versão de checklist registrada em uma análise não é mais a vigente, THEN THE Radar SHALL reproduzir a análise com a versão registrada conforme `R62.8`.
+11. THE Gestor_de_Checklist SHALL abster-se de alterar, por parametrização, a precedência canônica de decisão de `R53` e os princípios invioláveis.
+
+### Requirement 93: Triagem rápida e gate de promoção à análise profunda
+
+**User Story:** Como investidor, quero que a triagem separe rapidamente o que merece atenção, para não gastar análise profunda em toda oferta capturada.
+
+#### Acceptance Criteria
+
+1. THE Triagem_Rapida SHALL executar sobre as fases 1 a 5 do pipeline, avaliando localização, preço, rodada do leilão, desconto sobre o valor de referência da fonte, tipo de imóvel, área, quartos, ticket e disponibilidade de dados.
+2. THE Triagem_Rapida SHALL abster-se de calcular valuation, custo econômico total, Opportunity Score, Investor Fit Score e decisão.
+3. THE Triagem_Rapida SHALL classificar cada oportunidade como `candidato` ou `nao_candidato` e SHALL registrar o critério que determinou o resultado.
+4. THE Triagem_Rapida SHALL abster-se de emitir qualquer valor de `DecisionState`.
+5. THE Orquestrador SHALL promover um candidato à análise profunda somente quando o gate de promoção `G1-P` estiver satisfeito, exigindo cumulativamente: gate `G1` satisfeito conforme `R4.2`; nível de identidade igual ou superior a `I2` conforme `R7`; modalidade dentro do escopo do MVP; localização e tipo dentro do escopo configurado; preço dentro de `PRI-001` e `PRI-002`; ticket dentro de `INV-002`; potencial preliminar igual ou superior a `medio` conforme `R5.2`; e ausência de bloqueio crítico conhecido.
+6. IF o gate de promoção `G1-P` não é satisfeito, THEN THE Orquestrador SHALL abster-se de executar a análise profunda, SHALL registrar o critério não satisfeito e SHALL manter a oportunidade disponível para reavaliação.
+7. WHEN o investidor promove explicitamente uma oportunidade, THE Orquestrador SHALL executar a análise profunda e SHALL registrar a promoção manual com autor, data e motivo.
+8. THE Orquestrador SHALL executar a análise profunda como continuação das fases 6 a 14 do mesmo pipeline, com o mesmo catálogo de regras, os mesmos parâmetros e o mesmo Motor_de_Decisao da análise manual.
+9. IF os dados mínimos do gate `G1` estão ausentes, THEN THE Triagem_Rapida SHALL classificar a oportunidade como `nao_candidato` por dados insuficientes, SHALL registrar pendência de captura e SHALL manter a oportunidade em monitoramento.
+10. THE Radar SHALL registrar, para cada triagem, a data, a versão dos filtros aplicados e o resultado de cada critério avaliado.
+11. THE Radar SHALL apresentar a lista de candidatos ordenada por potencial preliminar conforme `R5.2`, AND SHALL abster-se de apresentar score de oportunidade antes da análise profunda.
+
+### Requirement 94: Interface do investidor em português com as capacidades mínimas
+
+**User Story:** Como investidor, quero uma interface em português que reúna análise, documentos, evidências e histórico, para conduzir todo o ciclo sem sair do produto.
+
+#### Acceptance Criteria
+
+1. THE Radar SHALL adotar React como tecnologia oficial da Interface_do_Investidor (`D70`).
+2. THE Interface_do_Investidor SHALL apresentar todo texto de interface, rótulo, mensagem e relatório em português.
+3. THE Interface_do_Investidor SHALL disponibilizar, no mínimo, as capacidades: painel de visão geral; nova análise; pesquisa de imóveis; Radar de candidatos; ficha detalhada da análise; documentos; evidências; pendências; reanálise; comparação de versões; checklists; parâmetros; e download de documentos.
+4. THE Interface_do_Investidor SHALL apresentar na ficha detalhada da análise: decisão; justificativa; confiança; Opportunity Score; Investor Fit Score; preço; valor de mercado; custo econômico total; desconto líquido; margem; preço máximo; preço-alvo; break-even de saída; aluguel estimado; yield bruto; yield líquido; liquidez; riscos; pendências; e evidências.
+5. THE Interface_do_Investidor SHALL identificar cada valor apresentado com o estado de informação correspondente conforme `R66.11`.
+6. WHEN o investidor solicita uma nova análise, THE Interface_do_Investidor SHALL permitir criar o imóvel, informar a oportunidade, enviar documentos, registrar evidências e executar a análise em um único fluxo.
+7. THE Interface_do_Investidor SHALL disponibilizar o download de todo documento registrado conforme `R86.7`.
+8. THE Interface_do_Investidor SHALL apresentar a comparação de versões conforme `R88.8`.
+9. THE Interface_do_Investidor SHALL apresentar cada checklist com o escopo resolvido, a versão aplicada e o resultado por item.
+10. THE Interface_do_Investidor SHALL apresentar cada parâmetro com identificador do catálogo, escopo aplicado, versão e valor vigente, conforme `R78.6`.
+11. WHERE um texto de origem externa está em outro idioma, THE Interface_do_Investidor SHALL preservar o texto original como evidência e SHALL apresentar o rótulo e a interpretação em português.
+
+### Requirement 95: Prova de fogo e ciclo de produto do MVP
+
+**User Story:** Como gestor, quero um critério único e verificável de MVP pronto, para não declarar pronto um produto que não fecha o ciclo.
+
+#### Acceptance Criteria
+
+1. THE Radar SHALL suportar o ciclo de prova do MVP em exatamente **dezoito** passos verificáveis: 1 criar imóvel; 2 cadastrar oportunidade da CAIXA; 3 enviar edital; 4 enviar matrícula; 5 informar IPTU; 6 informar condomínio; 7 adicionar processos judiciais; 8 executar análise; 9 visualizar decisão; 10 visualizar custo econômico total; 11 visualizar valuation; 12 visualizar riscos; 13 visualizar pendências; 14 baixar documentos; 15 adicionar nova evidência; 16 reanalisar; 17 comparar `V1` × `V2`; e 18 revisitar o imóvel posteriormente.
+2. THE Radar SHALL registrar, para cada um dos dezoito passos, o requisito deste documento que o sustenta.
+3. THE Radar SHALL fechar o ciclo de produto `DESCOBRIR` → `SELECIONAR` → `DOCUMENTAR` → `ANALISAR` → `COMPLEMENTAR` → `REANALISAR` → `COMPARAR` → `DECIDIR` nas duas portas de entrada.
+4. WHEN o ciclo é iniciado pelo Radar automático, THE Radar SHALL usar o candidato promovido como ponto de partida e SHALL executar os passos 3 a 18 sem alteração de motor, de regra ou de parâmetro.
+5. THE Radar SHALL satisfazer, em cada execução do ciclo, os atributos rastreabilidade, versionamento, explicabilidade, auditoria, reprodutibilidade, preservação de desconhecidos e histórico completo.
+6. IF qualquer um dos dezoito passos não é executável, THEN THE Radar SHALL reportar o MVP como incompleto e SHALL identificar o passo e o requisito não satisfeitos.
+7. THE Radar SHALL preservar, após a conclusão do ciclo, todas as versões de análise, todos os documentos, todas as versões de documento e todas as evidências produzidas.
+
+### Requirement 96: Visão financeira oficial e decomposição rastreável
+
+**User Story:** Como investidor, quero ver o resultado financeiro decomposto e rastreável até a evidência, para conferir cada número sem refazer a conta na planilha.
+
+#### Acceptance Criteria
+
+1. THE Motor_de_Calculo SHALL apresentar o custo econômico total decomposto nos **treze** componentes de `R26.1`, cada um com valor, estado de informação, fonte e evidência de origem.
+2. THE Motor_de_Calculo SHALL apresentar como visão financeira oficial o conjunto: custo econômico total; valor de mercado provável; margem absoluta e percentual; desconto líquido; preço máximo; preço-alvo; break-even de saída; aluguel estimado; yield bruto; yield líquido; ROI líquido; `roi_anualizado`; prazo estimado até a saída; e liquidez.
+3. THE Motor_de_Calculo SHALL reproduzir a **estrutura**, a **decomposição** e a **rastreabilidade** da planilha de viabilidade de referência.
+4. THE Motor_de_Calculo SHALL aplicar as fórmulas de `R26`, `R27` e `R28` onde a aritmética da planilha de referência foi verificadamente corrigida, AND SHALL abster-se de reproduzir a aritmética corrigida.
+5. THE Motor_de_Calculo SHALL apresentar a forma fechada conservadora da planilha como **referência informativa** conforme `R28.4` e `R28.4.1`, AND SHALL abster-se de apresentá-la como teto decisório.
+6. THE Motor_de_Calculo SHALL reproduzir os valores dos Golden Cases dos Anexos E e F como oráculos, incluindo no caso `F.1` o preço máximo R$ 182.158,03, o custo econômico total R$ 236.125,246785, o desconto líquido 18,5775%, o ROI líquido 16,5139% e o `roi_anualizado` 84,2940%.
+7. IF um componente do custo econômico total não possui evidência de origem registrada, THEN THE Motor_de_Calculo SHALL classificá-lo como `ESTIMATED` ou `UNKNOWN` conforme `R26.7` e SHALL registrar pendência.
+8. THE Interface_do_Investidor SHALL permitir navegar de cada componente da visão financeira até a evidência que o originou.
+
+### Requirement 97: Contrato de programação das capacidades de produto
+
+**User Story:** Como responsável técnico, quero que as capacidades de produto tenham contrato de programação, para que a interface não dependa de comportamento não especificado.
+
+#### Acceptance Criteria
+
+1. THE Radar SHALL expor famílias de recursos para imóveis, oportunidades, documentos, análises, evidências, candidatos do Radar, execução da triagem do Radar, checklists e configurações.
+2. THE Radar SHALL expor as operações de execução de análise, reanálise, comparação de versões, consulta de versões e download de documento.
+3. THE Radar SHALL nomear recursos, campos e valores de domínio em português conforme a convenção de idioma e nomenclatura.
+4. THE Radar SHALL exigir autenticação e autorização em toda operação exposta conforme `R79.8`.
+5. IF uma requisição referencia imóvel, oportunidade, documento, análise ou checklist inexistente, THEN THE Radar SHALL rejeitá-la informando o recurso e a causa.
+6. THE Radar SHALL registrar cada operação exposta na trilha de auditoria conforme `R64.2`.
+7. THE Radar SHALL abster-se de expor operação que altere captura registrada, evidência registrada ou versão de análise já persistida.
+
 ---
 
-# Anexo A — Checklist Mestre de Análise de Leilão (normativo, 136 itens)
+## Anexo A — Checklist Mestre de Análise de Leilão (normativo, 136 itens)
 
 Cada item é avaliado e registrado individualmente com resultado, evidência e
 localização documental. A coluna **Ausente ⇒** define o resultado quando não há
@@ -2405,7 +2717,7 @@ desta spec usava oito valores ad hoc, entre eles `REPROVADO` para itens em que a
 apenas faltava. Pelo princípio `P-E`, `REPROVADO` fica reservado para **evidência de
 irregularidade**; falta de informação é `PENDENTE` com prioridade proporcional ao impacto.
 
-## A.1 Identificação (MC-001 a MC-007)
+### A.1 Identificação (MC-001 a MC-007)
 
 | ID | Verificação | Aprovado quando | Reprovado quando | Ausente ⇒ | Efeito | Regra |
 |----|-------------|-----------------|------------------|-----------|--------|-------|
@@ -2417,7 +2729,7 @@ irregularidade**; falta de informação é `PENDENTE` com prioridade proporciona
 | MC-006 | Área, unidade, vagas e características conferidas | Área com tipo declarado e características conferidas | Área da fonte incompatível com a matrícula | `PENDENTE` | Reduz confiança de valuation | RULE-ID-001 |
 | MC-007 | Captura original preservada | Snapshot com fingerprint e data registrados | Captura comprovadamente alterada ou sobrescrita ⇒ `REPROVADO` | `PENDENTE` crítico | Gate G0 bloqueia análise | RULE-ID-001 |
 
-## A.2 Matrícula e titularidade (MC-008 a MC-016)
+### A.2 Matrícula e titularidade (MC-008 a MC-016)
 
 | ID | Verificação | Aprovado quando | Reprovado quando | Ausente ⇒ | Efeito | Regra |
 |----|-------------|-----------------|------------------|-----------|--------|-------|
@@ -2431,7 +2743,7 @@ irregularidade**; falta de informação é `PENDENTE` com prioridade proporciona
 | MC-015 | Ato ou averbação registral identificado | Número do ato registrado (ex.: AV-13) | Ato não localizável na matrícula | `PENDENTE` | P0 `PENDENTE` | RULE-JUR-013 |
 | MC-016 | Inconsistências de titularidade inexistentes ou tratadas | Sem inconsistência, ou inconsistência com tratamento documentado | Inconsistência material sem tratamento | `PENDENTE` | `BLOCK` | RULE-ID-002 |
 
-## A.3 Constituição em mora e notificações (MC-017 a MC-026)
+### A.3 Constituição em mora e notificações (MC-017 a MC-026)
 
 | ID | Verificação | Aprovado quando | Reprovado quando | Ausente ⇒ | Efeito | Regra |
 |----|-------------|-----------------|------------------|-----------|--------|-------|
@@ -2446,7 +2758,7 @@ irregularidade**; falta de informação é `PENDENTE` com prioridade proporciona
 | MC-025 | Intimações legalmente exigíveis relacionadas ao leilão verificadas | Comunicações das datas dos leilões comprovadas | Ausência comprovada de comunicação exigível | `PENDENTE` | `BLOCK` | RULE-JUR-005 |
 | MC-026 | Datas e destinatários das intimações conferidos | Datas e destinatários coerentes | Datas ou destinatários incoerentes | `PENDENTE` | `BLOCK`/`PENDENTE` | RULE-JUR-005 |
 
-## A.4 Edital e cronologia do leilão (MC-027 a MC-034)
+### A.4 Edital e cronologia do leilão (MC-027 a MC-034)
 
 | ID | Verificação | Aprovado quando | Reprovado quando | Ausente ⇒ | Efeito | Regra |
 |----|-------------|-----------------|------------------|-----------|--------|-------|
@@ -2459,7 +2771,7 @@ irregularidade**; falta de informação é `PENDENTE` com prioridade proporciona
 | MC-033 | Matrícula e edital sem conflito material | Identificação, área e titularidade coincidem | Conflito material | `PENDENTE` | `BLOCK` | RULE-ED-001 |
 | MC-034 | Regras específicas do edital analisadas | Cláusulas de custo, prazo, posse e obrigações registradas | Cláusula crítica incompatível com a tese | `PENDENTE` | `BLOCK` conforme cláusula | RULE-ED-001 |
 
-## A.5 Processos judiciais e risco de nulidade (MC-035 a MC-043)
+### A.5 Processos judiciais e risco de nulidade (MC-035 a MC-043)
 
 | ID | Verificação | Aprovado quando | Reprovado quando | Ausente ⇒ | Efeito | Regra |
 |----|-------------|-----------------|------------------|-----------|--------|-------|
@@ -2473,7 +2785,7 @@ irregularidade**; falta de informação é `PENDENTE` com prioridade proporciona
 | MC-042 | Impacto sobre a validade do leilão classificado | Impacto classificado em nenhum, potencial, material mitigável ou material impeditivo | Impacto material impeditivo | `PENDENTE` | `BLOCK` quando impeditivo | RULE-JUR-007 |
 | MC-043 | Processo não tratado como BLOCK automático apenas por existir | Classificação baseada em objeto, fase e efeito | Bloqueio emitido apenas pela existência do processo | — | Invariante de qualidade | RULE-JUR-007 |
 
-## A.6 Ocupação (MC-044 a MC-052)
+### A.6 Ocupação (MC-044 a MC-052)
 
 | ID | Verificação | Aprovado quando | Reprovado quando | Ausente ⇒ | Efeito | Regra |
 |----|-------------|-----------------|------------------|-----------|--------|-------|
@@ -2487,7 +2799,7 @@ irregularidade**; falta de informação é `PENDENTE` com prioridade proporciona
 | MC-051 | Custo e prazo de desocupação estimados | Faixa de custo e prazo registrada | Custo tratado como zero sem evidência | `PENDENTE` | Contingência obrigatória | RULE-OCC-001 |
 | MC-052 | Risco de posse separado do risco de nulidade | Registros em categorias distintas | Ocupação tratada como nulidade | — | Invariante de qualidade | RULE-OCC-002 |
 
-## A.7 Locação e inquilino (MC-053 a MC-063)
+### A.7 Locação e inquilino (MC-053 a MC-063)
 
 | ID | Verificação | Aprovado quando | Reprovado quando | Ausente ⇒ | Efeito | Regra |
 |----|-------------|-----------------|------------------|-----------|--------|-------|
@@ -2503,7 +2815,7 @@ irregularidade**; falta de informação é `PENDENTE` com prioridade proporciona
 | MC-062 | Impacto em posse, prazo e rentabilidade calculado | Impacto quantificado no cenário | Impacto não incorporado ao cenário | `PENDENTE` | Recalcular economia | RULE-LOC-002 |
 | MC-063 | Nulidade não presumida pela existência de inquilino | Registros mantêm as categorias separadas | Nulidade presumida | — | Invariante de qualidade | RULE-LOC-002 |
 
-## A.8 Dívidas e encargos (MC-064 a MC-069)
+### A.8 Dívidas e encargos (MC-064 a MC-069)
 
 | ID | Verificação | Aprovado quando | Reprovado quando | Ausente ⇒ | Efeito | Regra |
 |----|-------------|-----------------|------------------|-----------|--------|-------|
@@ -2514,7 +2826,7 @@ irregularidade**; falta de informação é `PENDENTE` com prioridade proporciona
 | MC-068 | Responsabilidade por cada débito identificada | Responsabilidade determinada pelo edital ou pela norma | Responsabilidade indeterminável | `PENDENTE` | Impede decisão final | RULE-ED-003 |
 | MC-069 | Contingência criada para valores desconhecidos | Contingência registrada com faixa | Valor desconhecido comprovadamente tratado como zero ⇒ `REPROVADO` | `PENDENTE` crítico | Violação de SAFE-005 quando zerado | RULE-ED-003 |
 
-## A.9 Mercado e valuation (MC-070 a MC-076)
+### A.9 Mercado e valuation (MC-070 a MC-076)
 
 | ID | Verificação | Aprovado quando | Reprovado quando | Ausente ⇒ | Efeito | Regra |
 |----|-------------|-----------------|------------------|-----------|--------|-------|
@@ -2526,7 +2838,7 @@ irregularidade**; falta de informação é `PENDENTE` com prioridade proporciona
 | MC-075 | Confiança do valuation | Confiança calculada e ≥ `VAL-009` | Confiança abaixo de `VAL-009` | Confiança `inconclusiva` | Impede `BUY` | RULE-MKT-003 |
 | MC-076 | Anomalias e outliers tratados | Outliers identificados, excluídos ou ajustados com registro | Outliers mantidos sem tratamento | — | Reduz confiança | RULE-MKT-004 |
 
-## A.10 Economia da operação (MC-077 a MC-090)
+### A.10 Economia da operação (MC-077 a MC-090)
 
 | ID | Verificação | Aprovado quando | Reprovado quando | Ausente ⇒ | Efeito | Regra |
 |----|-------------|-----------------|------------------|-----------|--------|-------|
@@ -2545,7 +2857,7 @@ irregularidade**; falta de informação é `PENDENTE` com prioridade proporciona
 | MC-089 | Margem de segurança | Calculada e testada em cenários | Margem abaixo do mínimo da estratégia | Não calculável | `DO_NOT_BUY`/`BUY_IF` | RULE-FIN-003 |
 | MC-090 | Preço máximo por estratégia | Calculado por estratégia ativa | Preço de oferta acima do preço máximo | Provisório | `DO_NOT_BUY` quando excedido | RULE-FIN-004 |
 
-## A.11 Liquidez e saída (MC-091 a MC-098)
+### A.11 Liquidez e saída (MC-091 a MC-098)
 
 | ID | Verificação | Aprovado quando | Reprovado quando | Ausente ⇒ | Efeito | Regra |
 |----|-------------|-----------------|------------------|-----------|--------|-------|
@@ -2558,7 +2870,7 @@ irregularidade**; falta de informação é `PENDENTE` com prioridade proporciona
 | MC-097 | Prazo máximo de carregamento | Prazo estimado ≤ `LIQ-009` | Prazo acima de `LIQ-009` | `indefinida` | `DO_NOT_BUY` para a estratégia | RULE-LIQ-003 |
 | MC-098 | Risco de liquidez | Risco classificado com severidade | Liquidez abaixo do mínimo sem compensação | `UNKNOWN` | Exige margem adicional | RULE-LIQ-001 |
 
-## A.12 Estratégia do investidor (MC-099 a MC-109)
+### A.12 Estratégia do investidor (MC-099 a MC-109)
 
 | ID | Verificação | Aprovado quando | Reprovado quando | Ausente ⇒ | Efeito | Regra |
 |----|-------------|-----------------|------------------|-----------|--------|-------|
@@ -2574,7 +2886,7 @@ irregularidade**; falta de informação é `PENDENTE` com prioridade proporciona
 | MC-108 | Capital disponível | Capital livre ≥ TCO e reserva preservada | TCO acima do limite por operação | `PENDENTE` | `BLOCK` operacional | RULE-STR-002 |
 | MC-109 | Concentração de carteira avaliada | Concentração calculada por dimensão | Concentração acima do limite | Não avaliada | Penaliza prioridade | RULE-STR-002 |
 
-## A.13 Score e decisão (MC-110 a MC-117)
+### A.13 Score e decisão (MC-110 a MC-117)
 
 | ID | Verificação | Aprovado quando | Reprovado quando | Ausente ⇒ | Efeito | Regra |
 |----|-------------|-----------------|------------------|-----------|--------|-------|
@@ -2587,7 +2899,7 @@ irregularidade**; falta de informação é `PENDENTE` com prioridade proporciona
 | MC-116 | Decisão emitida entre BUY, BUY IF, MONITOR, DO NOT BUY e BLOCK | Decisão em um dos cinco estados com camada determinante | Decisão fora do enum canônico | `PENDING` | Bloqueia registro | RULE-DEC-001 |
 | MC-117 | Toda decisão possui evidências e justificativa | Decisão vinculada a evidências e regras versionadas | Decisão sem vínculo | Não registrada | Impede compra | RULE-DEC-002 |
 
-## A.14 Gate final de validade jurídica (MC-118 a MC-125)
+### A.14 Gate final de validade jurídica (MC-118 a MC-125)
 
 | ID | Verificação | Aprovado quando | Reprovado quando | Ausente ⇒ | Efeito | Regra |
 |----|-------------|-----------------|------------------|-----------|--------|-------|
@@ -2600,7 +2912,7 @@ irregularidade**; falta de informação é `PENDENTE` com prioridade proporciona
 | MC-124 | Ocupação e locação tratadas econômica e juridicamente | Custo, prazo e efeitos registrados | Tratamento ausente | `PENDENTE` | Impede `BUY` | RULE-DEC-001 |
 | MC-125 | Item crítico inconclusivo resulta em PENDENTE ou BLOCK | Nenhum item crítico inconclusivo liberado como `BUY` | `BUY` emitido com item crítico inconclusivo | — | Invariante de SAFE-003 | RULE-DEC-001 |
 
-## A.15 Resultado da análise (MC-126 a MC-136)
+### A.15 Resultado da análise (MC-126 a MC-136)
 
 | ID | Verificação | Aprovado quando | Reprovado quando | Ausente ⇒ | Efeito | Regra |
 |----|-------------|-----------------|------------------|-----------|--------|-------|
@@ -2618,7 +2930,7 @@ irregularidade**; falta de informação é `PENDENTE` com prioridade proporciona
 
 ---
 
-# Anexo B — Verificações Complementares de Arrematação (normativo, 27 itens)
+## Anexo B — Verificações Complementares de Arrematação (normativo, 27 itens)
 
 Origem: material de estudo de domínio. As conclusões do material **não** são tratadas
 como regras jurídicas universais; cada item é ponto de investigação validado contra
@@ -2661,7 +2973,7 @@ escrevível.
 
 ---
 
-# Anexo C — Due Diligence Individual, Hard Stops e Disciplina de Lance (normativo)
+## Anexo C — Due Diligence Individual, Hard Stops e Disciplina de Lance (normativo)
 
 Origem: método de análise individual usado em operações reais, auditado e absorvido. As
 tabelas abaixo são normativas e autocontidas: `C.1` traz os 71 critérios de due diligence,
@@ -2669,7 +2981,7 @@ tabelas abaixo são normativas e autocontidas: `C.1` traz os 71 critérios de du
 os dados do certame e do leiloeiro, `C.6` a disciplina de lance e `C.7` os 12 itens da
 revalidação final do dia do lance.
 
-## C.1 Checklist de Due Diligence — 71 critérios
+### C.1 Checklist de Due Diligence — 71 critérios
 
 Cada critério recebe resultado `OK`, `ATENCAO` ou `REPROVAR`, com nota quando
 aplicável, evidência, fonte, data da consulta, link ou documento e observações.
@@ -2750,7 +3062,7 @@ painel executivo é 0 quando existe pelo menos um critério `REPROVAR`; é 60 qu
 existe pelo menos um `ATENCAO` e nenhum `REPROVAR`; e é 100 quando todos os
 critérios aplicáveis são `OK`.
 
-## C.2 Evicção de direito — hard stop (E01 a E09)
+### C.2 Evicção de direito — hard stop (E01 a E09)
 
 | ID | Verificação | Aprovado quando | Reprovado quando | Ausente ⇒ |
 |----|-------------|-----------------|------------------|-----------|
@@ -2779,7 +3091,7 @@ libera o lance:
 A formulação anterior desta spec admitia "no máximo `BUY_IF`" nos dois casos, o que
 convertia a ausência comprovada de garantia em decisão condicional favorável.
 
-## C.3 Hard stops de lance (9 condições)
+### C.3 Hard stops de lance (9 condições)
 
 | ID | Condição | Resultado |
 |----|----------|-----------|
@@ -2797,7 +3109,7 @@ convertia a ausência comprovada de garantia em decisão condicional favorável.
 aceitação do risco depender de parecer jurídico e o parecer não estiver registrado. Antes da
 consolidação, bastava configurar `INV-018 = nao` para desligar a proteção.
 
-## C.4 Checklist pré-lance — revalidação obrigatória (12 itens)
+### C.4 Checklist pré-lance — revalidação obrigatória (12 itens)
 
 | # | Item | Condição de liberação |
 |---|------|-----------------------|
@@ -2820,7 +3132,7 @@ quando os 12 itens `PL-01` a `PL-12` estiverem `SIM`, nenhum hard stop `HS-01` a
 estiverem definidos, e o lance atual for menor ou igual ao lance máximo absoluto. Em
 qualquer outra combinação, THE Radar SHALL emitir `NAO_DAR_LANCE`.
 
-## C.5 Dados do certame e do leiloeiro
+### C.5 Dados do certame e do leiloeiro
 
 | Campo | Obrigatoriedade | Observação |
 |-------|-----------------|------------|
@@ -2857,7 +3169,7 @@ este item era uma única linha "recomendado", o que o tornava inverificável.
 registro com data, fonte A, informação A, fonte B, informação B e impacto na decisão,
 conforme a entidade Divergência de `R74.6`.
 
-## C.7 Revalidação final do dia do lance (12 itens)
+### C.7 Revalidação final do dia do lance (12 itens)
 
 Esta verificação é **distinta** do checklist pré-lance `C.4`: ela ocorre no dia do certame e
 inclui quatro itens que não têm equivalente em `C.4` (`D50`).
@@ -2882,7 +3194,7 @@ somente quando os doze itens `RL-01` a `RL-12` estiverem `SIM`, os doze itens `P
 `PL-12` estiverem `SIM`, nenhum hard stop `HS-01` a `HS-09` estiver acionado, e o lance
 atual for menor ou igual ao lance máximo absoluto.
 
-## C.6 Disciplina de lance
+### C.6 Disciplina de lance
 
 | Campo | Regra |
 |-------|-------|
@@ -2894,7 +3206,7 @@ atual for menor ou igual ao lance máximo absoluto.
 
 ---
 
-# Anexo D — Matriz Canônica de Regras (55 regras, normativo)
+## Anexo D — Matriz Canônica de Regras (55 regras, normativo)
 
 As 45 primeiras regras são o catálogo canônico consolidado. As dez últimas,
 `RULE-RSK-001` a `RULE-RSK-010`, incorporam as regras de bloqueio de risco que existiam na
@@ -2964,7 +3276,7 @@ não deve continuar competindo pelo capital e pela atenção (`D3`).
 
 ---
 
-# Anexo E — Testes de Regressão Obrigatórios
+## Anexo E — Testes de Regressão Obrigatórios
 
 | ID | Cenário | Resultado esperado |
 |----|---------|--------------------|
@@ -3003,12 +3315,21 @@ não deve continuar competindo pelo capital e pela atenção (`D3`).
 | REG-033 | Teto conservador do método com IR igual a zero — entrada completa e obrigatória para reprodução: `V = 300.000`, `c_v = 0,06`, `F = 23.000`, `c_c = 0,05`, `r = 0,25`, `t = 0` e `c_itbi = 0` | Teto conservador `259.000 ÷ 1,30 =` R$ 199.230,77 **excede** o preço máximo exato `253.250 ÷ 1,3125 =` R$ 192.952,38, diferença de R$ 6.278,39. Com `c_itbi = 0,02` o preço máximo exato cai para `253.250 ÷ (1,07 × 1,25) = 253.250 ÷ 1,3375 =` R$ 189.345,79 e a diferença sobe para R$ 9.884,98: o ITBI **agrava** a falsidade da propriedade removida. O teto conservador é informativo e o teto decisório é `mínimo(exato; ajustado ao risco)` (`D28`) |
 | REG-034 | Pendência resolvida | Confiança, Opportunity Score, Investor Fit e ranking recalculados (`MON-011`, `D39`) |
 | REG-035 | Risco de severidade `critico` com evidência `ESTIMATED` | `BLOCK` registrado como bloqueio por risco crítico presumido, com condição objetiva de desbloqueio (`D20`) |
+| REG-036 | Nova captura da mesma oferta, com preço alterado, para imóvel já conhecido | Captura vinculada ao imóvel existente; nenhum imóvel novo criado; histórico de preços atualizado (`R84.12`, `R9`) |
+| REG-037 | Extração de texto executada sobre documento já registrado | Arquivo original preservado, hash inalterado e download byte a byte idêntico; extração registrada como conteúdo derivado (`R86.2`, `R86.6`, `R86.7`) |
+| REG-038 | Evidência de matrícula informada manualmente, sem documento anexado | Evidência registrada com origem `USUARIO` e classe no máximo `C indicado`; verificação jurídica permanece `UNKNOWN` com pendência (`R89.3`, `R89.5`) |
+| REG-039 | Mesma oportunidade analisada pela porta manual e pela porta do Radar, com as mesmas evidências e os mesmos parâmetros | Mesma decisão, mesma camada determinante e mesma explicação; a porta aparece apenas como proveniência (`R84.9`, `R93.8`) |
+| REG-040 | Configuração de checklist que tenta remover item crítico da versão 1, e configuração que tenta tornar a ausência de evidência favorável | Configuração rejeitada nos dois casos; cobertura dos 234 itens mantida (`R92.5`, `R92.6`, `R92.7`) |
+| REG-041 | Nova evidência material altera a decisão entre `V1` e `V2` | Comparação identifica a categoria `decisão alterada` e registra o motivo com as evidências, valores e versões de regra responsáveis (`R88.5`, `R88.6`) |
+| REG-042 | Débito de condomínio informado manualmente, com responsabilidade do adquirente declarada no edital | Débito integra `CUS-005` e aparece no custo econômico total decomposto, com documento e data da consulta (`R91.3`, `R96.1`) |
+| REG-043 | Candidato reprovado no gate de promoção `G1-P` | Análise profunda não executada; critério não satisfeito registrado; oportunidade mantida disponível para reavaliação; nenhum `DecisionState` emitido pela triagem (`R93.4`, `R93.6`) |
+| REG-044 | Nova versão de documento registrada contradizendo evidência vigente | Ambas as evidências preservadas, fato marcado como conflitante e versões de documento numeradas sem lacuna (`R87.1`, `R87.5`) |
 
 ---
 
-# Anexo F — Golden Cases (casos de prova)
+## Anexo F — Golden Cases (casos de prova)
 
-## F.1 Item 227 — Apartamento, caso de prova econômico
+### F.1 Item 227 — Apartamento, caso de prova econômico
 
 **Procedência dos dados.** As entradas de `F.1` vêm de uma planilha de análise individual
 real, e **não** da documentação de negócio. A documentação apresenta exemplos com outro
@@ -3016,7 +3337,7 @@ conjunto de números; os dois não se reconciliam e não devem ser misturados. E
 é oráculo **desta spec**: onde a planilha divergir das regras aqui escritas, prevalecem as
 regras, e a planilha permanece registrada como valor de origem.
 
-### F.1.1 Entradas
+#### F.1.1 Entradas
 
 | Campo | Valor | Origem |
 |-------|-------|--------|
@@ -3060,7 +3381,7 @@ contingência e pendência, e o aluguel líquido publicado abaixo é provisório
 `REN-012` está `[PENDENTE-DECISÃO]`, logo o imposto sobre aluguel não é aplicado e o yield
 líquido também é provisório por cima. As duas pendências só pioram o resultado.
 
-### F.1.2 Custo econômico total — planilha e spec
+#### F.1.2 Custo econômico total — planilha e spec
 
 O custo total de aquisição da planilha permanece registrado como valor de origem:
 
@@ -3090,7 +3411,7 @@ O TCO **não** inclui corretagem de venda nem IR sobre ganho de capital: pela `R
 pertencem exclusivamente à perna de venda. Também não inclui o custo de oportunidade do
 capital, pela `R26.1.2`.
 
-### F.1.3 Desconto líquido — base correta
+#### F.1.3 Desconto líquido — base correta
 
 `R27.3` calcula o desconto líquido sobre o **valor de mercado provável**, R$ 290.000,00:
 
@@ -3104,7 +3425,7 @@ sobre R$ 300.000,00, que é o preço de venda de referência, não o valor de me
 (`1 − 228.066,9017 ÷ 300.000 = 0,2397770`). O erro inflava o desconto em 2,62 pontos
 percentuais.
 
-### F.1.4 Resultado econômico recalculado
+#### F.1.4 Resultado econômico recalculado
 
 Todas as linhas usam o TCO da spec, R$ 236.125,246785.
 
@@ -3135,7 +3456,7 @@ Renda:
 | Yield líquido anual (`R27.8`) | `0,0049550 × 12` | 0,0594600 → 5,9460% |
 | Renda líquida anual | `1.170 × 12` | R$ 14.040,00 |
 
-### F.1.5 Preço máximo e teto decisório
+#### F.1.5 Preço máximo e teto decisório
 
 Entradas: `V = 300.000`, `c_v = 0,06`, `t = 0,15`, `F = 23.000`, `c_c = 0,05`,
 `c_itbi = 0,02`, `r = 0,25`.
@@ -3180,7 +3501,7 @@ O valor de R$ 168.374,76 **nunca** deve ser rotulado como "preço máximo por RO
 o resultado de uma álgebra diferente, que trata a base de IR sem o custo total de aquisição,
 e por isso não satisfaz a definição de `R28.2`.
 
-### F.1.6 Vereditos
+#### F.1.6 Vereditos
 
 | Estratégia | Indicador determinante | Threshold `STR` | Resultado | Camada determinante |
 |------------|------------------------|-----------------|-----------|---------------------|
@@ -3218,7 +3539,7 @@ impede essa aprovação (`D31`, SAFE-016).
 | Portal B | Residencial Piazza San Pietro | 47,76 | 2 | 1 | R$ 300.000 | R$ 6.281,41 | R$ 1.700 | R$ 510 | 14/09/2026 |
 | Fonte vendedora | Unidade em análise | 47,76 | 3 | 1 | R$ 191.651,31 | R$ 4.012,80 | R$ 1.900 | R$ 510 | 14/09/2026 |
 
-## F.2 Reserva dos Pinhais
+### F.2 Reserva dos Pinhais
 
 | Campo | Valor |
 |-------|-------|
@@ -3231,7 +3552,7 @@ impede essa aprovação (`D31`, SAFE-016).
 atualizada. Incorporar custo, prazo e documentação da regularização ao custo econômico
 total. Cobre `REG-003`.
 
-## F.3 Residencial Milano
+### F.3 Residencial Milano
 
 | Campo | Valor |
 |-------|-------|
@@ -3250,7 +3571,7 @@ que todas as notificações estão regulares nem substitui a verificação de pr
 ocupação, condomínio e tributos. Cobre `REG-002`. O valor mínimo do segundo leilão
 corresponde a 60% da avaliação, logo `RULE-JUR-011` não é acionada.
 
-## F.4 Conjunto Residencial Ouro Verde
+### F.4 Conjunto Residencial Ouro Verde
 
 | Campo | Valor |
 |-------|-------|
@@ -3265,7 +3586,7 @@ da avaliação da fonte. Cobre `REG-002` e `REG-009`.
 
 ---
 
-# Correctness Properties
+## Correctness Properties
 
 Propriedades executáveis destinadas a teste baseado em propriedades. Cada propriedade
 declara o gerador de entradas, a invariante e os requisitos cobertos. Propriedades que
@@ -3273,7 +3594,7 @@ dependem de serviços externos não estão nesta seção: consultas a cartório,
 concessionárias e portais são verificadas por testes de integração com um a três
 exemplos representativos e por dublês nos testes de propriedade.
 
-## P1 — Preservação e identidade da captura
+### P1 — Preservação e identidade da captura
 
 | ID | Propriedade | Gerador | Requisitos |
 |----|-------------|---------|-----------|
@@ -3283,7 +3604,7 @@ exemplos representativos e por dublês nos testes de propriedade.
 | P1.4 | Registrar a mesma captura `n` vezes resulta em exatamente um registro persistido (idempotência) | captura e `n` em 1 a 10 | 2.3 |
 | P1.5 | Para qualquer sequência de operações, nenhuma captura previamente registrada é alterada ou removida | sequências de capturas e correções | 2.4, 2.5 |
 
-## P2 — Normalização sem invenção de dados
+### P2 — Normalização sem invenção de dados
 
 | ID | Propriedade | Gerador | Requisitos |
 |----|-------------|---------|-----------|
@@ -3301,7 +3622,7 @@ exemplos representativos e por dublês nos testes de propriedade.
 | P2.12 | Entrada não interpretável resulta em `UNKNOWN`, nunca em zero | strings arbitrárias, incluindo vazia, apenas símbolos e texto livre | 3.2, 3.4.4 |
 | P2.13 | Precedência de vacância: qualquer texto que contenha termo de desocupação resulta em desocupado, mesmo quando o termo contém "ocupado" como subcadeia | textos com termos de ocupação e vacância combinados | 3.8 |
 
-## P3 — Identidade e deduplicação
+### P3 — Identidade e deduplicação
 
 | ID | Propriedade | Gerador | Requisitos |
 |----|-------------|---------|-----------|
@@ -3317,7 +3638,7 @@ exemplos representativos e por dublês nos testes de propriedade.
 | P3.10 | Evidência insuficiente resulta em veredito indefinido, nunca em verdadeiro ou falso | pares com evidência fraca | 9.6 |
 | P3.11 | Desfazer uma associação preserva o registro histórico da associação anterior | sequências de associação e correção | 9.9 |
 
-## P4 — Gate jurídico determinístico
+### P4 — Gate jurídico determinístico
 
 | ID | Propriedade | Gerador | Requisitos |
 |----|-------------|---------|-----------|
@@ -3330,7 +3651,7 @@ exemplos representativos e por dublês nos testes de propriedade.
 | P4.7 | Ocupação nunca altera o `legal_status` | conjuntos de verificações com estado de ocupação variado | 18.2, 18.8 |
 | P4.8 | Processo judicial sem impacto material classificado nunca produz `BLOCK` | processos com impacto `nenhum` | 16.6 |
 
-## P5 — Camada de evidência
+### P5 — Camada de evidência
 
 | ID | Propriedade | Gerador | Requisitos |
 |----|-------------|---------|-----------|
@@ -3340,7 +3661,7 @@ exemplos representativos e por dublês nos testes de propriedade.
 | P5.4 | Registrar evidências contraditórias preserva todas e marca o fato como conflitante | pares de evidências contraditórias | 20.5 |
 | P5.5 | Todo valor apresentado possui exatamente um estado de informação atribuído | conjuntos de fatos consolidados | 10.2 |
 
-## P6 — Cálculos econômicos
+### P6 — Cálculos econômicos
 
 | ID | Propriedade | Gerador | Requisitos |
 |----|-------------|---------|-----------|
@@ -3357,7 +3678,7 @@ exemplos representativos e por dublês nos testes de propriedade.
 | P6.11 | Determinismo: duas execuções com as mesmas entradas produzem exatamente os mesmos resultados em todas as métricas | entradas arbitrárias | 27.17 |
 | P6.12 | O break-even de saída, usado como preço de venda, produz lucro líquido igual a zero dentro da tolerância de arredondamento | TCO e custos de saída positivos | 27.14 |
 
-## P7 — Preço máximo
+### P7 — Preço máximo
 
 | ID | Propriedade | Gerador | Requisitos |
 |----|-------------|---------|-----------|
@@ -3374,7 +3695,7 @@ exemplos representativos e por dublês nos testes de propriedade.
 | P7.11 | O preço máximo é monotônico decrescente no ITBI: aumentar `c_itbi` nunca aumenta o preço máximo | alíquotas de ITBI crescentes | 28.2, 28.2.1 |
 | P7.12 | Contraexemplo verificado, mantido como exemplo dirigido e **não** como propriedade: com a entrada completa `V = 300.000`, `c_v = 0,06`, `F = 23.000`, `c_c = 0,05`, `r = 0,25`, `t = 0` e `c_itbi = 0`, o teto conservador do método (`259.000 ÷ 1,30 =` R$ 199.230,77) excede o preço máximo exato (`253.250 ÷ 1,3125 =` R$ 192.952,38). Com `c_itbi = 0,02` o exato cai para `253.250 ÷ 1,3375 =` R$ 189.345,79 e a diferença sobe de R$ 6.278,39 para R$ 9.884,98, ou seja, o ITBI agrava a falsidade. A propriedade "conservador ≤ exato" é falsa e foi removida | exemplo fixo com as sete entradas declaradas, incluindo `c_itbi = 0` | 28.4.1 |
 
-## P8 — Cenários e risco
+### P8 — Cenários e risco
 
 | ID | Propriedade | Gerador | Requisitos |
 |----|-------------|---------|-----------|
@@ -3387,7 +3708,7 @@ exemplos representativos e por dublês nos testes de propriedade.
 | P8.8 | `BLOCK` por risco crítico com evidência `ESTIMATED` ou `INFERRED` sempre acompanha condição objetiva de desbloqueio registrada | riscos críticos presumidos | 34.5.1 |
 | P8.7 | Categoria não investigada resulta em risco `UNKNOWN`, nunca em `baixo` | conjuntos com categorias omitidas | 34.9 |
 
-## P9 — Liquidez
+### P9 — Liquidez
 
 | ID | Propriedade | Gerador | Requisitos |
 |----|-------------|---------|-----------|
@@ -3397,7 +3718,7 @@ exemplos representativos e por dublês nos testes de propriedade.
 | P9.4 | Liquidez abaixo do mínimo da estratégia nunca resulta em `BUY` sem exceção registrada | scores e estratégias arbitrárias | 40.7 |
 | P9.5 | Aumentar o prazo estimado nunca reduz a margem adicional exigida | prazos crescentes | 41.4, 30.7 |
 
-## P10 — Score, Fit e ranking
+### P10 — Score, Fit e ranking
 
 | ID | Propriedade | Gerador | Requisitos |
 |----|-------------|---------|-----------|
@@ -3422,7 +3743,7 @@ exemplos representativos e por dublês nos testes de propriedade.
 | P10.19 | O score de prioridade é o produto de exatamente cinco fatores, e concentração influencia o resultado por exatamente um caminho: zerar o componente `diversificacao` do Fit elimina toda a sensibilidade do score de prioridade à concentração | carteiras com concentração variada | 52.1, 52.1.1, 47.4.1 |
 | P10.20 | A escala de urgência e a escala de atratividade combinada não compartilham rótulos: nenhum valor pertence às duas | valores das duas escalas | 52.6, 52.6.1 |
 
-## P11 — Motor de decisão
+### P11 — Motor de decisão
 
 | ID | Propriedade | Gerador | Requisitos |
 |----|-------------|---------|-----------|
@@ -3446,7 +3767,7 @@ exemplos representativos e por dublês nos testes de propriedade.
 | P11.18 | Evidência de ausência produz o efeito da regra: cláusula de evicção comprovadamente inexistente no edital obtido resulta em `BLOCK`, e cláusula não verificada resulta em `PENDENTE`; os dois casos são distinguíveis no registro | estados de evicção variados | 15.9, 15.9.1, 15.9.2 |
 | P11.19 | Precedência de escopo: para qualquer par de escopos, o mais específico prevalece, exceto quando o menos específico impõe bloqueio crítico ou restrição legal ou documental | hierarquias de parâmetros com conflitos gerados | 54.10, 54.10.1 |
 
-## P12 — Orquestração
+### P12 — Orquestração
 
 | ID | Propriedade | Gerador | Requisitos |
 |----|-------------|---------|-----------|
@@ -3456,7 +3777,7 @@ exemplos representativos e por dublês nos testes de propriedade.
 | P12.4 | Determinismo do pipeline: o mesmo estado inicial produz o mesmo traço e o mesmo resultado | estados arbitrários | 70.1 |
 | P12.5 | Equivalência de execução: a execução orquestrada e a execução sequencial de referência produzem o mesmo resultado (teste baseado em modelo) | estados arbitrários | 70.1, 70.6 |
 
-## P13 — Monitoramento e governança
+### P13 — Monitoramento e governança
 
 | ID | Propriedade | Gerador | Requisitos |
 |----|-------------|---------|-----------|
@@ -3471,7 +3792,7 @@ exemplos representativos e por dublês nos testes de propriedade.
 | P13.9 | Expiração de exceção: após a data de validade, a regra padrão é restaurada e a reavaliação é disparada | exceções com prazos variados | 63.5 |
 | P13.10 | Idempotência da reavaliação: reavaliar duas vezes sem mudança de entrada produz o mesmo resultado e não cria nova versão | estados arbitrários | 57.6, 61.1 |
 
-## P14 — Disciplina de lance
+### P14 — Disciplina de lance
 
 | ID | Propriedade | Gerador | Requisitos |
 |----|-------------|---------|-----------|
@@ -3483,18 +3804,18 @@ exemplos representativos e por dublês nos testes de propriedade.
 | P14.6 | Divergência documental pendente resulta em `NAO_DAR_LANCE`, independentemente do restante do checklist | divergências e checklists arbitrários | 82.10 |
 | P14.7 | A comissão do leiloeiro nunca é subtraída do lance: para qualquer lance, o custo total de aquisição é estritamente maior que o lance quando a comissão é positiva | lances e percentuais de comissão positivos | 82.7 |
 
-## P16 — Escopo, dicionário e priorização
+### P16 — Escopo, dicionário e priorização
 
 | ID | Propriedade | Gerador | Requisitos |
 |----|-------------|---------|-----------|
-| P16.1 | Cobertura de catálogo: todo item `MC-001` a `MC-136`, `B-01` a `B-27` e `C-01` a `C-71` possui exatamente um resultado registrado por análise, ou é explicitamente `nao_aplicavel` | análises geradas com combinações de dados disponíveis | 36.5, `D17` |
-| P16.2 | Cobertura de prioridade: todo requisito de 1 a 83 possui exatamente uma classificação entre `P0`, `P1`, `P2` e `fora do MVP` | conjunto de requisitos | 75.5 |
+| P16.1 | Cobertura de catálogo: todo item `MC-001` a `MC-136`, `B-01` a `B-27` e `C-01` a `C-71` possui exatamente um resultado registrado por análise, ou é explicitamente `nao_aplicavel`, **para qualquer versão de checklist configurada** | análises geradas com combinações de dados disponíveis e versões de checklist derivadas da versão 1 | 36.5, 92.7, `D17`, `D83` |
+| P16.2 | Cobertura de prioridade: todo requisito de 1 a **97** possui exatamente uma classificação entre `P0`, `P1`, `P2` e `fora do MVP` | conjunto de requisitos | 75.5 |
 | P16.3 | Parâmetro `[PENDENTE-DECISÃO]` nunca é aplicado: o requisito dependente é reportado como NÃO AVALIADO, nunca como satisfeito | parâmetros pendentes e análises arbitrárias | `D54`, 74.11 |
 | P16.4 | Toda regra aplicada depende apenas de entidades e campos declarados no dicionário; regra que dependa de estrutura ausente é rejeitada | conjuntos de regras e dicionários parciais | 74.11 |
 | P16.5 | Os pontos mínimos de intervenção humana não são removíveis: para qualquer configuração, os sete pontos de `R83.5` permanecem exigidos | configurações arbitrárias | 83.5, 83.6 |
 | P16.6 | Texto-fonte e paráfrase permanecem distinguíveis em todo segmento recuperado | documentos arbitrários | 72.3.1, 72.3.2 |
 
-## P15 — Ingestão de conhecimento
+### P15 — Ingestão de conhecimento
 
 | ID | Propriedade | Gerador | Requisitos |
 |----|-------------|---------|-----------|
@@ -3503,15 +3824,42 @@ exemplos representativos e por dublês nos testes de propriedade.
 | P15.3 | Reingerir o mesmo documento não duplica segmentos (idempotência por fingerprint) | documentos e repetições | 72.1 |
 | P15.4 | Todo item recuperado da memória histórica é marcado como hipótese, nunca como evidência atual | consultas arbitrárias | 72.9 |
 
+### P17 — Portas de entrada, documentos, versionamento e triagem
+
+| ID | Propriedade | Gerador | Requisitos |
+|----|-------------|---------|-----------|
+| P17.1 | Nova captura não cria imóvel novo: quando a deduplicação conclui identidade verdadeira, a quantidade de imóveis persistidos é invariante, e o vínculo passa a apontar para o imóvel existente | sequências de capturas da mesma oferta com preço, status e rodada variados | 84.12, 9.1 |
+| P17.2 | Imutabilidade do arquivo original: para qualquer sequência de extrações, novas versões e reanálises, o conteúdo e o hash de cada arquivo original permanecem inalterados | sequências de operações sobre documentos arbitrários | 86.2, 86.6 |
+| P17.3 | Round-trip de download: o arquivo entregue no download é byte a byte igual ao arquivo original registrado, e o hash recalculado é igual ao registrado | documentos arbitrários, incluindo binários e arquivos de zero byte | 86.7, 86.8 |
+| P17.4 | Idempotência do registro de documento: registrar `n` vezes o mesmo arquivo no mesmo vínculo produz exatamente um documento persistido | documento e `n` em 1 a 10 | 86.9 |
+| P17.5 | Invariância de porta de entrada: para entradas equivalentes em evidências, parâmetros e versões de regra, a decisão, a camada determinante e a explicação são idênticas nas duas portas (teste baseado em modelo) | pares de execuções equivalentes pela porta manual e pela porta do Radar | 84.9, 93.8 |
+| P17.6 | Evidência de origem `USUARIO` nunca herda confiança de fonte oficial: sem documento de suporte, a classe atribuída nunca é `A` nem `B`, e nenhuma verificação obrigatória do gate jurídico passa a `OK` por essa evidência | evidências manuais com e sem documento de suporte | 89.3, 89.5 |
+| P17.7 | Versionamento de documento: as versões de cada documento são estritamente crescentes e sem lacuna, e toda versão anterior permanece inalterada após o registro de uma nova | sequências de versões por documento | 87.1, 87.2 |
+| P17.8 | Independência das dimensões de versão: alterar a versão de um documento nunca altera a numeração de versões de análise, e o inverso também vale | sequências intercaladas de novas versões de documento e de análise | 87.3, 61.1 |
+| P17.9 | Comparação vazia se e somente se idênticas: o conjunto de diferenças entre duas versões de análise é vazio exatamente quando evidências, parâmetros, versões de regra e resultados coincidem | pares de versões geradas com e sem alteração | 88.7 |
+| P17.10 | Simetria e neutralidade da comparação: comparar `A` com `B` e `B` com `A` produz o mesmo conjunto de diferenças, e nenhuma das versões comparadas é alterada | pares arbitrários de versões | 88.4, 88.9 |
+| P17.11 | Decisão alterada sempre tem motivo: toda diferença classificada como `decisão alterada` acompanha motivo registrado com ao menos uma evidência, valor, pendência ou versão de regra responsável | pares de versões com decisão distinta | 88.6 |
+| P17.12 | Totalidade da classificação de diferenças: cada diferença encontrada pertence a exatamente uma das cinco categorias | pares de versões com alterações combinadas | 88.5 |
+| P17.13 | A triagem rápida nunca decide: para qualquer candidato, nenhum valor de `DecisionState`, Opportunity Score, Investor Fit Score, valuation ou custo econômico total é produzido pela triagem | ofertas normalizadas arbitrárias | 93.2, 93.4 |
+| P17.14 | Gate de promoção é necessário: a análise profunda aparece no traço de execução somente quando `G1-P` está satisfeito ou quando existe promoção manual registrada | estados de candidato com critérios de promoção variados | 93.5, 93.6, 93.7 |
+| P17.15 | A triagem é prefixo do mesmo pipeline: o traço da triagem é sempre um prefixo do traço da análise profunda sobre o mesmo estado inicial | estados iniciais arbitrários | 93.1, 93.8, 70.1 |
+| P17.16 | Parametrização não enfraquece o checklist: para qualquer configuração aceita, todo item crítico da versão 1 permanece avaliado e o resultado na ausência de evidência nunca é mais favorável que o da versão 1 | configurações de checklist geradas por escopo | 92.5, 92.6 |
+| P17.17 | Registro do checklist aplicado: toda execução persiste identificador, versão e escopo resolvido, e reproduzir a análise com a versão registrada produz o mesmo resultado | execuções com versões de checklist variadas | 92.4, 92.10 |
+| P17.18 | Conservação do débito no custo: o custo econômico total inclui a soma dos débitos registrados com responsabilidade do adquirente, e acrescentar um débito nunca reduz o custo econômico total | conjuntos de débitos não negativos e atribuições de responsabilidade | 91.3, 91.6, 26.1 |
+| P17.19 | Débito não investigado nunca vale zero: para qualquer tipo de débito exigido pelo checklist e não investigado, o componente permanece `UNKNOWN` | conjuntos de débitos com tipos omitidos | 91.5, 26.10 |
+| P17.20 | Desacoplamento do conector: para qualquer estratégia de aquisição declarada, a oferta normalizada e o resultado da análise são idênticos quando o payload é o mesmo | payloads iguais obtidos por estratégias de aquisição distintas | 85.3, 85.5 |
+| P17.21 | Reexecução sem mudança não versiona: reexecutar a análise com as mesmas entradas não cria nova versão e registra a reexecução na auditoria | estados arbitrários com e sem alteração de entrada | 88.10, 61.1, 64.1 |
+| P17.22 | Cobertura dos dezoito passos: para o ciclo de prova do MVP, cada um dos dezoito passos possui requisito associado e resultado verificável, e nenhum passo é reportado como satisfeito sem execução registrada | execuções completas e parciais do ciclo | 95.1, 95.2, 95.6 |
+
 ---
 
-# Diagnóstico Técnico — Revisão do Estado Atual
+## Diagnóstico Técnico — Revisão do Estado Atual
 
 Revisão realizada por inspeção direta de `src/radar/`, `db/schema.sql`, `spec/`,
 `tests/`, `pyproject.toml` e da spec parcial `.kiro/specs/pipeline-captura-identidade-gate-juridico/`.
 Cada achado cita o artefato inspecionado. Nenhum código foi alterado.
 
-## D.1 Defeitos de cálculo (verificados numericamente)
+### D.1 Defeitos de cálculo (verificados numericamente)
 
 **D.1.1 — `max_price_by_target_roi` não satisfaz a própria definição. Severidade: crítica.**
 
@@ -3635,7 +3983,7 @@ ser medida contra o **valor conservador** e não contra o valor base, tornando a
 condições independentes. Enquanto isso não for implementado, `margem_min` não deve ser
 apresentada como critério ativo.
 
-## D.2 Defeitos do motor de decisão
+### D.2 Defeitos do motor de decisão
 
 **D.2.1 — Camada de score nunca é avaliada. Severidade: alta.**
 
@@ -3713,7 +4061,7 @@ com "não sei", o que viola `Requirement 20.4` e impede distinguir cobertura com
 lacuna. Por fim, `GateCheck.blocks_buy_if_unknown` é sempre `True` e só reflete em
 `Pending.blocks_buy`, sem efeito na agregação de status.
 
-## D.3 Lacunas de implementação (capacidades P0 ausentes)
+### D.3 Lacunas de implementação (capacidades P0 ausentes)
 
 | Capacidade | Situação | Requisito não atendido |
 |-----------|----------|------------------------|
@@ -3737,7 +4085,7 @@ lacuna. Por fim, `GateCheck.blocks_buy_if_unknown` é sempre `True` e só reflet
 | Persistência da oferta normalizada | ausente; `NormalizedListing` não é gravado | 3.11 |
 | Confiança por dimensão | ausente; `analyses.confidence` é escalar único | 50.1 |
 
-## D.4 Divergências entre documentação e esquema de dados
+### D.4 Divergências entre documentação e esquema de dados
 
 | # | Achado | Artefato | Requisito afetado |
 |---|--------|----------|-------------------|
@@ -3757,7 +4105,7 @@ lacuna. Por fim, `GateCheck.blocks_buy_if_unknown` é sempre `True` e só reflet
 | D.4.14 | Não há entidade para posições do portfólio do investidor, o que torna as regras de concentração incalculáveis. | `db/schema.sql` | 47.5 |
 | D.4.15 | Não há entidade para resultado real pós-aquisição, necessária ao backtest. | `db/schema.sql` | 60.1 |
 
-## D.5 Gate jurídico incompleto
+### D.5 Gate jurídico incompleto
 
 `src/radar/pipeline/legal_gate.py` implementa sete verificações (`GATE-JUR-001` a
 `GATE-JUR-007`). `Requirement 12.9` exige **19**: treze `RULE-JUR-001` a `RULE-JUR-013`,
@@ -3786,7 +4134,7 @@ Além disso, `LegalGateResult.blocks_buy` retorna verdadeiro para `BLOCK` e para
 para o curto-circuito, de modo que `PENDENTE` prossegue pelo pipeline sem que o efeito
 de `blocks_buy` seja consumido em nenhum ponto.
 
-## D.6 Inconsistências internas entre spec e código
+### D.6 Inconsistências internas entre spec e código
 
 | # | Achado |
 |---|--------|
@@ -3802,7 +4150,7 @@ de `blocks_buy` seja consumido em nenhum ponto.
 | D.6.10 | `langchain` e `langchain-openai` são dependências declaradas em `pyproject.toml` e não são importadas em nenhum arquivo de `src/`. `config.Settings.llm_provider`, `llm_model` e `openai_api_key` não são lidos por nenhum módulo. A camada de IA da arquitetura (§7, §8, §12) está declarada e ausente. |
 | D.6.11 | `node_normalize` em `orchestration/graph.py` chama `normalize_caixa` incondicionalmente, ignorando `RawCapture.source_type`. Qualquer fonte é normalizada como se fosse CAIXA, o que contraria `Requirement 1.1` e a premissa multi-fonte do produto. |
 
-## D.7 Riscos técnicos
+### D.7 Riscos técnicos
 
 | # | Risco | Impacto | Mitigação recomendada |
 |---|-------|---------|-----------------------|
@@ -3817,7 +4165,7 @@ de `blocks_buy` seja consumido em nenhum ponto.
 | D.7.9 | A orquestração cai silenciosamente para execução sequencial quando o LangGraph não está disponível (`except ImportError`). | Duas implementações do fluxo podem divergir sem sinalização. | Registrar o modo de execução na trilha de auditoria e cobrir a equivalência pela propriedade `P12.5`. |
 | D.7.10 | Não há tratamento de frescor de dados em nenhum módulo. | Decisões tomadas com preço, edital ou matrícula vencidos. | Implementar `FRESH` e `CONF-008` no `Monitor`. |
 
-## D.8 Relação com a spec `pipeline-captura-identidade-gate-juridico`
+### D.8 Relação com a spec `pipeline-captura-identidade-gate-juridico`
 
 A spec `pipeline-captura-identidade-gate-juridico` é **integralmente absorvida** por este
 documento e **não é mais fonte de trabalho** (`D55`). Este documento é um superconjunto:
@@ -3844,7 +4192,7 @@ curto-circuito e persistência como snapshot imutável.
 | 9 | A spec parcial não define identificadores de checklist. | Os Anexos A, B e C passam a ter `MC-*`, `B-01` a `B-27` e `C-01` a `C-71`. |
 | 10 | A spec parcial não exige `CONSOLIDATED` nem `QUALIFIED` no pipeline. | `Requirement 70.1` e a tabela de fases passam a exigir as duas. |
 
-## D.9 Integridade do banco de dados
+### D.9 Integridade do banco de dados
 
 Achados obtidos por leitura de `db/schema.sql` e `src/radar/db/`. **Esta lista é normativa**:
 o modelo físico deve declarar cada item abaixo. Por `D51`, a exigência de integridade vive
@@ -3864,7 +4212,7 @@ aqui e não em artefato externo.
 | D.9.10 | A última linha de `db/models.py` é `CheckConstraint("confidence BETWEEN 0 AND 100", name="ck_analysis_confidence")` no escopo do módulo, fora de qualquer `__table_args__`. | Não gera DDL nem validação. Dá falsa aparência de paridade com o schema. | Mover para `Analysis.__table_args__` ou remover. |
 | D.9.11 | Não existem migrações. O único caminho é `db/schema.sql` aplicado por `scripts/db_setup.py`, que divide comandos por `;` e tolera erros por lista de SQLSTATE. O `INSERT INTO strategies` final **não é idempotente**: a segunda execução gera `23505 unique_violation`, que não está na lista tolerada, e o script termina com código 2. `--drop` executa `DROP SCHEMA … CASCADE` sem confirmação. | O setup só funciona do zero. Evolução de schema sem histórico. | Adotar ferramenta de migração, tornar o seed idempotente (`ON CONFLICT DO UPDATE`) e exigir confirmação no `--drop`. |
 
-## D.10 Configuração, segredos e operação
+### D.10 Configuração, segredos e operação
 
 | # | Achado | Impacto | Correção exigida |
 |---|--------|---------|------------------|
@@ -3877,7 +4225,7 @@ aqui e não em artefato externo.
 | D.10.7 | `AnalyzeRequest.market_value` é `float` sem `gt=0`. `POST /analysis/run` com `market_value = 0` atinge `calculation.net_discount`, que levanta `ValueError`, e não há manipulador de exceção em `main.py`: resposta 500. | Entrada válida pelo schema derruba a requisição. | Validação no schema e manipulador de erro que retorne 422 com a causa. |
 | D.10.8 | `AnalyzeRequest` omite `tributos`, `custo_juridico_potencial`, `prob_juridica` e `carrying`, que existem em `AnalysisRequest` e na Canônica §9. | Pela API esses custos entram como zero, o que é precisamente a conversão de desconhecido em zero proibida por SAFE-003 e por `Requirement 26.7`. | Expor todos os componentes do TCO e marcar ausência como desconhecido, não como zero. |
 
-## D.11 Fonte única normativa
+### D.11 Fonte única normativa
 
 **Declaração** `[CANÔNICO]` (`D51`). Este documento é o único artefato normativo do produto.
 A documentação de negócio de origem, o material extraído dela e as especificações canônicas
@@ -3891,7 +4239,7 @@ Regras decorrentes:
 |-------|--------|
 | Nenhum requisito novo entra no produto sem passar por este documento | Impede que regra saia de material de origem direto para código. |
 | Nenhuma justificativa é feita por indireção | Onde havia "conforme a especificação canônica §N", a justificativa está reescrita no próprio texto. |
-| A seção **Decisões de Consolidação** é a memória de auditoria | `D1` a `D55` registram conflito, lados, decisão e motivo de cada resolução. |
+| A seção **Decisões de Consolidação** é a memória de auditoria | `D1` a `D89` registram conflito, lados, decisão e motivo de cada resolução. |
 | O modelo físico de dados é normatizado por `D.9` | A lista de integridade de `D.9` é exigência desta spec, não de artefato externo. |
 | O material de origem é arquivo histórico | Preservado fora do fluxo de trabalho, sem valor normativo. |
 
@@ -3918,7 +4266,7 @@ teste comparando as três representações. A tabela `STR` desta spec é esse po
 
 ---
 
-# Decisões de Consolidação
+## Decisões de Consolidação
 
 Esta seção é a **memória de auditoria** da consolidação. Cada decisão registra o conflito
 encontrado, os lados em disputa, a decisão adotada e o motivo. Depois que o material de
@@ -3926,7 +4274,7 @@ origem sai do fluxo de trabalho, é aqui que se entende por que cada valor é o 
 
 Os princípios que governaram as decisões são `P-A` a `P-E`, declarados na Introdução.
 
-## D1 — Precedência de decisão: onze camadas
+### D1 — Precedência de decisão: onze camadas
 
 **Conflito.** O número e a ordem das camadas de decisão divergia em **cinco** formulações.
 
@@ -3952,7 +4300,7 @@ capital como sub-verificações de outras camadas tornava a camada determinante 
 mesmo caso podia ser reportado como reprovado por "estratégia" ou por "score" conforme o
 caminho de código, o que quebra a auditabilidade exigida por `MC-116`.
 
-## D2 — Ocupação pode bloquear
+### D2 — Ocupação pode bloquear
 
 **Conflito.** A spec tratava ocupação como risco alto que nunca bloqueia; a fonte de risco
 prevê `BLOCK` para ocupação com impacto crítico sem estratégia de desocupação e classifica
@@ -3973,7 +4321,7 @@ e a ausência de estratégia não deve ser compensada por desconto. `R18.3` para
 a própria spec exige que a análise econômica continue, o que é incompatível com pendência
 crítica.
 
-## D3 — Regra eliminatória do investidor produz BLOCK
+### D3 — Regra eliminatória do investidor produz BLOCK
 
 **Conflito.** A fonte de risco classifica a regra eliminatória do investidor como `BLOCK`; a
 matriz canônica a mapeia para `DO_NOT_BUY`.
@@ -3984,7 +4332,7 @@ matriz canônica a mapeia para `DO_NOT_BUY`.
 permanece nele. Uma oportunidade que o investidor declarou inaceitável não deve continuar
 competindo por capital e atenção.
 
-## D4 — Evicção: dois casos distintos
+### D4 — Evicção: dois casos distintos
 
 **Conflito.** A spec tratava "garantia de evicção não confirmada" como um caso único com
 resultado "no máximo `BUY_IF`".
@@ -3999,7 +4347,7 @@ jurídico que impede `BUY`. Nos dois casos o lance não é liberado. Corrigidos 
 decisão condicional favorável, que é exatamente o resultado que a garantia existe para
 evitar.
 
-## D5 — Hard stop de parecer jurídico não é configurável
+### D5 — Hard stop de parecer jurídico não é configurável
 
 **Conflito.** `HS-09` era condicionado a `INV-018 = nao`, isto é, bastava configurar o
 parâmetro para desligar o hard stop.
@@ -4014,7 +4362,7 @@ jurídico relevante", com default `sim`, e não condiciona o hard stop. Corrigid
 hard stop de origem é pessoal e absoluto: "necessidade de advogado para aceitar o risco ⇒
 reprovar".
 
-## D6 — Reforma estrutural desconhecida gera pendência
+### D6 — Reforma estrutural desconhecida gera pendência
 
 **Conflito.** A spec tratava condição estrutural desconhecida apenas como contingência de
 custo; a fonte de risco a classifica como `PENDENTE` (`RULE-RSK-008`).
@@ -4025,7 +4373,7 @@ custo; a fonte de risco a classifica como `PENDENTE` (`RULE-RSK-008`).
 **Motivo.** `P-A`. Contingência sozinha permite que a análise avance até `BUY` com um risco
 estrutural não investigado; a pendência força a investigação.
 
-## D7 — Liquidez mínima
+### D7 — Liquidez mínima
 
 **Conflito.** Cinco valores: piso global 60 na spec anterior; `LIQ-001` igual a 70 no
 catálogo de parâmetros; 70 para renda, 75 para revenda e 70 para MCMV nos exemplos de
@@ -4040,7 +4388,7 @@ fixava o piso em 60 contra os documentos.
 **Motivo.** `P-D`: a numeração e os valores do catálogo de parâmetros são canônicos. A
 resolução anterior escolhia o valor mais permissivo sem fonte que o sustentasse.
 
-## D8 — Sete faixas de liquidez
+### D8 — Sete faixas de liquidez
 
 **Conflito.** Quatro faixas na spec anterior, com limiar de exceção formal em 40; sete faixas
 por dezena na fonte de liquidez.
@@ -4054,7 +4402,7 @@ resulta em `MONITOR` ou `DO_NOT_BUY` e exige exceção formal para qualquer comp
 exceção em 40 deixava 40–49 passar sem exceção, embora essa seja a segunda pior faixa da
 escala de origem.
 
-## D9 — Margem mínima
+### D9 — Margem mínima
 
 **Conflito.** Quatro valores: 15% no catálogo de parâmetros e nos exemplos de renda e MCMV;
 18% na fonte de governança; 20% no manual de regras e no documento de negócio; 25% na fonte
@@ -4068,7 +4416,7 @@ mais restritivos, admitidos pela hierarquia de escopo.
 escopo mais específico e prevalece; o piso global não pode ser mais permissivo que o valor
 documentado.
 
-## D10 — Desconto líquido mínimo
+### D10 — Desconto líquido mínimo
 
 **Conflito.** Cinco valores divergentes: `PRI-005` igual a 10% no catálogo; 15% no desconto
 sobre mercado; 20% no exemplo de revenda; 25% no manual de regras; 30% na fonte de due
@@ -4081,7 +4429,7 @@ mcmv 0,20, terreno 0,20, renda 0,15, valorizacao 0,15.
 o usava; elevá-lo a 15% alinha o piso ao menor valor efetivamente aplicado. Os 25% e 30%
 permanecem como defaults de perfil.
 
-## D11 — Matriz score × confiança completa
+### D11 — Matriz score × confiança completa
 
 **Conflito.** A spec cobria nove das quinze células e a fonte de decisão era internamente
 contraditória sobre a faixa 50–59: uma seção dizia "somente se a estratégia aceitar" e outra
@@ -4096,7 +4444,7 @@ emitindo `DO_NOT_BUY` para score abaixo de 60.
 vai de 65 a 75, logo **nenhuma** estratégia aceita 50–59 pela regra normal. As duas
 afirmações da fonte descrevem a mesma coisa: reprovado, salvo exceção.
 
-## D12 — Escala nomeada de confiança
+### D12 — Escala nomeada de confiança
 
 **Conflito.** Três fontes usam seis níveis nomeados; a spec usava faixas numéricas e uma
 faixa `insuficiente` que não existe em nenhuma fonte.
@@ -4112,7 +4460,7 @@ não apenas em abster-se de recomendar. Corrigidos `R50.5`, `R55.9` e toda refer
 fonte exige resultado explícito. O rótulo `insuficiente` era invenção e criava uma sexta
 faixa numérica sem limites declarados.
 
-## D13 — Custo desconhecido nunca é zero
+### D13 — Custo desconhecido nunca é zero
 
 **Conflito.** `REN-005` inadimplência, `CUS-014` custo jurídico potencial e `CUS-015`
 probabilidade jurídica tinham default 0, contrariando a regra explícita da própria fonte de
@@ -4127,7 +4475,7 @@ numérico; enquanto pendente, o yield líquido é emitido como provisório.
 **Motivo.** `P-A` e SAFE-005. Default zero é indistinguível de "verifiquei e é zero", e a
 diferença muda a decisão.
 
-## D14 — Custo de oportunidade não é retorno exigido
+### D14 — Custo de oportunidade não é retorno exigido
 
 **Conflito.** `GLB-007` acumulava duas funções: preço do tempo do capital, usada no carrying,
 e retorno mínimo exigido, usada como limiar de aprovação. Com isso o retorno exigido era
@@ -4143,7 +4491,7 @@ excluído do TCO usado em desconto, margem e ROI (`R26.1.2`).
 uma taxa anual, o que é incomparável; e o custo do capital entrava no denominador do próprio
 ROI que deveria superá-lo.
 
-## D15 — Restauração da numeração de parâmetros
+### D15 — Restauração da numeração de parâmetros
 
 **Conflito.** A spec havia renumerado silenciosamente as faixas `VAL`, `CMP`, `LOC` e `ALT`,
 perdido dois parâmetros e apontado referências cruzadas para os IDs errados — em especial
@@ -4170,7 +4518,7 @@ máxima entre fontes" e `CMP-010` como "outlier"; a formulação original atribu
 dois IDs. Por `P-D`, prevalece o catálogo: `VAL-010` é `diferenca_maxima_entre_fontes_pct` e
 `CMP-010` é `outlier`.
 
-## D16 — O gate jurídico tem 19 verificações
+### D16 — O gate jurídico tem 19 verificações
 
 **Conflito.** A spec citava **três** contagens divergentes para o mesmo conjunto (21 em uma
 seção, 21 em outra, e uma lista incompatível na matriz de rastreabilidade) e apoiava parte da
@@ -4186,7 +4534,7 @@ não integram o gate. Corrigidas as três contagens e acrescentado o crosswalk e
 **Motivo.** Verificação direta: as regras citadas não existem. Ocupação e locação são risco
 de posse e de economia, não validade do procedimento — colocá-las no gate contradiz SAFE-013.
 
-## D17 — Identificadores de checklist
+### D17 — Identificadores de checklist
 
 **Conflito.** Os Anexos B e C.1 não tinham identificadores próprios, o que torna o teste de
 cobertura de catálogo exigido pelo projeto técnico inescrevível.
@@ -4197,7 +4545,7 @@ C.1 passa a `C-01` a `C-71`, em que o número do identificador é o número do c
 **Motivo.** Cobertura de catálogo é propriedade verificável (`P16.1`) e propriedade
 verificável exige identificador estável.
 
-## D18 — Remapeamentos da matriz canônica
+### D18 — Remapeamentos da matriz canônica
 
 **Conflito.** O mapeamento de checks para regras canônicas tinha quatro erros internos.
 
@@ -4213,7 +4561,7 @@ verificável exige identificador estável.
 **Motivo.** O próprio critério de agrupamento da fonte, declarado na seção de mapeamento,
 exige essas atribuições. O mapeamento publicado se contradizia.
 
-## D19 — Regras de bloqueio de risco incorporadas
+### D19 — Regras de bloqueio de risco incorporadas
 
 **Conflito.** Dez regras de bloqueio de risco existiam na fonte de risco e não tinham
 representação no catálogo canônico desta spec.
@@ -4226,7 +4574,7 @@ ter **55 regras**.
 **Motivo.** Regra que não está no catálogo não é executada nem auditada. Quatro delas
 produzem `BLOCK` e estavam fora.
 
-## D20 — Risco crítico bloqueia independentemente da evidência
+### D20 — Risco crítico bloqueia independentemente da evidência
 
 **Conflito.** A fonte de risco é internamente contraditória: uma seção declara `BLOCK`
 incondicional para severidade crítica; outra condiciona o bloqueio a confiança alta. A spec
@@ -4242,7 +4590,7 @@ bloquear significa que um risco crítico apenas estimado libera a compra — o o
 função do bloqueio. A condição de desbloqueio evita o efeito contrário, de bloqueio
 permanente por suspeita.
 
-## D21 — Investor Fit com sete componentes
+### D21 — Investor Fit com sete componentes
 
 **Conflito.** A fonte de portfólio lista oito componentes de aderência, entre eles "qualidade
 econômica"; a spec usava quatro, sem liquidez, horizonte nem esforço operacional.
@@ -4257,7 +4605,7 @@ obrigatória entre os dois scores, declarada pela própria fonte. Os três compo
 são justamente os que distinguem "boa oportunidade" de "boa oportunidade para este
 investidor".
 
-## D22 — `qualidade_oportunidade` nos pesos por estratégia
+### D22 — `qualidade_oportunidade` nos pesos por estratégia
 
 **Conflito.** O fator constava dos pesos mestres e não das cinco colunas de override. Como
 cada coluna já somava 1,00 sem ele, seu peso efetivo por estratégia era **zero**,
@@ -4270,7 +4618,7 @@ somam 1,00.
 **Motivo.** Um fator exigido por requisito com peso efetivo zero é requisito não atendido, e
 a propriedade `P10.18` passa a detectar.
 
-## D23 — Score composto com cinco fatores
+### D23 — Score composto com cinco fatores
 
 **Conflito.** A fonte de ranking define cinco fatores; a spec usava quatro, com "capital e
 concentração" fundidos em um só.
@@ -4286,7 +4634,7 @@ capital" de "concentra demais a carteira", que exigem ações diferentes. A esco
 concentração em um único caminho é registrada porque, sem esse registro, uma leitura futura
 a reintroduziria nos dois lugares e penalizaria a mesma característica duas vezes.
 
-## D24 — Escalas de prioridade
+### D24 — Escalas de prioridade
 
 **Conflito.** Duas escalas com rótulos concorrentes: `P0` a `P4` mais `BLOCK` para urgência, e
 `P1` a `P5` para atratividade combinada. O mesmo rótulo `P1` significava coisas diferentes.
@@ -4299,7 +4647,7 @@ excepcional**. Registrado em `SCORE-009` e `R52.6`.
 **Motivo.** Rótulos colidentes tornam qualquer relatório ambíguo. A renomeação preserva as
 duas escalas, que medem coisas distintas e independentes.
 
-## D25 — Precedência de escopo
+### D25 — Precedência de escopo
 
 **Conflito.** `R54.10` determinava que a regra global prevalece sobre a regra de estratégia,
 contradizendo `R44.9`, a hierarquia de escopo declarada no catálogo de parâmetros e duas
@@ -4312,7 +4660,7 @@ Registrado como **superado** o trecho da fonte de decisão que afirmava "regra g
 **Motivo.** `P-C`. A formulação anterior tornava toda a hierarquia de escopo inútil: se o
 global sempre vence, parametrizar por estratégia não tem efeito.
 
-## D26 — Escopo do custo econômico total
+### D26 — Escopo do custo econômico total
 
 **Conflito.** `R26.1` incluía "custos de saída conforme a estratégia" no TCO, enquanto
 `R27.9` e `R27.11` os subtraíam novamente na perna de venda.
@@ -4328,7 +4676,7 @@ base do IR subtraindo o TCO; com o IR dentro do TCO, ele dependeria de si mesmo.
 consistente com a própria fonte de economia, que exclui os custos de saída do capital
 empregado antes da venda, e com a fonte de valuation.
 
-## D27 — Preço máximo por ROI alvo inclui o ITBI
+### D27 — Preço máximo por ROI alvo inclui o ITBI
 
 **Conflito.** A derivação do preço máximo usava apenas a comissão de compra no coeficiente
 proporcional ao preço, omitindo o ITBI, que também é proporcional ao preço.
@@ -4343,7 +4691,7 @@ para reserva proporcional.
 **Motivo.** Aritmética: omitir um custo proporcional ao preço superestima o teto em
 R$ 3.469,68 no caso de prova, o que é um falso positivo econômico.
 
-## D28 — O teto conservador do método não é limite superior
+### D28 — O teto conservador do método não é limite superior
 
 **Conflito.** A spec afirmava, como propriedade `P7.10`, que o teto conservador do método de
 referência nunca excede o preço máximo exato.
@@ -4375,7 +4723,7 @@ Corrigidos `R28.4` a `R28.4.2`, `P7.10` e acrescentado `REG-033`.
 `t = 0` a forma conservadora perde o termo que a mantinha abaixo da exata. Manter a
 propriedade produziria um teste que falha em entrada legítima.
 
-## D29 — Golden Case F.1 republicado
+### D29 — Golden Case F.1 republicado
 
 **Conflito.** Quatro problemas simultâneos no caso de prova: o TCO publicado era o da
 planilha, que não obedece a `CUS-011`; o desconto líquido era calculado sobre o preço de venda
@@ -4416,7 +4764,7 @@ reconcilia com este.
 não é oráculo: é ruído. As duas reprovações ficarem mais folgadas confirma que as correções
 não mudaram o veredito, apenas a margem com que ele é alcançado.
 
-## D30 — Faixas de confiança do valuation sem lacuna
+### D30 — Faixas de confiança do valuation sem lacuna
 
 **Conflito.** As faixas de `R22` deixavam a faixa 60–74 **inalcançável**, e `VAL-002` era uma
 faixa "7 a 10", o que torna ambígua a comparação "quantidade ≥ `VAL-002`".
@@ -4431,7 +4779,7 @@ confiança média, e o salto de 89 para 59 mudava o fator de confiança de 0,95 
 estado intermediário. Registrado que uma das fontes admite "3 a 5 como base inicial
 razoável", faixa que a resolução anterior descartou e que agora é coberta pela faixa 40–59.
 
-## D31 — Yield: piso sobre o líquido
+### D31 — Yield: piso sobre o líquido
 
 **Conflito.** Duas fontes fixam o piso de 0,80% mensal sobre o yield **bruto**; a
 especificação canônica interna anterior o fixava sobre o **líquido**.
@@ -4448,7 +4796,7 @@ o piso em zero.
 **Motivo.** `P-A` e SAFE-016. Aplicar o piso ao bruto transforma custos recorrentes não
 deduzidos em melhora da tese.
 
-## D32 — Carrying completo
+### D32 — Carrying completo
 
 **Conflito.** `CUS-016` listava quatro componentes; `R30.2` listava a lista completa de seis.
 O parâmetro contradizia o requisito.
@@ -4462,7 +4810,7 @@ desconto, margem e ROI.
 **Motivo.** Alinhamento com a fonte de economia. A exclusão do custo de oportunidade do TCO
 decisório segue a mesma lógica de `D26` e `D14`: não cobrar o retorno exigido duas vezes.
 
-## D33 — Break-even comparado ao preço atual
+### D33 — Break-even comparado ao preço atual
 
 **Conflito.** `R33.7` comparava o break-even de saída com o valor de mercado conservador; a
 fonte de economia o compara com o **preço atual**.
@@ -4474,7 +4822,7 @@ limiar como fração do preço atual.
 perco", e a referência de risco é quanto eu vou pagar, não quanto o mercado vale no cenário
 pessimista.
 
-## D34 — Entidades ausentes do dicionário
+### D34 — Entidades ausentes do dicionário
 
 **Conflito.** Regras da spec dependiam de entidades e campos que o dicionário não declarava:
 `R10.1` exige histórico de preços e `R10.3` exige versões do perfil, sem estrutura para
@@ -4490,7 +4838,7 @@ requisito é reportado como NÃO AVALIADO.
 **Motivo.** Regra que depende de estrutura inexistente é regra não executável, e a spec a
 declarava como se fosse.
 
-## D35 — Identidade: lacuna de cobertura e grau dos sinais
+### D35 — Identidade: lacuna de cobertura e grau dos sinais
 
 **Conflito.** Endereço completo **com** unidade, sem matrícula e sem identificador oficial,
 ficava sem nível atribuído, embora a fonte de captura atribua força **alta** a esse sinal. E
@@ -4509,7 +4857,7 @@ Acrescentadas as dimensões de deduplicação que faltavam: descrição semelhan
 grau: força nula é afirmação factualmente errada — o preço carrega alguma informação — e a
 correção preserva a proibição, que é o que importa para a decisão.
 
-## D36 — Escopo e priorização do MVP
+### D36 — Escopo e priorização do MVP
 
 **Conflito.** A spec não tinha domínio de escopo e priorização, e nenhum requisito tinha
 prioridade atribuída, o que torna a ordem de implementação não derivável.
@@ -4522,7 +4870,7 @@ própria do Índice de Requisitos e da Matriz de Rastreabilidade.
 **Motivo.** Sem prioridade por requisito, a ordem de construção depende de interpretação, e
 uma spec de 83 requisitos não é implementável em bloco.
 
-## D37 — Telas e capacidades sem requisito
+### D37 — Telas e capacidades sem requisito
 
 **Conflito.** Capacidades declaradas `P0` na fonte não tinham nenhum critério de aceitação:
 Análise Profunda (`P0-18` e tela `P0`), Cenários como espaço de teste de premissas, e
@@ -4537,7 +4885,7 @@ queda de preço, score crescente, monitoramento e bloqueadas. Acrescentados "rad
 
 **Motivo.** Capacidade `P0` sem critério de aceitação não é implementável nem testável.
 
-## D38 — Interface de programação
+### D38 — Interface de programação
 
 **Conflito.** Seis capacidades apresentadas na interface não tinham contrato de programação
 correspondente.
@@ -4549,7 +4897,7 @@ investidor, com autenticação obrigatória e rejeição explícita de valor for
 **Motivo.** Interface que depende de comportamento não especificado é interface que divergirá
 da especificação sem aviso.
 
-## D39 — Monitoramento e alertas
+### D39 — Monitoramento e alertas
 
 **Conflito.** O gatilho mais comum da due diligence — pendência resolvida — estava ausente,
 assim como os seis sinais de mercado obrigatórios, o gatilho de recomparação da carteira por
@@ -4564,7 +4912,7 @@ estados em `R57.10.1`.
 **Motivo.** Sem `MON-011`, resolver uma pendência não devolvia a oportunidade ao ranking, o
 que torna a due diligence um beco sem saída. Os demais itens constavam das fontes.
 
-## D40 — Governança
+### D40 — Governança
 
 **Conflito.** `R65.1` exigia "evidência suficiente" sem critério; faltavam indicadores de
 falso positivo e falso negativo, a população do falso negativo, o controle de sobreajuste, o
@@ -4584,7 +4932,7 @@ como **endurecimento deliberado**: a fonte de governança admitia superar bloque
 população definida é indicador incalculável. E uma autorização capaz de superar bloqueio
 crítico anularia SAFE-002 por via administrativa.
 
-## D41 — Capital e portfólio
+### D41 — Capital e portfólio
 
 **Conflito.** Faltavam reserva percentual do patrimônio líquido, esforço operacional e meta de
 renda no perfil, alocação-alvo por estratégia, três das cinco métricas de eficiência, faixas
@@ -4602,7 +4950,7 @@ R$ 250 mil passa a **default do perfil**, com a estratégia prevalecendo por `D2
 **Motivo.** Sem alocação-alvo não há como medir desvio nem aplicar o bônus de equilíbrio de
 `SCORE-008`. Sem faixas de ação, o ranking não se converte em trabalho.
 
-## D42 — Critérios por estratégia e perfil de ativo
+### D42 — Critérios por estratégia e perfil de ativo
 
 **Conflito.** A fonte de portfólio exige critérios que a spec não avaliava, e vários critérios
 eram descritos sem parâmetro correspondente.
@@ -4620,7 +4968,7 @@ sexta estratégia `customizada`, parametrizável pelo investidor, exigida por `P
 **Motivo.** Critério sem parâmetro não é avaliável. E a estratégia configurável é capacidade
 `P0` declarada.
 
-## D43 — Compensações condicionais
+### D43 — Compensações condicionais
 
 **Conflito.** `R45.10` exigia "margem adicional" quando a liquidez está abaixo do mínimo, sem
 número; `LIQ-010` é compensação por **prazo**, não por liquidez, e estava sendo usado como se
@@ -4633,7 +4981,7 @@ Acrescentado também, em `R45.11`, "imóvel atípico exige comparáveis de quali
 **Motivo.** Exigência sem número não é verificável, e reutilizar a compensação de prazo para
 cobrir iliquidez subcompensa o caso mais grave.
 
-## D44 — Score econômico como indicador informativo
+### D44 — Score econômico como indicador informativo
 
 **Conflito.** A resolução anterior arrolava a fonte de economia como **concordante** com os
 pesos mestres do Opportunity Score. É leitura errada: aquela fonte define um score econômico
@@ -4646,7 +4994,7 @@ componentes da fonte — desconto 25, margem 25, ROI 15, liquidez 10, prazo 10, 
 **Motivo.** Tratar dois modelos distintos como um só apagava um deles e dava falsa impressão
 de convergência entre fontes.
 
-## D45 — Colisão de namespace entre catálogos
+### D45 — Colisão de namespace entre catálogos
 
 **Conflito.** Dois catálogos de parâmetros usam os **mesmos IDs para parâmetros diferentes** em
 dez ou mais casos.
@@ -4670,7 +5018,7 @@ abaixo existe para que nenhuma leitura futura reintroduza o erro.
 **Motivo.** Sem a tabela, qualquer citação futura de `CUS-002` é ambígua, e a ambiguidade
 troca comissão de leiloeiro por custo de reforma.
 
-## D46 — Terminologia jurídica
+### D46 — Terminologia jurídica
 
 **Conflito.** O material de origem escreve "devedor fiduciário" em dois checks e na matriz
 canônica.
@@ -4681,7 +5029,7 @@ canônica.
 **Motivo.** Está errado: na alienação fiduciária o devedor é o **fiduciante** e o credor é o
 **fiduciário**. Propagar o erro produz busca documental e redação de pareceres incorretas.
 
-## D47 — Pipeline e enriquecimento
+### D47 — Pipeline e enriquecimento
 
 **Conflito.** Duas fases existiam como componentes e não como marco persistido: qualificação
 (gate `G1`) e consolidação de perfil. E o enriquecimento progressivo tinha dependência
@@ -4696,7 +5044,7 @@ do **potencial preliminar** em faixas qualitativas — `descartavel`, `baixo`, `
 **Motivo.** Fase que não é registrada não é verificável pelo traço de execução. E a dependência
 circular tornava `R5` inexecutável na ordem declarada por `R70.1`.
 
-## D48 — Frescor da matrícula
+### D48 — Frescor da matrícula
 
 **Conflito.** A fonte de parâmetros declara, para matrícula e documentação registral,
 "até mudança ou evidência nova" — a única linha explicitamente **não temporal** da tabela. A
@@ -4710,7 +5058,7 @@ tabela FRESH.
 certidão que pode ter sido superada por averbação no dia seguinte à emissão, e aos 31 dias
 invalida uma certidão que continua correta. A revalidação antes da compra resolve os dois.
 
-## D49 — Ausência de evidência nos itens de checklist
+### D49 — Ausência de evidência nos itens de checklist
 
 **Conflito.** A coluna "Ausente ⇒" do Anexo A usava oito valores ad hoc e atribuía `REPROVADO`
 a itens em que a informação apenas faltava.
@@ -4724,7 +5072,7 @@ exclusivamente o vocabulário de `R36.3` mais os estados de pendência e de deci
 **Motivo.** `REPROVADO` por falta de informação confunde "não verifiquei" com "verifiquei e
 está irregular", e as duas situações exigem ações opostas: investigar versus abandonar.
 
-## D50 — Disciplina de lance com requisito numerado
+### D50 — Disciplina de lance com requisito numerado
 
 **Conflito.** Os hard stops, os itens pré-lance, as verificações de evicção e a revalidação
 final do dia do lance existiam apenas como tabelas de anexo, sem requisito numerado e sem
@@ -4740,7 +5088,7 @@ total" em `C.5` e desdobrado "histórico do leiloeiro" nas seis verificações `
 **Motivo.** A disciplina de lance é a última barreira antes de um compromisso irreversível, e
 era a única parte da spec sem requisito nem rastreabilidade.
 
-## D51 — Fonte única
+### D51 — Fonte única
 
 **Conflito.** Quatro camadas normativas sobrepostas, com o artefato que se declarava fonte
 única dependendo por indireção das outras três.
@@ -4755,7 +5103,7 @@ especificação canônica §N" e reescrita a justificativa no próprio texto —
 **Motivo.** Uma spec que se declara autocontida e cita arquivos externos para justificar
 decisões não é autocontida. Quando os arquivos saírem, a justificativa desaparece.
 
-## D52 — Fronteira da IA
+### D52 — Fronteira da IA
 
 **Conflito.** A arquitetura de origem é internamente contraditória: em várias seções e em um
 registro de decisão arquitetural declara determinismo e proíbe que agentes decidam; em outra
@@ -4774,7 +5122,7 @@ intervenção humana em `R83.5`, com `R83.6` proibindo configuração que os rem
 dizia "pontos de decisão configurados" sem lista, o que permite configurar **zero** pontos e
 esvaziar a supervisão.
 
-## D53 — Taxonomia de conhecimento
+### D53 — Taxonomia de conhecimento
 
 **Conflito.** A arquitetura define oito tipos de segmento; a base de conhecimento exige mais.
 Com oito, os próprios princípios SAFE, as exceções e o catálogo de parâmetros não são
@@ -4796,7 +5144,7 @@ nenhuma fonte sustenta. `R72.2.1` já atribui uso explícito a sete dos quinze t
 separação entre texto-fonte e paráfrase é o que impede que os dois coexistam
 indistinguíveis — exatamente o risco que `R71.7` tenta evitar.
 
-## D54 — Pendências que permanecem
+### D54 — Pendências que permanecem
 
 **Conflito.** A spec misturava pendências de decisão de negócio com pendências de calibração e
 com valores interpolados apresentados como derivados.
@@ -4818,7 +5166,7 @@ documentada**; os três passam a `[PENDENTE-CALIBRAÇÃO]`.
 silenciosa de converter ausência de decisão em resultado favorável. E valor interpolado
 apresentado como derivado esconde que não há fonte para ele.
 
-## D55 — Spec duplicada
+### D55 — Spec duplicada
 
 **Conflito.** A spec `pipeline-captura-identidade-gate-juridico` reenunciava regras desta spec,
 com formulações mais fracas em dez pontos.
@@ -4829,12 +5177,598 @@ trabalho**. Os dez pontos em que esta a altera estão enumerados em `D.8`.
 **Motivo.** Duas specs enunciando a mesma regra com formulações diferentes produzem
 implementações diferentes, e a mais fraca tende a prevalecer porque é a que já está no código.
 
+### D56 — MVP restrito ao leilão extrajudicial
+
+**Conflito.** A spec descrevia o produto como plataforma para ofertas "em leilão e venda
+direta", sem declarar modalidade obrigatória; a revisão de produto restringe o MVP a leilão
+extrajudicial.
+
+**Princípio aplicado.** `P-C`: o escopo mais específico prevalece, e aqui ele é também o mais
+restritivo em termos de superfície implementada.
+
+**Decisão.** O MVP cobre **exclusivamente leilão extrajudicial** de imóveis com garantia de
+alienação fiduciária (Lei nº 9.514/97), tendo a CAIXA como primeira fonte. Ficam fora do MVP:
+venda direta; leilão judicial; execução judicial; arrematação judicial; e execução automática
+de lance. A restrição está declarada na Introdução, na seção **Escopo** e em **Fora de Escopo
+Declarado**. A arquitetura permanece extensível a novas modalidades e fontes (`R85.5`).
+
+**Consequência.** O corpo de regras do MVP é o da execução extrajudicial: as verificações de
+mora, intimação, consolidação, praças e averbação de leilão negativo continuam obrigatórias, e
+nenhuma regra do MVP depende de procedimento judicial. O efeito sobre o Índice de Requisitos
+está resolvido em `D82`.
+
+### D57 — Duas portas de entrada convergentes
+
+**Conflito.** A spec descrevia um único caminho, iniciado por captura de fonte. Não existia
+requisito para o caminho em que o próprio investidor cria o imóvel, envia os documentos e
+executa a análise — que é o primeiro marco funcional do produto.
+
+**Princípio aplicado.** `P-C`, com o cuidado de `P-A`: acrescentar a porta manual não pode
+criar um caminho com verificação mais fraca.
+
+**Decisão.** Existem exatamente **duas** portas de entrada — análise manual e Radar
+automático — e as duas convergem para o **mesmo** motor determinístico (`R84`). O modelo
+conceitual é `Imóvel → Oportunidade → Capturas`, com Documentos, Evidências e Análises
+vinculados ao imóvel e à oportunidade (`R84.11`). Uma nova captura nunca cria imóvel novo
+(`R84.12`). O contrato de programação das duas portas está em `R97`.
+
+**Consequência.** A porta manual não tem regra própria, motor próprio nem checklist próprio:
+ela produz evidência e dispara o mesmo pipeline. A prova de fogo do MVP (`R95`) é executada
+primeiro pela porta manual.
+
+### D58 — CAIXA como primeira implementação do conector
+
+**Conflito.** A spec declarava o modelo multi-fonte, porém nenhum requisito fixava qual fonte
+é a primeira nem o que caracteriza "incorporar uma fonte".
+
+**Princípio aplicado.** `P-C`.
+
+**Decisão.** A CAIXA é a **primeira** implementação do contrato de conector de fonte
+(`R85.4`). Novas instituições são incorporadas implementando o contrato e cadastrando a fonte
+conforme `R1.1`, sem alteração de entidade, regra, parâmetro, motor ou esquema (`R85.5`).
+
+**Consequência.** "Suportar nova instituição" passa a ter critério verificável: implementar o
+contrato e cadastrar a fonte. Cobertura ampla de instituições permanece fora do MVP.
+
+### D59 — Conector desacoplado da estratégia de aquisição
+
+**Conflito.** A discussão de produto tratava página pública, endpoint, arquivo, interface de
+terceiro e varredura como alternativas de arquitetura, o que arrastava a estratégia de coleta
+para dentro do domínio.
+
+**Princípio aplicado.** `P-C`.
+
+**Decisão.** A estratégia de aquisição é **detalhe de infraestrutura** e não é exposta ao
+domínio (`R85.3`). O domínio conhece o contrato e o payload bruto, não o meio de obtenção.
+
+**Consequência.** Trocar a estratégia de coleta de uma fonte não altera nenhuma regra, nenhum
+cálculo e nenhum resultado: para o mesmo payload, a oferta normalizada e a análise são
+idênticas (`P17.20`).
+
+### D60 — Arquivo original preservado e nunca substituído pela extração
+
+**Conflito.** A spec exigia proveniência e localização documental da evidência, mas não
+declarava o documento como entidade nem proibia que a extração substituísse o arquivo.
+
+**Princípio aplicado.** `P-A`, aplicado à evidência: extração é interpretação, e interpretação
+não pode ocupar o lugar da prova.
+
+**Decisão.** Documento é **entidade de primeira classe** (`R86`), com arquivo original
+permanente e imutável, metadados completos, tipo em enumeração fechada e extração registrada
+como conteúdo derivado.
+
+**Consequência.** Toda conclusão é confrontável com o arquivo que a originou. Divergência entre
+hash registrado e recalculado gera falha de integridade e pendência crítica, e o conteúdo
+extraído deixa de valer como evidência (`R86.8`).
+
+### D61 — Documento versionado, em dimensão distinta da análise
+
+**Conflito.** Versionamento existia para análise, regra e parâmetro, e não para documento — o
+que fazia uma segunda via da matrícula sobrescrever a primeira.
+
+**Princípio aplicado.** `P-A` e SAFE-010: evidência não se sobrescreve.
+
+**Decisão.** Documentos possuem versões estritamente crescentes e sem lacuna, com todas as
+anteriores preservadas (`R87`). O versionamento de documento é **dimensão distinta** do
+versionamento de análise e nenhuma das duas numerações deriva da outra (`R87.3`).
+
+**Consequência.** Uma nova versão que contradiz evidência vigente preserva as duas evidências e
+marca o fato como conflitante; se a informação for material, dispara reavaliação.
+
+### D62 — Análise é snapshot imutável
+
+**Conflito.** Nenhum. A revisão de produto reenuncia o que `R61.1` a `R61.4` já exigem.
+
+**Princípio aplicado.** `P-C`.
+
+**Decisão.** Mantido `R61`: cada análise é snapshot imutável, versionada, reproduzível e
+rastreável. A revisão acrescenta apenas o conteúdo mínimo do registro por versão, absorvido em
+`R88.3`: data e hora, autor, evidências consideradas, parâmetros, checklist e versão,
+resultados, decisão e justificativa.
+
+**Consequência.** Não há decisão nova; há um requisito de conteúdo por versão, que é o que
+torna a comparação de versões possível.
+
+### D63 — Reanálise cria nova versão
+
+**Conflito.** A spec disparava reavaliação por mudança material, sem declarar que a
+complementação de evidência pelo investidor é um desses gatilhos.
+
+**Princípio aplicado.** `P-C`.
+
+**Decisão.** Evidência material nova cria nova versão de análise (`R88.2`), e reexecução sem
+mudança de entrada **não** cria versão (`R88.10`, `P13.10`).
+
+**Consequência.** O histórico cresce por mudança de informação, não por repetição de execução.
+
+### D64 — Entrada manual é evidência com proveniência
+
+**Conflito.** A spec tratava entrada manual do analista como fonte (`R1.3`, `R1.4`), sem
+declarar o que se registra nem que confiança se atribui. Sem isso, informação digitada tende a
+ser tratada como confirmada.
+
+**Princípio aplicado.** `P-A` e SAFE-009.
+
+**Decisão.** Entrada manual é evidência explícita com tipo, conteúdo, origem, data, autor,
+confiança, validade, referência e observação (`R89.1`). A origem `USUARIO` **não** recebe a
+confiabilidade de fonte oficial: sem documento de suporte, a classe é no máximo `C indicado`, e
+verificação obrigatória do gate jurídico que dependa apenas dela permanece `UNKNOWN` com
+pendência (`R89.3`, `R89.5`).
+
+**Consequência.** O investidor pode alimentar a análise sem que isso vire atalho para
+`CONFIRMED`. A explicação da decisão identifica cada evidência de origem `USUARIO`.
+
+### D65 — Processo judicial importado manualmente
+
+**Conflito.** O gate jurídico exige avaliação de processos, e a spec declara a consulta
+automatizada a tribunais fora de escopo. Faltava o caminho de entrada.
+
+**Princípio aplicado.** `P-C`.
+
+**Decisão.** Processo Judicial é entidade própria e pode ser importado manualmente por PDF,
+captura de tela ou número, com decisões, andamentos, data da consulta, documento e observação
+(`R90`). Nenhuma integração automática é exigida para concluir a análise.
+
+**Consequência.** `R16` passa a ser executável no MVP com evidência documental fornecida. A
+existência isolada de processo continua não produzindo `BLOCK` (SAFE-014), e processo sem
+decisão nem andamento resulta em impacto `UNKNOWN` com pendência.
+
+### D66 — Débito como entidade explícita
+
+**Conflito.** `CUS-005` e `CUS-006` eram componentes de custo sem entidade que os
+sustentasse: não havia onde registrar valor, período, fonte, data da consulta, documento e
+situação de cada débito.
+
+**Princípio aplicado.** `P-A` e SAFE-005.
+
+**Decisão.** Débito é entidade própria (`R91`), alimenta `CUS-005` e `CUS-006`, respeita a
+atribuição de responsabilidade do edital e, quando não investigado, mantém o componente
+`UNKNOWN` em vez de zero.
+
+**Consequência.** O custo econômico total passa a ser decomponível até o débito individual e
+rastreável ao documento que o comprova (`R96.1`).
+
+### D67 — Checklist parametrizável e versionado
+
+**Conflito.** Os 234 itens dos Anexos A, B e C.1 são catálogo enumerável com cobertura
+verificada por meta-teste; a revisão exige checklist como configuração versionada, não regra
+embutida em código.
+
+**Princípio aplicado.** `P-A` para a força da verificação, `P-C` para a forma.
+
+**Decisão.** Checklist é configuração versionada com regra, filtro, peso, severidade, ordem,
+condição e ação por item, e cada execução registra o checklist, a versão e o escopo aplicados
+(`R92`). A relação com o catálogo fixo está resolvida em `D83`.
+
+**Consequência.** Nenhum item de verificação pode ser aplicado sem estar declarado em uma
+versão registrada de checklist (`R92.9`), e nenhuma parametrização altera a precedência
+canônica de decisão nem os princípios invioláveis (`R92.11`).
+
+### D68 — Escopo do checklist por instituição, localização, tipo e estratégia
+
+**Conflito.** A hierarquia de escopo existia para parâmetros e não para checklists.
+
+**Princípio aplicado.** `P-C` e `D25`.
+
+**Decisão.** O checklist aplicável é resolvido por instituição vendedora, estado, cidade, tipo
+de imóvel, estratégia e oportunidade, com a mesma precedência de escopo de `R54.10`
+(`R92.3`).
+
+**Consequência.** Uma exigência específica de um município entra como versão de escopo, não
+como código condicional. A precedência continua tendo a exceção de `P-C`: escopo menos
+específico prevalece quando impõe bloqueio crítico ou restrição legal ou documental.
+
+### D69 — Triagem rápida distinta da análise profunda
+
+**Conflito.** A spec tinha um pipeline único de 16 fases, executado integralmente. A revisão
+exige triagem rápida barata para toda captura e análise profunda apenas para o que merece.
+
+**Princípio aplicado.** `P-A`: a economia de esforço não pode produzir decisão com menos
+verificação.
+
+**Decisão.** A triagem rápida avalia localização, preço, rodada, desconto, tipo, área,
+quartos, ticket e disponibilidade de dados, sem calcular valuation, custo, score ou decisão
+(`R93.1`, `R93.2`), e a análise profunda não é executada indiscriminadamente. A forma dessa
+separação está resolvida em `D84`.
+
+**Consequência.** A triagem decide **quem segue**, nunca **o que vale**; nenhum valor de
+`DecisionState` é emitido por ela (`R93.4`, `P17.13`).
+
+### D70 — React como tecnologia oficial da interface
+
+**Conflito.** A spec exigia capacidades de interface sem fixar tecnologia, e a decisão de
+produto fixa React.
+
+**Princípio aplicado.** `P-C`.
+
+**Decisão.** React é a tecnologia oficial da Interface_do_Investidor (`R94.1`).
+
+**Consequência.** É a única decisão de tecnologia normativa deste documento, registrada porque
+a revisão a tomou explicitamente. Ela não altera nenhum requisito funcional de interface: `R66`
+a `R69`, `R77`, `R78` e `R94` continuam valendo como estão.
+
+### D71 — Interface integralmente em português
+
+**Conflito.** Nenhum requisito fixava o idioma da interface.
+
+**Princípio aplicado.** `P-C`.
+
+**Decisão.** Todo texto de interface, rótulo, mensagem e relatório é em português (`R94.2`).
+Texto de origem externa em outro idioma é preservado como evidência, com rótulo e interpretação
+em português (`R94.11`).
+
+**Consequência.** Preservar o texto original continua obrigatório: traduzir não pode apagar a
+prova.
+
+### D72 — Idioma e nomenclatura: português em tudo, renomeando o que já existe
+
+**Conflito.** A formulação inicial da revisão restringia o português a **novos** componentes, o
+que produziria base de código bilíngue. Restava também a dúvida sobre renomear os códigos
+estáveis de parâmetro, regra, checklist, verificação e teste.
+
+**Princípio aplicado.** `P-C` para a convenção; `P-D` para a estabilidade dos identificadores
+de catálogo, que proíbe renumeração silenciosa e, por extensão, renomeação silenciosa.
+
+**Decisão.** Português em **tudo**, inclusive renomeando o que já existe: tipos, classes,
+funções, métodos, variáveis, módulos, pacotes, tabelas, colunas, índices, enums e valores de
+enum. Exceções permitidas, e apenas estas: nomes de tecnologia e de biblioteca externa;
+identificadores exigidos por API, contrato ou formato de terceiro; e palavras reservadas da
+linguagem. **Permanecem inalterados** os identificadores estáveis citados em todo este
+documento — códigos de parâmetro (`CUS-005`, `REN-009`, `LOC-013`, `GLB-011`, ...), de regra
+(`RULE-*`), de checklist (`MC-*`, `B-*`, `C-*`), de verificação (`E01` a `E09`, `PL-*`, `RL-*`,
+`HL-*`, `HS-*`), gates, níveis de identidade, princípios, decisões, requisitos, propriedades e
+testes de regressão (`REG-*`) — porque renomeá-los invalidaria a rastreabilidade sem nenhum
+ganho. Os nomes de sistema do glossário (`Motor_de_Calculo`, `Gate_Juridico`, `Capturador`,
+`Conector_de_Fonte`, ...) já estão em português e permanecem. Os rótulos de domínio escritos em
+inglês neste documento (`PipelinePhase`, `DecisionState`, `CONFIRMED`, `UNKNOWN`, `BLOCK`, ...)
+mantêm a grafia aqui e recebem identificadores em português na implementação, com
+correspondência de um para um declarada no projeto técnico. A convenção completa está na seção
+**Convenção de idioma e nomenclatura**.
+
+**Consequência.** O projeto técnico é reescrito com identificadores em português, e os títulos
+das propriedades de correção e dos artefatos derivados acompanham a convenção. A dúvida sobre
+renomear códigos de catálogo está encerrada: não se renomeia, e isso não é reaberto.
+
+### D73 — Documentação de arquitetura derivada
+
+**Conflito.** A revisão recomenda dezesseis documentos em `architecture/backend/` — `README`,
+`architecture`, `components`, `data-flow`, `api`, `persistence`, `ai`, `rag`, `langgraph`,
+`agents`, `mcp`, `document-processing`, `source-connectors`, `radar`, `security` e
+`observability`. Uma segunda camada de documentos é exatamente o que `D51` eliminou.
+
+**Princípio aplicado.** `P-A` e `D51`.
+
+**Decisão.** Os dezesseis documentos são **derivados e não normativos**. A resolução está
+detalhada em `D86`.
+
+**Consequência.** Nenhum requisito, valor, regra ou caso de prova passa a existir apenas neles.
+
+### D74 — RAG é recuperação, não verdade transacional
+
+**Conflito.** Aparente. A revisão reenuncia limite já declarado.
+
+**Princípio aplicado.** `P-C`.
+
+**Decisão.** Redundante com `R71`, `R72.9`, SAFE-009 e SAFE-011. Nada é acrescentado; ver
+`D85`.
+
+**Consequência.** A regra continua sendo a de `R71`: recuperação fornece contexto, não fato.
+
+### D75 — Agente de linguagem não substitui motor determinístico
+
+**Conflito.** Aparente. A revisão reenuncia `D52`.
+
+**Princípio aplicado.** `P-C`.
+
+**Decisão.** Redundante com `R83.1` a `R83.4`, `R71` e SAFE-009. Nada é acrescentado; ver
+`D85`.
+
+**Consequência.** Valuation, custo econômico total, preço máximo, score, regra jurídica e
+decisão continuam proibidos a agentes de linguagem.
+
+### D76 — Captura preserva payload bruto
+
+**Conflito.** Aparente. `R2.1` a `R2.7` já exigem payload bruto, origem, data e hora,
+fingerprint, imutabilidade e referências a documentos e imagens.
+
+**Princípio aplicado.** `P-C`.
+
+**Decisão.** Mantido `R2`. A revisão acrescenta um item concreto, absorvido em `R85.2`: o
+conector entrega também o hash, os documentos, as imagens e a **versão da captura**, e os
+arquivos entregues seguem para o Gestor_de_Documentos com o tipo declarado (`R85.7`).
+
+**Consequência.** A pergunta "o que a fonte informou quando esta oportunidade foi capturada?"
+é respondível com o arquivo original, não apenas com o campo normalizado.
+
+### D77 — Planilha de viabilidade como visão financeira oficial
+
+**Conflito.** A revisão declara que o resultado financeiro "reproduz a planilha de
+viabilidade". Esta spec corrigiu a planilha em dois pontos verificados: a forma fechada dela
+produz R$ 168.374,76 e foi rebaixada a **referência informativa** por não reproduzir o ROI alvo
+(`R28.4`, `R28.4.1`, `D28`); e o custo econômico total do item 227 passou de R$ 228.066,90 para
+R$ 236.125,246785 ao completar os componentes (`D29`, `F.1.2`).
+
+**Princípio aplicado.** `P-A`: a aritmética verificadamente incorreta não volta por
+compatibilidade.
+
+**Decisão.** A planilha é adotada como **visão financeira oficial** na sua estrutura: o
+conjunto de indicadores publicados e a decomposição do custo em componentes rastreáveis à
+evidência (`R96.1` a `R96.3`). A resolução do conflito com os Golden Cases está em `D81`.
+
+**Consequência.** O investidor reconhece a planilha na tela, e os números são os desta spec.
+
+### D78 — Documentos capturados são baixáveis
+
+**Conflito.** A spec exigia acesso à evidência original, sem requisito de entrega do arquivo.
+
+**Princípio aplicado.** `P-C`.
+
+**Decisão.** Todo documento registrado é baixável, com o arquivo original íntegro e hash igual
+ao registrado (`R86.7`, `R94.7`).
+
+**Consequência.** O download é verificável por propriedade de ida e volta (`P17.3`), e falha de
+integridade impede o uso do conteúdo extraído como evidência.
+
+### D79 — Histórico de análises navegável e comparável
+
+**Conflito.** A spec preservava as versões e não exigia compará-las. Sem comparação, o histórico
+existe e não informa.
+
+**Princípio aplicado.** `P-C`.
+
+**Decisão.** A comparação de duas versões quaisquer, incluindo `V1` × `VN`, classifica cada
+diferença em exatamente uma de cinco categorias — nova evidência, valor alterado, risco
+alterado, pendência resolvida e decisão alterada — e registra o **motivo** quando a decisão
+muda (`R88.4` a `R88.6`). O histórico é navegável na interface (`R88.8`).
+
+**Consequência.** "Por que a decisão mudou?" passa a ter resposta registrada, com evidências,
+valores, pendências e versões de regra responsáveis.
+
+### D80 — Radar e análise manual convergem para o mesmo motor
+
+**Conflito.** Uma camada de descoberta com filtros e checklist próprios tende a se tornar um
+segundo motor de decisão, com regras mais fracas e resultado divergente.
+
+**Princípio aplicado.** `P-A`.
+
+**Decisão.** O Radar é **camada de descoberta**: ele qualifica candidatos e não decide
+(`R84.7`). O candidato promovido entra no mesmo pipeline, com o mesmo catálogo de regras, os
+mesmos parâmetros e o mesmo Motor_de_Decisao da análise manual (`R84.8`, `R93.8`).
+
+**Consequência.** A invariância de porta é verificável: entradas equivalentes produzem decisão,
+camada determinante e explicação idênticas (`P17.5`, `REG-039`).
+
+### D81 — A planilha é reproduzida na estrutura, não na aritmética corrigida
+
+**Conflito.** `D77` contra os Golden Cases. "Reproduzir a planilha" implicaria trazer de volta
+R$ 228.066,90 como custo econômico total e R$ 168.374,76 como preço máximo, ambos já
+verificadamente corrigidos nesta spec.
+
+**Princípio aplicado.** `P-A`, com `P-C` para o que a planilha continua determinando.
+
+**Decisão.** O produto reproduz a **estrutura**, a **decomposição** e a **rastreabilidade** da
+planilha de viabilidade, e **não** reproduz a sua aritmética onde a aritmética foi
+verificadamente corrigida (`R96.3`, `R96.4`). A forma fechada conservadora permanece como
+referência informativa (`R96.5`, `R28.4`). Os valores dos Golden Cases permanecem exatamente
+como publicados: `F.1` mantém preço máximo R$ 182.158,03, custo econômico total
+R$ 236.125,246785, desconto líquido 18,5775%, ROI líquido 16,5139% e `roi_anualizado`
+84,2940%; nenhum número de `F.1` a `F.4` é alterado por esta integração.
+
+**Consequência.** A planilha governa a **apresentação** do resultado financeiro; as fórmulas de
+`R26`, `R27` e `R28` governam o **valor**. Onde as duas divergem, a divergência é a correção já
+registrada em `D27`, `D28` e `D29`, e permanece explicada ao investidor.
+
+### D82 — Restrição de modalidade e efeito no Índice de Requisitos
+
+**Conflito.** `D56` contra o Índice de Requisitos e Prioridade, que tabulava 83 requisitos com
+71 `P0`, 11 `P1`, 1 `P2` e nenhum fora do MVP. Era preciso verificar se a restrição de
+modalidade empurra algum requisito existente para fora do MVP.
+
+**Princípio aplicado.** `P-C` e `R75.5`.
+
+**Decisão.** Verificação requisito a requisito: **nenhum** dos requisitos `R1` a `R83` fica
+fora do MVP pela restrição de `D56`. Os requisitos do gate jurídico (`R12` a `R20`) são os da
+execução extrajudicial; a disciplina de lance (`R82`) apoia o lance sem executá-lo, e execução
+automática de lance já estava fora de escopo; venda direta subsiste apenas como **tipo de
+preço observado** no histórico de preços de `R10.7`, que é registro de fato observado e não
+modalidade operada. O Índice de Requisitos passa a ter **97** requisitos, com **85 `P0`**,
+**11 `P1`**, **1 `P2`** e nenhum fora do MVP. Os catorze requisitos novos `R84` a `R97` são
+todos `P0`, porque todos são exigidos pelo primeiro marco funcional do produto — a análise
+manual real de um imóvel da CAIXA, do documento à decisão, com complementação, reanálise e
+comparação — ou pela descoberta que o alimenta. A contagem de 83 requisitos citada em `D36`
+refere-se ao estado do documento no momento daquela decisão.
+
+**Defeito herdado apurado.** A contagem que a versão de 83 requisitos **declarava** em prosa —
+69 `P0`, 13 `P1` e 1 `P2` — fechava aritmeticamente em 83, mas divergia da própria tabulação
+daquela versão: a lista nominal de requisitos `P1` tinha, e sempre teve, **onze** membros —
+`R5`, `R31`, `R42`, `R43`, `R48`, `R59`, `R60`, `R65`, `R69`, `R80` e `R81`. A contagem
+verdadeira daquela versão era portanto **71 `P0`, 11 `P1` e 1 `P2`**. O defeito é anterior à
+integração da revisão de produto e foi propagado por ela. Apurado e corrigido com a tabela
+linha a linha como fonte: 71 + 14 `P0` novos = **85 `P0`**, mais **11 `P1`** e **1 `P2`**,
+total 97. Nenhuma linha da tabela teve a prioridade alterada — o defeito estava no resumo, não
+na tabulação. O registro completo está em `D89`. Isso importa porque `D36` também cita a
+contagem de requisitos daquele estado do documento.
+
+**Consequência.** `R75.5` continua exigindo exatamente uma classificação por requisito, e
+`P16.2` continua verificável, agora sobre o intervalo de 1 a 97. As contagens de capacidades de
+`R75.1` a `R75.4` — 23 `P0`, nove `P1`, oito `P2` e nove itens fora da primeira versão —
+permanecem inalteradas: os requisitos novos foram mapeados às capacidades existentes, sem criar
+capacidade nova.
+
+### D83 — Os 234 itens são a versão 1 do checklist padrão
+
+**Conflito.** `D67` e `D68` contra o catálogo fixo. Parametrização sem piso permitiria remover
+item crítico ou tornar a ausência de evidência favorável, desfazendo `D49` e `P-E`; catálogo
+fixo sem parametrização impediria escopo por instituição, cidade e estratégia.
+
+**Princípio aplicado.** `P-A` para o piso, `P-C` para a forma.
+
+**Decisão.** O catálogo dos **234 itens** — `MC-001` a `MC-136`, `B-01` a `B-27` e `C-01` a
+`C-71` — é a **versão 1 do checklist padrão** (`R92.2`). Toda configuração é derivada dela e
+está sujeita a dois limites invioláveis: não pode remover, desativar nem tornar não aplicável
+item crítico da versão 1 (`R92.5`); e não pode tornar o resultado na ausência de evidência mais
+favorável do que o devido na versão 1 (`R92.6`). A cobertura dos 234 permanece verificável por
+meta-teste para **qualquer** versão configurada (`P16.1`, `R92.7`).
+
+**Consequência.** Parametrização acrescenta verificação e ajusta aplicabilidade por escopo;
+nunca subtrai proteção. Item crítico removido por configuração é erro de configuração, não
+flexibilidade.
+
+### D84 — Triagem rápida é prefixo do pipeline único, com gate de promoção
+
+**Conflito.** `D69` contra o pipeline único de 16 fases e 20 etapas de orquestração. Dois
+fluxos separados criariam dois motores, dois catálogos de regra e duas verdades.
+
+**Princípio aplicado.** `P-A`.
+
+**Decisão.** A triagem rápida é o **prefixo** do mesmo pipeline: fases 1 a 5 — `CAPTURED`,
+`NORMALIZED`, `IDENTIFIED`, `DEDUPLICATED`, `QUALIFIED` — seguidas do **gate de promoção**
+`G1-P`, cujos critérios cumulativos estão em `R93.5`. A análise profunda é a continuação das
+fases 6 a 14 sobre o mesmo estado (`R93.8`). Não existe segundo pipeline, segundo catálogo de
+regras nem segundo motor de decisão. A declaração está também na seção de fases do pipeline.
+
+**Consequência.** O traço da triagem é sempre prefixo do traço da análise profunda (`P17.15`),
+e o curto-circuito continua sendo o de `R70`. Reprovar na promoção não é decisão de
+investimento: a oportunidade permanece disponível para reavaliação (`R93.6`).
+
+### D85 — `D74` e `D75` são redundantes com os princípios já vigentes
+
+**Conflito.** `D74` e `D75` contra os princípios invioláveis e os requisitos de fronteira da
+IA, que já dizem o mesmo com mais precisão.
+
+**Princípio aplicado.** `P-C`, com a regra de não duplicar norma.
+
+**Decisão.** `D74` e `D75` **não acrescentam** nada e não geram requisito novo. O que elas
+enunciam já está em: SAFE-009, que proíbe componente automatizado de criar evidência ou
+promover `UNKNOWN` a `CONFIRMED`; SAFE-011, que impede histórico de virar evidência atual;
+`R71`, que fixa os guarda-corpos dos componentes de IA; `R72.9`, que marca todo item
+recuperado como hipótese; `R83.1` a `R83.4`, que mapeiam cada agente para função sem poder de
+decisão e proíbem atribuir valuation, custo econômico total e decisão a agente de linguagem; e
+`D52`, que resolveu a contradição de origem. A arquitetura conceitual em camadas descrita pela
+revisão — interface, interface de programação, orquestração, grafo de execução, recuperação e
+agentes, extração, evidência estruturada, motores determinísticos, decisão — é **desenho**, não
+norma, e vive nos artefatos derivados de `D86`.
+
+**Consequência.** Nenhum requisito novo, nenhum princípio novo. Quem for implementar consulta
+`R71`, `R83` e SAFE-009 a SAFE-011, e não uma paráfrase paralela.
+
+### D86 — Artefatos de arquitetura são derivados e não normativos
+
+**Conflito.** `D73` contra `D51`. Dezesseis documentos de arquitetura podem virar uma segunda
+camada normativa, que foi o problema eliminado por `D51`.
+
+**Princípio aplicado.** `P-A` e `D51`.
+
+**Decisão.** Os dezesseis artefatos de `architecture/backend/` são **derivados e não
+normativos**. Eles descrevem como esta spec é implementada; não criam requisito, valor, regra,
+parâmetro, item de checklist nem caso de prova. **Divergência entre qualquer um deles e esta
+spec resolve-se sempre a favor desta spec.** Esta spec permanece autocontida: nenhuma regra
+depende de leitura de artefato derivado.
+
+**Consequência.** Os artefatos derivados podem ser reescritos, reorganizados ou descartados sem
+perda normativa. Se algum deles enunciar regra que não esteja aqui, a regra não existe.
+
+### D87 — Seção anexada removida e hierarquia normativa única
+
+**Conflito.** A revisão de produto havia sido anexada ao fim do documento como seção em prosa,
+com cabeçalho de nível 1 no meio do arquivo e a cláusula "em conflito, prevalece quando mais
+específica". Isso criava uma **segunda camada de fonte da verdade dentro do próprio arquivo** —
+exatamente o que `D51` eliminou entre arquivos — e enunciava vinte e cinco decisões sem
+requisito numerado, sem critério de aceitação em EARS, sem entidade de dado e sem propriedade
+de correção.
+
+**Princípio aplicado.** `P-A` e `D51`.
+
+**Decisão.** A seção anexada e a sua cláusula de precedência interna foram **removidas**. Todo
+o conteúdo dela foi integrado à estrutura normativa: como requisitos `R84` a `R97` com
+critérios de aceitação em EARS; como entidades do dicionário (Documento, versão de documento,
+Processo Judicial, Débito, checklist versionado, candidato); como decisões `D56` a `D88`; como
+propriedades de correção `P17.1` a `P17.22`; como testes de regressão `REG-036` a `REG-044`;
+como termos do glossário e nomes de sistema; e como declaração de escopo, de convenção de
+idioma e de itens fora de escopo. O documento tem **uma única hierarquia normativa**: um
+cabeçalho de nível 1 no topo e nenhuma cláusula de precedência interna entre seções.
+
+**Consequência.** Não existe seção que prevaleça sobre outra. Conflito aparente entre seções é
+defeito de redação a corrigir, não regra de precedência a aplicar.
+
+### D88 — Ordem de construção do MVP
+
+**Conflito.** A ordem de entrega estava declarada como prosa na seção anexada e não tinha
+registro normativo. Sem registro, a construção tende a começar pela varredura de portais, que é
+a parte mais frágil e a que menos prova valor.
+
+**Princípio aplicado.** `P-C` e `D36`.
+
+**Decisão.** A ordem de construção é: 1 domínio determinístico; 2 persistência; 3 documentos e
+evidências; 4 análise manual ponta a ponta; 5 reanálise e versionamento; 6 interface de
+programação; 7 interface do investidor; 8 conector CAIXA; 9 Radar automático; 10 checklists
+parametrizáveis por escopo; e 11 auditoria e Golden Cases. **A construção não começa pelo
+coletor.** O primeiro marco funcional é a análise manual real de um imóvel da CAIXA, do envio
+dos documentos até a decisão apresentada na interface, incluindo complementação de evidência e
+reanálise; o Radar automático é priorizado depois.
+
+**Consequência.** Ordem de construção e prioridade de requisito são dimensões distintas: um
+requisito `P0` construído no passo 10 continua `P0`. A prova do MVP é `R95`, e a diretriz de
+processo permanece: primeiro fechar a especificação, depois implementar.
+
+### D89 — Contagem de prioridade: a tabulação linha a linha é a fonte
+
+**Conflito.** O texto de resumo do Índice de Requisitos e Prioridade contra a própria tabela.
+O resumo declarava 83 `P0`, 13 `P1` e 1 `P2`; a tabela, que enumera os 97 requisitos sem lacuna
+e sem duplicata, tabula 85 `P0`, 11 `P1` e 1 `P2`. O defeito é **herdado**: a versão de 83
+requisitos declarava 69 `P0`, 13 `P1` e 1 `P2` — soma que fechava em 83 — enquanto a lista
+nominal de requisitos `P1` daquela versão tinha apenas onze membros (`R5`, `R31`, `R42`, `R43`,
+`R48`, `R59`, `R60`, `R65`, `R69`, `R80`, `R81`), de modo que a contagem verdadeira era 71 `P0`,
+11 `P1` e 1 `P2`. A integração dos catorze requisitos `P0` de `R84` a `R97` propagou o erro
+somando 14 sobre a base errada.
+
+**Princípio aplicado.** `P-D`. A numeração e a tabulação do catálogo são **canônicas**, e
+nenhuma renumeração nem recontagem silenciosa é admitida. Corrigir o resumo é admissível;
+promover requisitos a `P1` para fazer o total fechar em 13 seria recontagem silenciosa, e é
+proibido.
+
+**Decisão.** A **tabela linha a linha** do Índice de Requisitos é a fonte da contagem. As
+contagens corretas são **85 `P0`**, **11 `P1`**, **1 `P2`**, total de **97** requisitos e
+nenhum fora do MVP. Nenhuma prioridade de linha foi alterada. Corrigidos: o texto de contagem do
+Índice de Requisitos, incluindo a contagem anterior à integração, que passa a 71 `P0`, 11 `P1` e
+1 `P2` em 83 requisitos; as contagens declaradas em `D82`, com o registro do defeito herdado; e
+a linha do domínio `N` da Matriz de Rastreabilidade, que dizia 7 de 10 `P0` onde a tabulação dá
+8 de 10 — resíduo aritmético dos dois `P1` inexistentes. A contagem de 83 requisitos citada em
+`D36` permanece correta: refere-se ao número de requisitos do documento naquele momento, e não
+às contagens por prioridade.
+
+**Consequência.** `R75.5` e `P16.2` permanecem exatamente como estão — uma classificação por
+requisito, no intervalo de 1 a 97 — e passam a ser verificados também como **confronto entre o
+resumo declarado e a tabulação linha a linha**. É esse meta-teste que impede a reincidência: um
+resumo em prosa que ninguém confere contra a tabela é o mecanismo exato pelo qual este defeito
+sobreviveu a uma integração inteira.
+
 ---
 
-## Decisões anteriores preservadas
+### Decisões anteriores preservadas
 
 As resoluções abaixo foram verificadas na auditoria e **permanecem válidas**. Onde uma decisão
-`D1` a `D55` as altera, a coluna de resolução registra a substituição.
+`D1` a `D89` as altera, a coluna de resolução registra a substituição.
 
 | ID | Conflito | Fontes divergentes | Resolução |
 |----|----------|--------------------|-----------|
@@ -4863,13 +5797,13 @@ As resoluções abaixo foram verificadas na auditoria e **permanecem válidas**.
 | CONF-RISCO-MATRIZ | Matriz de severidade | Uma seção da fonte de risco lista cinco níveis incluindo informacional; outra define matriz 3 × 4 com quatro níveis | **MANTIDA.** Quatro níveis de severidade (`baixo`, `medio`, `alto`, `critico`) derivados da matriz de probabilidade × impacto. O nível informacional é tratado como registro sem severidade. |
 | CONF-ESCOPO-JURIDICO | Automação jurídica | Documento de negócio: automação jurídica completa fora do foco · adendo do plano de MVP: validade jurídica como capacidade P0 | **MANTIDA — sem contradição, e assim registrado:** o Radar avalia a validade do procedimento com base em evidência documental fornecida, e não substitui parecer jurídico nem automatiza a coleta em cartórios e tribunais. |
 
-## Pendências que permanecem
+### Pendências que permanecem
 
 Permanecem apenas as pendências que **nenhuma fonte fixa** (`D54`). Para cada uma está
 declarada a **regra de comportamento na ausência**: enquanto não decidida, o parâmetro não é
 aplicado e o requisito dependente é reportado como **NÃO AVALIADO**, nunca como satisfeito.
 
-### Pendências de decisão de negócio `[PENDENTE-DECISÃO]`
+#### Pendências de decisão de negócio `[PENDENTE-DECISÃO]`
 
 | ID | Pendência | Parâmetro | Comportamento enquanto pendente |
 |----|-----------|-----------|---------------------------------|
@@ -4882,7 +5816,7 @@ aplicado e o requisito dependente é reportado como **NÃO AVALIADO**, nunca com
 | PEND-IR-ALUGUEL | Alíquota de IR sobre aluguel | `REN-012` | O imposto não é aplicado; o yield líquido é emitido como **provisório** e nunca como confirmado (`R27.7.2`) |
 | PEND-LIQ-MODELO | Metodologia de cálculo do score de liquidez a partir de dados observáveis | `R40.3` | O score de liquidez é emitido como `indefinida` quando a metodologia não é aplicável aos dados disponíveis (`R40.6`) |
 
-### Pendências de calibração `[PENDENTE-CALIBRAÇÃO]`
+#### Pendências de calibração `[PENDENTE-CALIBRAÇÃO]`
 
 | ID | Pendência | Parâmetro | Comportamento enquanto pendente |
 |----|-----------|-----------|---------------------------------|
@@ -4890,7 +5824,7 @@ aplicado e o requisito dependente é reportado como **NÃO AVALIADO**, nunca com
 | PEND-CONTINGENCIA | `CUS-017` N2 = 0,15 é **interpolação** entre as sensibilidades de +10% e +25%; `CUS-018` e `CUS-019` iguais a 0,10 são **derivações sem sensibilidade documentada** | `CUS-017`, `CUS-018`, `CUS-019` | Os valores são aplicados e marcados como não calibrados; a contingência resultante é apresentada como faixa, não como número exato |
 | PEND-YIELD | Reavaliar o piso de yield líquido mensal de 0,0080 após 10 a 20 análises reais. O piso equivale a 9,6% ao ano sobre o capital total e reprova o caso de prova `F.1` na estratégia de renda; é preciso confirmar se o patamar é alcançável no segmento e na faixa de ticket alvo, ou se o valor correto está entre 0,0050 e 0,0080 | `REN-009`, `STR` | O piso de 0,0080 é aplicado; a reprovação por yield é registrada com a marcação de piso não calibrado |
 
-### Pendências de modelagem declaradas
+#### Pendências de modelagem declaradas
 
 | ID | Pendência | Observação |
 |----|-----------|------------|
@@ -4898,11 +5832,13 @@ aplicado e o requisito dependente é reportado como **NÃO AVALIADO**, nunca com
 
 ---
 
-# Índice de Requisitos e Prioridade
+## Índice de Requisitos e Prioridade
 
-Índice completo dos 83 requisitos com a capacidade do MVP a que cada um serve e a prioridade
-atribuída conforme `R75.5` e `D36`. Esta é a tabela que torna a ordem de implementação
-derivável do documento.
+Índice completo dos **97** requisitos com a capacidade do MVP a que cada um serve e a
+prioridade atribuída conforme `R75.5`, `D36` e `D82`. Esta é a tabela que torna a ordem de
+implementação derivável do documento. Os requisitos `R84` a `R97` integram a revisão de
+produto (`D56` a `D80`) e foram mapeados às capacidades já declaradas em `R75.1`, sem criar
+capacidade nova.
 
 | Req. | Título | Capacidade | Prioridade |
 |------|--------|-----------|------------|
@@ -4989,14 +5925,37 @@ derivável do documento.
 | 81 | Alocação, eficiência de capital e faixas de ação | `P1` — comparação avançada de portfólio | P1 |
 | 82 | Disciplina de lance e revalidação final | `P0-20` | P0 |
 | 83 | Fronteira dos componentes de IA e intervenção humana | `P0-17` | P0 |
+| 84 | Duas portas de entrada convergentes | `P0-18` | P0 |
+| 85 | Contrato de conector de fonte | `P0-01` | P0 |
+| 86 | Documento como entidade de primeira classe | `P0-19` | P0 |
+| 87 | Versionamento de documento | `P0-21` | P0 |
+| 88 | Reanálise e comparação de versões de análise | `P0-21` | P0 |
+| 89 | Evidência de origem manual | `P0-19` | P0 |
+| 90 | Importação manual de processo judicial | `P0-23` | P0 |
+| 91 | Débito como entidade explícita | `P0-08` | P0 |
+| 92 | Checklist parametrizável e versionado | `P0-13` | P0 |
+| 93 | Triagem rápida e gate de promoção à análise profunda | `P0-13` | P0 |
+| 94 | Interface do investidor em português com as capacidades mínimas | `P0-17` | P0 |
+| 95 | Prova de fogo e ciclo de produto do MVP | `P0-21` | P0 |
+| 96 | Visão financeira oficial e decomposição rastreável | `P0-09` | P0 |
+| 97 | Contrato de programação das capacidades de produto | `P0-16` | P0 |
 
-Contagem: **69 requisitos `P0`**, **13 requisitos `P1`**, **1 requisito `P2`**, nenhum fora do
-MVP. Nenhum requisito desta spec é fora de escopo, porque os itens fora do MVP estão listados
-em `R75.4` como exclusões e não como requisitos.
+Contagem: **85 requisitos `P0`**, **11 requisitos `P1`**, **1 requisito `P2`**, total de **97
+requisitos**, nenhum fora do MVP. Os onze requisitos `P1` são exatamente `R5`, `R31`, `R42`,
+`R43`, `R48`, `R59`, `R60`, `R65`, `R69`, `R80` e `R81`; o único `P2` é `R72`. Nenhum requisito
+desta spec é fora de escopo, porque os itens fora do MVP estão listados em `R75.4` como
+exclusões e não como requisitos, e porque a restrição de modalidade de `D56` não retirou nenhum
+requisito existente do MVP (`D82`). A tabela acima é a fonte da contagem: onde o texto de resumo
+divergir da tabulação linha a linha, prevalece a tabulação (`D89`).
+
+Contagem anterior à integração da revisão de produto: 83 requisitos, com 71 `P0`, 11 `P1` e
+1 `P2`. Os catorze requisitos acrescentados (`R84` a `R97`) são todos `P0` porque todos são
+exigidos pelo primeiro marco funcional declarado em `D88` ou pela descoberta que o alimenta; a
+justificativa item a item está em `D82`.
 
 ---
 
-# Matriz de Rastreabilidade
+## Matriz de Rastreabilidade
 
 | Domínio | Requisitos | Prioridade predominante | Regras canônicas | Checklist | Propriedades |
 |---------|-----------|-------------------------|------------------|-----------|--------------|
@@ -5013,7 +5972,8 @@ em `R75.4` como exclusões e não como requisitos.
 | K — Governança e Auditoria | 61 a 65 | P0 (4 de 5) | RULE-GOV-001, RULE-DEC-002, RULE-RSK-010 | MC-136 | P13 |
 | L — Interface do Investidor | 66 a 69 | P0 (3 de 4) | RULE-DEC-002 | MC-115, MC-126 a MC-135 | exemplos dirigidos |
 | M — Orquestração e Arquitetura de IA | 70 a 73 | P0 (3 de 4) | RULE-DEC-001, RULE-GOV-001 | Anexo E | P12, P15 |
-| N — Dicionário, Escopo e Priorização | 74 a 83 | P0 (7 de 10) | RULE-GOV-001, RULE-ED-002, RULE-RSK-009 | `B-13`, `B-14`, Anexo C.2 a C.7 | P14, P16 |
+| N — Dicionário, Escopo e Priorização | 74 a 83 | P0 (8 de 10) | RULE-GOV-001, RULE-ED-002, RULE-RSK-009 | `B-13`, `B-14`, Anexo C.2 a C.7 | P14, P16 |
+| O — Portas de Entrada, Documentos e Ciclo de Produto | 84 a 97 | P0 (14 de 14) | RULE-ID-001, RULE-ID-002, RULE-GOV-001, RULE-FIN-001 a RULE-FIN-006, RULE-JUR-007 a RULE-JUR-011 | versão 1 do checklist padrão — `MC-001` a `MC-136`, `B-01` a `B-27`, `C-01` a `C-71` | P17, P16.1, P16.2 |
 
 **Disciplina de lance — rastreabilidade dos anexos `C.2` a `C.7`** (`D50`). Antes da
 consolidação, nenhuma linha da matriz cobria esses anexos.
@@ -5027,7 +5987,7 @@ consolidação, nenhuma linha da matriz cobria esses anexos.
 | C.6 | Disciplina de lance e tetos | `R82.6` | P14.3 |
 | C.7 | 12 itens da revalidação final `RL-01` a `RL-12` | `R82.5`, `R82.6` | P14.5 |
 
-## Definition of Done funcional
+### Definition of Done funcional
 
 Uma capacidade é considerada funcionalmente pronta quando possui: requisito identificado
 neste documento; módulo responsável; caso de uso quando aplicável; regras canônicas
@@ -5038,7 +5998,7 @@ no histórico definido; e prioridade de release atribuída.
 
 ---
 
-# Fora de Escopo Declarado
+## Fora de Escopo Declarado
 
 Para evitar ambiguidade na implementação, os itens abaixo estão explicitamente fora do
 escopo deste documento.
@@ -5057,107 +6017,7 @@ escopo deste documento.
 | Aplicativo móvel completo | Não necessário para provar o valor do produto. |
 | Operação em múltiplas instituições no MVP | A primeira fonte é a CAIXA; o modelo já nasce multi-fonte. |
 | Definição da arquitetura de produção em nuvem | Local-first no MVP; produção apenas quando houver necessidade demonstrada. |
-
-
-# CONSOLIDAÇÃO DE PRODUTO — D56–D80
-
-Esta seção incorpora a revisão de produto e passa a ser canônica para a evolução do MVP. Em conflito, prevalece quando mais específica.
-
-## Escopo MVP
-O MVP é exclusivamente **leilão extrajudicial de imóveis**, inicialmente da CAIXA. Venda direta, leilão judicial e demais modalidades ficam fora do MVP, embora a arquitetura permaneça extensível.
-
-## Duas portas de entrada
-**Análise manual:** usuário cria/seleciona imóvel, informa oportunidade, envia matrícula, edital e demais evidências e executa análise.
-
-**Radar automático:** captura oportunidades da CAIXA, preserva captura bruta, normaliza, identifica, deduplica, aplica filtros/checklists e apresenta candidatos. A análise profunda usa o mesmo motor da análise manual.
-
-Princípio: **Imóvel → Evidências → Análise → Decisão.** Radar é descoberta, não um segundo motor de decisão.
-
-## Imóvel, oportunidade, captura e análise
-Uma nova captura não cria automaticamente novo imóvel. O modelo deve preservar: imóvel físico, oportunidade dinâmica, capturas históricas, documentos/evidências e análises versionadas.
-
-## Source Connector
-A aquisição deve ser abstraída por um contrato de fonte. Implementação inicial: CAIXA. Futuros bancos não exigem alteração estrutural do domínio. Crawling/scraping, API, download, arquivo ou página pública são detalhes de infraestrutura e devem ser desacoplados do domínio.
-
-## Captura e documentos
-Toda captura automática preserva payload bruto, origem/URL, data/hora, hash, documentos e versões. Documentos são entidades de primeira classe; o arquivo original é permanente. Metadados incluem tipo, nome, MIME, tamanho, hash, origem, usuário, vínculos, versão, texto extraído, páginas, chunks e embeddings quando usados.
-
-Tipos iniciais: MATRÍCULA, EDITAL, IPTU, CONDOMÍNIO, PROCESSO_JUDICIAL, LAUDO, FOTOS, ORÇAMENTO_REFORMA e OUTRO.
-
-## Versionamento e reanálise
-Documentos têm versões. Cada análise é snapshot imutável e registra evidências, parâmetros, checklist, resultados e decisão. Nova evidência pode gerar nova análise. A interface deve comparar versões, mostrando evidências, valores, riscos e decisão alterados.
-
-## Evidências manuais
-Entrada manual é evidência explícita com tipo, conteúdo, origem, data, autor, confiança, validade, referência e observação. Origem USER não recebe automaticamente confiança de fonte oficial.
-
-## Processos e débitos
-Processos judiciais podem ser importados manualmente no MVP por PDF, captura, número, decisão ou andamento. IPTU e condomínio possuem modelo próprio e alimentam o TCO, com valor, período, fonte, data, documento e status.
-
-## Fast Radar × Deep Analysis
-Fast Radar: `Captura → Normalização → Identificação → Deduplicação → Filtros → Checklist → Candidato`.
-
-Deep Analysis: `Documentos → Evidências → Jurídico → Valuation → Comparáveis → TCO → Reforma → Desocupação → Liquidez → Risco → Yield → Estratégia → Score → Decisão`.
-
-## Checklist parametrizável
-Checklist é configuração versionada, nunca regra hardcoded. Suporta banco, estado, cidade, tipo de imóvel, estratégia e oportunidade; registra versão, regras, filtros, pesos, severidade, ordem, condição e ação. Cada execução registra checklist e versão.
-
-## Frontend React
-React é a interface oficial, 100% em português. Capacidades mínimas: Dashboard, Nova Análise, pesquisa, Radar, ficha detalhada, documentos, evidências, pendências, reanálise, comparação, checklists, parâmetros e download.
-
-A ficha deve exibir decisão, justificativa, confiança, scores, preço, valor de mercado, TCO, desconto líquido, margem, preço máximo, preço-alvo, break-even, aluguel, yields, liquidez, riscos, pendências e evidências.
-
-A planilha de viabilidade torna-se visão financeira oficial: cada componente do TCO deve ser decomponível e rastreável à sua origem/evidência.
-
-## IA e determinismo
-LLM, RAG, LangGraph, Agents e MCP interpretam documentos, recuperam conhecimento e orquestram etapas. Não substituem os motores determinísticos. TCO, valuation final, regras jurídicas, preço máximo, score e decisão devem permanecer auditáveis e reproduzíveis.
-
-RAG é camada de recuperação, não fonte transacional. O sistema distingue fato/documento, interpretação da IA e resultado determinístico. LLM nunca promove UNKNOWN para CONFIRMED sem nova evidência.
-
-## Modelo de dados
-Garantir cobertura das responsabilidades de imóvel, oportunidade, fonte, captura, documento/versionamento, evidência/proveniência, análise/versionamento, processo, débitos, checklist/versionamento, radar, comparáveis, valuation, custos, risco, decisão e auditoria, sem duplicar responsabilidades já modeladas.
-
-## API conceitual
-`/imoveis`, `/oportunidades`, `/documentos`, `/analises`, `/evidencias`, `/radar/oportunidades`, `/radar/executar`, `/checklists` e `/configuracoes`, incluindo reanálise, comparação, download e versionamento.
-
-## Auditoria e idioma
-Alterações manuais registram quem, quando, anterior, novo e motivo. Capturas, evidências e análises são preservadas/versionadas. Novos componentes de domínio, banco e documentação usam português; tecnologias e APIs externas são exceções.
-
-## Arquitetura documentada
-A arquitetura derivada deve ser documentada em `architecture/backend/`, cobrindo componentes, fluxo, API, persistência, IA, RAG, LangGraph, Agents, MCP, processamento documental, Source Connectors, Radar, segurança e observabilidade.
-
-## Ordem de implementação
-1. domínio determinístico; 2. persistência; 3. documentos/evidências; 4. análise manual ponta a ponta; 5. reanálise; 6. API; 7. frontend; 8. conector CAIXA; 9. Radar; 10. checklists; 11. auditoria/Golden Cases.
-
-**Não começar pelo crawler.**
-
-## Prova de fogo
-O primeiro marco deve permitir criar imóvel CAIXA, enviar edital/matrícula, complementar IPTU/condomínio/processos, executar análise, visualizar TCO/valuation/riscos/pendências/decisão, adicionar nova evidência, reanalisar e comparar V1×V2. Depois, um candidato capturado pelo Radar deve entrar no mesmo fluxo de análise profunda.
-
-## Decisões D56–D80
-- D56: MVP exclusivamente leilão extrajudicial.
-- D57: análise manual e Radar automático são as duas entradas.
-- D58: CAIXA é o primeiro Source Connector.
-- D59: Source Connector é desacoplado da estratégia de captura.
-- D60: documento original é preservado.
-- D61: documento possui versionamento.
-- D62: análise é snapshot imutável.
-- D63: reanálise gera nova versão.
-- D64: entrada manual é evidência com proveniência.
-- D65: processo judicial pode ser importado manualmente.
-- D66: débitos podem ser informados manualmente.
-- D67: checklist é parametrizável e versionado.
-- D68: checklist possui escopo por banco/localização/estratégia.
-- D69: Fast Radar é separado de Deep Analysis.
-- D70: frontend React é interface oficial.
-- D71: interface é em português.
-- D72: novos componentes de código e banco são em português.
-- D73: arquitetura backend possui documentação própria.
-- D74: RAG é recuperação, não fonte transacional.
-- D75: LLM/Agent não substitui motor determinístico.
-- D76: captura automática preserva payload bruto.
-- D77: resultado financeiro reproduz a planilha de viabilidade.
-- D78: documentos capturados podem ser baixados.
-- D79: histórico de análises é navegável e comparável.
-- D80: Radar e análise manual convergem para o mesmo motor.
-
-Diretriz: **primeiro fechar a especificação; depois implementar.**
+| Venda direta da instituição vendedora | Fora do MVP por `D56` e `D82`. O modelo de dados nasce extensível à modalidade, e nenhuma regra do MVP depende dela. |
+| Leilão judicial, execução judicial e arrematação judicial | Fora do MVP por `D56` e `D82`. As regras do MVP são as da execução extrajudicial regida pela Lei nº 9.514/97. |
+| Integração automática com bases de processos judiciais | No MVP o processo judicial é importado manualmente conforme `R90`. |
+| Documentos derivados de arquitetura técnica | Os artefatos de `architecture/backend/` são derivados e não normativos (`D86`); divergência entre eles e esta spec resolve-se a favor desta spec. |
