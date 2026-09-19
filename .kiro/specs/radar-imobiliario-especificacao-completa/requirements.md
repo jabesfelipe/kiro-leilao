@@ -5057,3 +5057,107 @@ escopo deste documento.
 | Aplicativo móvel completo | Não necessário para provar o valor do produto. |
 | Operação em múltiplas instituições no MVP | A primeira fonte é a CAIXA; o modelo já nasce multi-fonte. |
 | Definição da arquitetura de produção em nuvem | Local-first no MVP; produção apenas quando houver necessidade demonstrada. |
+
+
+# CONSOLIDAÇÃO DE PRODUTO — D56–D80
+
+Esta seção incorpora a revisão de produto e passa a ser canônica para a evolução do MVP. Em conflito, prevalece quando mais específica.
+
+## Escopo MVP
+O MVP é exclusivamente **leilão extrajudicial de imóveis**, inicialmente da CAIXA. Venda direta, leilão judicial e demais modalidades ficam fora do MVP, embora a arquitetura permaneça extensível.
+
+## Duas portas de entrada
+**Análise manual:** usuário cria/seleciona imóvel, informa oportunidade, envia matrícula, edital e demais evidências e executa análise.
+
+**Radar automático:** captura oportunidades da CAIXA, preserva captura bruta, normaliza, identifica, deduplica, aplica filtros/checklists e apresenta candidatos. A análise profunda usa o mesmo motor da análise manual.
+
+Princípio: **Imóvel → Evidências → Análise → Decisão.** Radar é descoberta, não um segundo motor de decisão.
+
+## Imóvel, oportunidade, captura e análise
+Uma nova captura não cria automaticamente novo imóvel. O modelo deve preservar: imóvel físico, oportunidade dinâmica, capturas históricas, documentos/evidências e análises versionadas.
+
+## Source Connector
+A aquisição deve ser abstraída por um contrato de fonte. Implementação inicial: CAIXA. Futuros bancos não exigem alteração estrutural do domínio. Crawling/scraping, API, download, arquivo ou página pública são detalhes de infraestrutura e devem ser desacoplados do domínio.
+
+## Captura e documentos
+Toda captura automática preserva payload bruto, origem/URL, data/hora, hash, documentos e versões. Documentos são entidades de primeira classe; o arquivo original é permanente. Metadados incluem tipo, nome, MIME, tamanho, hash, origem, usuário, vínculos, versão, texto extraído, páginas, chunks e embeddings quando usados.
+
+Tipos iniciais: MATRÍCULA, EDITAL, IPTU, CONDOMÍNIO, PROCESSO_JUDICIAL, LAUDO, FOTOS, ORÇAMENTO_REFORMA e OUTRO.
+
+## Versionamento e reanálise
+Documentos têm versões. Cada análise é snapshot imutável e registra evidências, parâmetros, checklist, resultados e decisão. Nova evidência pode gerar nova análise. A interface deve comparar versões, mostrando evidências, valores, riscos e decisão alterados.
+
+## Evidências manuais
+Entrada manual é evidência explícita com tipo, conteúdo, origem, data, autor, confiança, validade, referência e observação. Origem USER não recebe automaticamente confiança de fonte oficial.
+
+## Processos e débitos
+Processos judiciais podem ser importados manualmente no MVP por PDF, captura, número, decisão ou andamento. IPTU e condomínio possuem modelo próprio e alimentam o TCO, com valor, período, fonte, data, documento e status.
+
+## Fast Radar × Deep Analysis
+Fast Radar: `Captura → Normalização → Identificação → Deduplicação → Filtros → Checklist → Candidato`.
+
+Deep Analysis: `Documentos → Evidências → Jurídico → Valuation → Comparáveis → TCO → Reforma → Desocupação → Liquidez → Risco → Yield → Estratégia → Score → Decisão`.
+
+## Checklist parametrizável
+Checklist é configuração versionada, nunca regra hardcoded. Suporta banco, estado, cidade, tipo de imóvel, estratégia e oportunidade; registra versão, regras, filtros, pesos, severidade, ordem, condição e ação. Cada execução registra checklist e versão.
+
+## Frontend React
+React é a interface oficial, 100% em português. Capacidades mínimas: Dashboard, Nova Análise, pesquisa, Radar, ficha detalhada, documentos, evidências, pendências, reanálise, comparação, checklists, parâmetros e download.
+
+A ficha deve exibir decisão, justificativa, confiança, scores, preço, valor de mercado, TCO, desconto líquido, margem, preço máximo, preço-alvo, break-even, aluguel, yields, liquidez, riscos, pendências e evidências.
+
+A planilha de viabilidade torna-se visão financeira oficial: cada componente do TCO deve ser decomponível e rastreável à sua origem/evidência.
+
+## IA e determinismo
+LLM, RAG, LangGraph, Agents e MCP interpretam documentos, recuperam conhecimento e orquestram etapas. Não substituem os motores determinísticos. TCO, valuation final, regras jurídicas, preço máximo, score e decisão devem permanecer auditáveis e reproduzíveis.
+
+RAG é camada de recuperação, não fonte transacional. O sistema distingue fato/documento, interpretação da IA e resultado determinístico. LLM nunca promove UNKNOWN para CONFIRMED sem nova evidência.
+
+## Modelo de dados
+Garantir cobertura das responsabilidades de imóvel, oportunidade, fonte, captura, documento/versionamento, evidência/proveniência, análise/versionamento, processo, débitos, checklist/versionamento, radar, comparáveis, valuation, custos, risco, decisão e auditoria, sem duplicar responsabilidades já modeladas.
+
+## API conceitual
+`/imoveis`, `/oportunidades`, `/documentos`, `/analises`, `/evidencias`, `/radar/oportunidades`, `/radar/executar`, `/checklists` e `/configuracoes`, incluindo reanálise, comparação, download e versionamento.
+
+## Auditoria e idioma
+Alterações manuais registram quem, quando, anterior, novo e motivo. Capturas, evidências e análises são preservadas/versionadas. Novos componentes de domínio, banco e documentação usam português; tecnologias e APIs externas são exceções.
+
+## Arquitetura documentada
+A arquitetura derivada deve ser documentada em `architecture/backend/`, cobrindo componentes, fluxo, API, persistência, IA, RAG, LangGraph, Agents, MCP, processamento documental, Source Connectors, Radar, segurança e observabilidade.
+
+## Ordem de implementação
+1. domínio determinístico; 2. persistência; 3. documentos/evidências; 4. análise manual ponta a ponta; 5. reanálise; 6. API; 7. frontend; 8. conector CAIXA; 9. Radar; 10. checklists; 11. auditoria/Golden Cases.
+
+**Não começar pelo crawler.**
+
+## Prova de fogo
+O primeiro marco deve permitir criar imóvel CAIXA, enviar edital/matrícula, complementar IPTU/condomínio/processos, executar análise, visualizar TCO/valuation/riscos/pendências/decisão, adicionar nova evidência, reanalisar e comparar V1×V2. Depois, um candidato capturado pelo Radar deve entrar no mesmo fluxo de análise profunda.
+
+## Decisões D56–D80
+- D56: MVP exclusivamente leilão extrajudicial.
+- D57: análise manual e Radar automático são as duas entradas.
+- D58: CAIXA é o primeiro Source Connector.
+- D59: Source Connector é desacoplado da estratégia de captura.
+- D60: documento original é preservado.
+- D61: documento possui versionamento.
+- D62: análise é snapshot imutável.
+- D63: reanálise gera nova versão.
+- D64: entrada manual é evidência com proveniência.
+- D65: processo judicial pode ser importado manualmente.
+- D66: débitos podem ser informados manualmente.
+- D67: checklist é parametrizável e versionado.
+- D68: checklist possui escopo por banco/localização/estratégia.
+- D69: Fast Radar é separado de Deep Analysis.
+- D70: frontend React é interface oficial.
+- D71: interface é em português.
+- D72: novos componentes de código e banco são em português.
+- D73: arquitetura backend possui documentação própria.
+- D74: RAG é recuperação, não fonte transacional.
+- D75: LLM/Agent não substitui motor determinístico.
+- D76: captura automática preserva payload bruto.
+- D77: resultado financeiro reproduz a planilha de viabilidade.
+- D78: documentos capturados podem ser baixados.
+- D79: histórico de análises é navegável e comparável.
+- D80: Radar e análise manual convergem para o mesmo motor.
+
+Diretriz: **primeiro fechar a especificação; depois implementar.**

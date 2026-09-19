@@ -1481,3 +1481,25 @@ normativa de engenharia, incluindo o modelo físico de dados.
   ]
 }
 ```
+
+
+# Consolidação de Produto — Implementação
+
+## Ordem oficial do produto
+- [ ] Domínio determinístico completo
+- [ ] Persistência e versionamento
+- [ ] Documentos originais + processamento + evidências
+- [ ] Análise manual ponta a ponta
+- [ ] Reanálise e comparação V1×VN
+- [ ] API
+- [ ] Frontend React em português
+- [ ] Conector CAIXA
+- [ ] Radar automático
+- [ ] Checklists parametrizáveis/versionados
+- [ ] Auditoria + Golden Cases + regressão
+
+## Critério de passagem para Radar
+O fluxo manual deve estar funcional antes do Radar automático. O Radar somente descobre candidatos; a decisão deve ocorrer no motor compartilhado.
+
+## Critério de aceite do MVP
+Criar imóvel → cadastrar oportunidade CAIXA → anexar edital/matrícula → complementar evidências → executar análise → visualizar decisão/TCO/valuation/riscos/pendências → adicionar evidência → reanalisar → comparar versões.

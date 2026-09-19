@@ -3701,3 +3701,40 @@ O único requisito `P2` — a esteira de conhecimento de `R72` — fica delibera
 É a capacidade de maior custo de construção e a única cujo valor depende de haver conteúdo
 normativo estabilizado para indexar. Todos os `P1` vêm depois de todos os `P0`, e o `P2` depois
 de todos os `P1`.
+
+
+# Consolidação de Produto — Arquitetura
+
+## Fluxo de entradas
+```text
+Análise Manual ───────┐
+                      ├→ Domínio/Análise Determinística → Evidências → Decisão
+Radar Automático ─────┘
+```
+
+O Radar é uma camada de descoberta e não possui motor de decisão paralelo. O conector CAIXA captura e preserva o estado bruto; normalização, identidade e deduplicação ocorrem antes do checklist. A análise profunda reutiliza o mesmo contrato da análise manual.
+
+## Documentos e evidências
+Documentos originais são preservados e versionados. Extração textual, chunks e embeddings são derivados; nunca substituem o arquivo original. Evidências apontam para sua proveniência e mantêm contradições. Entradas manuais são explicitamente identificadas como USER.
+
+## IA
+```text
+React → API → Orquestrador → LangGraph → RAG/Agents/MCP
+                                      ↓
+                             Evidências estruturadas
+                                      ↓
+                       Motores determinísticos
+                                      ↓
+                                  Decisão
+```
+
+LLM pode extrair e interpretar, mas não pode alterar a verdade estruturada nem decidir sozinho. Cálculos e gates permanecem determinísticos.
+
+## Source Connector
+Definir interface de conector de fonte independente da estratégia de aquisição. O contrato deve permitir trocar página, endpoint, arquivo, API ou crawler sem alterar o domínio. Implementação inicial: CAIXA.
+
+## Frontend
+React é a interface oficial e deve consumir contratos da API. Organizar por páginas/features, serviços, hooks, tipos, rotas e layouts. A ficha de análise deve expor decisão, evidências, TCO detalhado, valuation, riscos, pendências, score, yield e comparação de versões.
+
+## Arquitetura de documentação
+Criar `architecture/backend/` com README, architecture, components, data-flow, api, persistence, ai, rag, langgraph, agents, mcp, document-processing, source-connectors, radar, security e observability. Esses arquivos são derivados da spec e não substituem sua autoridade.
