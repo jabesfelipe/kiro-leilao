@@ -4,7 +4,7 @@ Radar Imobiliário — Projeto Técnico da Especificação Completa
 
 ## Overview
 
-Este documento projeta a implementação dos **97 requisitos** de
+Este documento projeta a implementação dos **126 requisitos** de
 `.kiro/specs/radar-imobiliario-especificacao-completa/requirements.md`. Ele não reenuncia
 regras de negócio: para cada decisão de projeto, referencia o requisito que a origina e
 explica **como** a regra passa a ser executável, determinística e auditável.
@@ -26,7 +26,7 @@ jurídico parcial, motor de cálculo, motor de decisão, persistência e interfa
 O diagnóstico técnico do documento de requisitos (`D.1` a `D.11`) verificou seis defeitos
 numéricos, oito defeitos do motor de decisão, vinte e duas lacunas de capacidade, quinze
 divergências entre documentação e esquema, onze achados de integridade de banco e oito achados
-de configuração. Este design tem, portanto, quatro objetivos simultâneos:
+de configuração. Este design tem, portanto, cinco objetivos simultâneos:
 
 1. **Corrigir** os defeitos verificados — em especial `D.1.1` (preço máximo que não satisfaz
    a própria definição), `D.1.2` (TCO incompleto e, em versão anterior deste design, com
@@ -44,6 +44,44 @@ de configuração. Este design tem, portanto, quatro objetivos simultâneos:
 4. **Tornar os princípios invioláveis executáveis** — `SAFE-001` a `SAFE-017` deixam de ser
    texto e passam a ser tipos fechados, invariantes verificadas por propriedade e restrições
    declarativas no banco.
+5. **Integrar os Domínios P a T** (`R98` a `R126`): infraestrutura de IA com provedores
+   abstraídos, custo e avaliação; aquisição resiliente com execução do Radar auditável,
+   captura incremental, idempotência e agendamento; plataforma com observabilidade,
+   segurança, configuração por ambiente, catálogo de erros, desempenho, eventos, preparo
+   multi-titular, separação entre núcleo, adaptadores e infraestrutura, versão do motor e
+   data de corte; experiência do investidor com estados de tela, navegação, responsividade,
+   catálogo visual e acessibilidade; e o portão de congelamento arquitetural.
+
+### Contagens que este design reproduz
+
+As contagens abaixo vêm da tabulação do requirements e são contrato: divergir delas é defeito,
+verificado por meta-teste e não por leitura.
+
+| Grandeza | Valor | Origem |
+|----------|-------|--------|
+| Requisitos | **126**, `R1` a `R126` | Índice de Requisitos |
+| Prioridade | **112 `P0`**, **13 `P1`**, **1 `P2`** | `D102`, verificado por `MT-06` |
+| Requisitos `P1` | `R5`, `R31`, `R42`, `R43`, `R48`, `R59`, `R60`, `R65`, `R69`, `R80`, `R81`, `R117`, `R121` | `D102` |
+| Requisito `P2` | `R72` | `D102` |
+| Decisões de consolidação | **104**, `D1` a `D104` | seção *Decisões de Consolidação* |
+| Propriedades executáveis | **262**, em **22 famílias** `P1` a `P22` | `D97`, verificado por `MT-01` e `MT-02` |
+| Meta-testes | **16**, `MT-01` a `MT-16` | `R73.10`, `D101` |
+| Testes de regressão | **60**, `REG-001` a `REG-060`, um por linha do Anexo E | `R73.8`, `D101` |
+| Passos da ordem de construção | **20** | `D91`, que substitui `D88` |
+| Domínios de requisito | **20**, A a T | seção *Requirements* |
+| Entidades de negócio | **61**, inalteradas | `R74`, `D96` |
+| Entidades de infraestrutura e de plataforma | **15**, fora do conjunto de `R74` | `D96` |
+| Enums de negócio | **60**, inalterados | *Data Models*, verificado por `MT-09` |
+| Enums de infraestrutura | **7** | *Data Models*, verificado por `MT-09` |
+| Itens de integridade | **24** | *Data Models* |
+| Componentes | **49** — 20 do projeto anterior, 7 do Domínio O, 22 dos Domínios P a T | *Components and Interfaces* |
+
+Nenhum número de negócio muda com o fechamento arquitetural: R$ 182.158,03,
+R$ 236.125,246785, 18,5775%, 16,5139%, 84,2940%, R$ 251.197,07105, os 13 componentes de custo,
+as 19 verificações do gate jurídico, as 11 camadas de decisão, as 55 regras canônicas, os 234
+itens de checklist, os 7 pesos de aderência e os 4 Golden Cases permanecem exatamente como
+estão. O fechamento acrescenta infraestrutura, plataforma e experiência; não toca aritmética,
+precedência nem catálogo de regras.
 
 ### Convenção de idioma e nomenclatura aplicada ao projeto técnico (`D72`)
 
@@ -148,6 +186,42 @@ rastreabilidade entre critério de aceitação e código se rompe.
 | `em_aberto` · `parcelado` · `quitado` · `em_discussao` · `desconhecido` | idem em maiúsculas | `R91.4` |
 | `PODE_DAR_LANCE` · `NAO_DAR_LANCE` · `LIBERADO_PARA_LANCE` | idem | já em português |
 | `DESCOBRIR` → `SELECIONAR` → ... → `DECIDIR` | idem | ciclo de produto de `R95.3` |
+
+#### Correspondências obrigatórias dos Domínios P a T `[CANÔNICO]` (`D103`)
+
+A tabela de correspondências obrigatórias da *Convenção de idioma e nomenclatura* do
+requirements é normativa e vale integralmente aqui. Cada termo abaixo tem **um** nome neste
+projeto; **sinônimo novo para termo já nomeado é defeito de redação, não variação de estilo**.
+
+| Termo em inglês | Identificador de implementação | Requisito |
+|-----------------|--------------------------------|-----------|
+| `LLMProvider` | `ProvedorDeModeloDeLinguagem` | `R98.1` |
+| `EmbeddingProvider` | `ProvedorDeEmbedding` | `R98.2` |
+| `Capture Strategy` | `EstrategiaDeCaptura` | `R106.1`, `D94` |
+| `ENGINE_VERSION` | `VersaoDoMotor` | `R120.1`, `PLT-003` |
+| `cut-off date` | `DataDeCorte` | `R120.4` |
+| `correlation id` | `IdentificadorDeCorrelacao` | `R111.1` |
+| `AI budget` | `OrcamentoDeExecucaoDeIA` | `R99.2`, `IA-003`, `IA-004` |
+| `SourceConnector` | `ConectorDeFonte` (`Conector_de_Fonte` como nome de sistema) | `R85.1` |
+| `TCO` | custo econômico total | `R26.1` |
+| `hard stop` | parada absoluta (`HS-01` a `HS-09`) | `R82` |
+| `tenant` | titular; `tenant_id` como coluna declarada em `R118.1` | `R118.1` |
+| `feature flag` | sinalizador de recurso | `R113.6`, `PLT-012` |
+| `idempotency key` | chave de idempotência | `R109.1` |
+| `circuit breaker` | disjuntor | `R107.7` |
+| `rate limit` | limite de taxa | `R107.4`, `AQ-003` |
+| `checkpoint` | ponto de retomada | `R103.4`, `R107.5` |
+| `chunk` | segmento | `R101.2`, `IA-008` |
+| `embedding` (o vetor) | representação vetorial | `R100.3` |
+| `design system` | `DesignSystem` — nome próprio do catálogo visual único | `R125.1` |
+| `skeleton` (estado de tela) | esqueleto | `R122.1` |
+| `stale data` | dado obsoleto | `R122.6` |
+
+**Exceções mantidas em inglês, e apenas estas**, porque são nomes de tecnologia externa:
+LangChain, LangGraph, MCP, RAG, OCR, React, FastAPI, PostgreSQL, pgvector, S3, OpenAI, Bedrock
+e cron. A coluna `tenant_id` permanece com esse nome porque é o identificador declarado
+literalmente em `R118.1`; o termo de negócio correspondente é **titular**, e é ele que aparece
+em interface, mensagem e relatório.
 
 Os títulos das propriedades de correção deste design e os nomes dos artefatos derivados
 acompanham a convenção.
@@ -308,10 +382,11 @@ verificadamente corrigida. A forma fechada conservadora permanece como referênc
 
 ### Escopo do design
 
-Incluído: os 97 requisitos, os Anexos A a F (checklists, verificações complementares,
-disciplina de lance, matriz canônica de 55 regras, 44 testes de regressão e Golden Cases), as
+Incluído: os 126 requisitos, os Anexos A a F (checklists, verificações complementares,
+disciplina de lance, matriz canônica de 55 regras, 60 testes de regressão e Golden Cases), as
 correções de `D.1` a `D.10` e o **modelo físico de dados completo**, que este documento
-normatiza conforme a lista de integridade de `D.9`.
+normatiza conforme a lista de integridade de `D.9`, ampliada pelas entidades de infraestrutura
+e de plataforma dos Domínios P a T.
 
 **Modalidade do MVP** (`D56`, `D82`): leilão **extrajudicial** de alienação fiduciária, com a
 CAIXA como primeira fonte. Venda direta, leilão judicial, execução judicial, arrematação
@@ -324,7 +399,14 @@ a cartório, tribunais, prefeituras e concessionárias. Os resultados dessas ver
 **entradas** com contrato definido, produzidas por documento ou registro do analista — e é
 exatamente o que `R89`, `R90` e `R91` especificam. A varredura de portais deixa de ser fora de
 escopo e passa a ser uma **estratégia de aquisição** do `Conector_de_Fonte` (`R85.3`),
-priorizada no passo 9 da ordem de construção.
+priorizada no passo 15 da ordem de construção de `D91`.
+
+**Aplicativo móvel nativo** continua fora do escopo; a **interface web responsiva** está dentro
+e é obrigatória desde a primeira versão (`D92`, `R124`). O **provisionamento** de infraestrutura
+de nuvem continua fora; os **adaptadores** e a **configuração por ambiente** que o admitem estão
+dentro (`D93`, `R119`, `R113`). **Cobrança, planos, limites comerciais e medição para cobrança**
+permanecem fora; o **preparo estrutural multi-titular** é `P0`, porque retroajustá-lo depois das
+61 entidades de negócio gravadas é migração, não ajuste (`D96`, `R118`).
 
 ### Defeito de contagem registrado
 
@@ -643,6 +725,221 @@ implementação da etapa 1.
 | Orquestrador | `radar/orquestracao/grafo.py` | renomear e ampliar; remover regra do grafo |
 | Interface_do_Investidor | `radar/api/**`, `radar/apresentacao/**`, `frontend/src/**` (React) | ampliar (`R94`, `R97`) |
 
+Os módulos dos Domínios P a T entram no mesmo mapa. A coluna de camada é o que `MT-10` e `P19.2`
+verificam: **nada em `nucleo/**` importa cliente externo**.
+
+| Sistema (glossário) | Módulo | Camada | Situação |
+|---------------------|--------|--------|----------|
+| `ProvedorDeModeloDeLinguagem` | `radar/nucleo/contratos/provedor_de_modelo_de_linguagem.py` · `radar/adaptadores/modelo_de_linguagem/{openai,local}.py` | contrato no núcleo, implementação no adaptador | novo (`R98.1`) |
+| `ProvedorDeEmbedding` | `radar/nucleo/contratos/provedor_de_embedding.py` · `radar/adaptadores/embedding/openai.py` | contrato no núcleo, implementação no adaptador | novo (`R98.2`) |
+| `Gestor_de_Custo_de_IA` | `radar/ia/custo.py`, `radar/ia/cache.py` | adaptadores | novo (`R99`) |
+| Prompt versionado | `radar/ia/prompts.py` | núcleo (configuração versionada) | novo (`R100`) |
+| `Motor_de_Recuperacao` | `radar/conhecimento/recuperacao.py`, `radar/conhecimento/segmentacao.py` | adaptadores | ampliar (`R101`) |
+| `Indice_Vetorial` | `radar/adaptadores/indice_vetorial/pgvector.py` | adaptadores | novo (`R102`) |
+| `Orquestrador_de_Workflow_de_IA` | `radar/ia/workflow.py` (LangGraph) | adaptadores | novo (`R103`) |
+| `Agente_Limitado`, `Servidor_de_Ferramentas` | `radar/ia/agentes/*.py`, `radar/ia/ferramentas/{leitura,escrita}.py` (MCP) | adaptadores | novo (`R104`) |
+| `Avaliador_de_IA` | `radar/ia/avaliacao.py`, `testes/avaliacao_de_ia/**` | adaptadores e suíte própria | novo (`R105`) |
+| `Motor_do_Radar` | `radar/radar/motor.py` | núcleo | novo (`R106`) |
+| `Validador_de_Captura` | `radar/captura/validacao.py` | núcleo | novo (`R107.1`) |
+| `EstrategiaDeCaptura` | `radar/adaptadores/captura/{pagina_publica,endpoint,arquivo,varredura}.py` | adaptadores | novo (`R107`, `D94`) |
+| `Agendador` | `radar/adaptadores/agendamento/{local,nuvem}.py` | adaptadores | novo (`R110`) |
+| `Gestor_de_Observabilidade` | `radar/plataforma/observabilidade.py` | adaptadores | novo (`R111`) |
+| `Gestor_de_Seguranca` | `radar/plataforma/seguranca.py`, `radar/plataforma/upload.py` | adaptadores | novo (`R112`) |
+| `Gestor_de_Configuracao` | `radar/plataforma/configuracao.py` | adaptadores | novo (`R113`) |
+| `Gestor_de_Erros` | `radar/plataforma/erros.py` | núcleo (catálogo) e adaptador (tradução) | novo (`R114`) |
+| `Executor_Assincrono` | `radar/plataforma/execucao_assincrona.py` | adaptadores | novo (`R115`) |
+| Eventos de domínio | `radar/plataforma/eventos.py` | núcleo (tipos) e adaptador (transporte) | novo (`R117`) |
+| `Gestor_de_Notificacoes`, `Gestor_de_Acompanhamento` | `radar/monitoramento/{notificacoes,acompanhamento}.py` · `radar/adaptadores/notificacao/{local,externo}.py` | núcleo e adaptadores | novo (`R121`) |
+| `DesignSystem` | `frontend/src/design-system/**` | interface | novo (`R125`) |
+
+### Três camadas: núcleo, adaptadores e infraestrutura (`R119.1`)
+
+A implementação é organizada em **três** camadas declaradas, e a declaração é verificável:
+
+| Camada | Conteúdo | Diretório |
+|--------|----------|-----------|
+| **Núcleo** | domínio determinístico, regras, motores, catálogos como dados e **contratos** | `radar/nucleo/**`, `radar/motores/**`, `radar/pipeline/**`, `radar/regras/**`, `radar/radar/**` |
+| **Adaptadores** | implementações dos contratos declarados em `R119.2` | `radar/adaptadores/**`, `radar/ia/**`, `radar/plataforma/**`, `radar/conectores/**` |
+| **Infraestrutura** | recursos externos: banco, armazenamento, agendador, provedores, índice vetorial | fora do processo, resolvida por configuração de ambiente (`R113.2`) |
+
+```mermaid
+flowchart LR
+    subgraph N["Núcleo — determinístico, sem cliente externo"]
+        DOM[Entidades, regras, motores<br/>catálogos como dados]
+        CTR[Contratos declarados<br/>ProvedorDeModeloDeLinguagem · ProvedorDeEmbedding<br/>IndiceVetorial · ArmazenamentoDeArquivo<br/>Agendador · CanalDeNotificacao<br/>ConectorDeFonte · EstrategiaDeCaptura]
+    end
+    subgraph A["Adaptadores — implementam os contratos"]
+        AD1[OpenAI · modelo local]
+        AD2[pgvector]
+        AD3[disco local · S3]
+        AD4[cron local · agendador de nuvem]
+        AD5[notificação local · canal externo]
+        AD6[página pública · endpoint · arquivo · varredura]
+    end
+    subgraph I["Infraestrutura — recurso externo"]
+        INF[(PostgreSQL · armazenamento · provedores · fontes)]
+    end
+    DOM --> CTR
+    CTR -. implementado por .-> A
+    A --> I
+    N -. proibido .-x I
+```
+
+**O grafo de importação proibida é o contrato** (`R119.3`, `R98.5`). O fechamento transitivo de
+importações do núcleo **não contém**: cliente de modelo de linguagem (`openai`, `anthropic`,
+`bedrock` ou equivalente), biblioteca de orquestração de IA (`langchain*`, `langgraph`), cliente
+de embedding, cliente de armazenamento externo (`boto3` ou equivalente) e cliente de agendamento.
+A direção das dependências é única: o núcleo declara o contrato, o adaptador o implementa, e o
+núcleo nunca conhece o adaptador. `MT-10` percorre a árvore de imports e falha com o **caminho
+completo** do import proibido; `P19.2` verifica o fechamento transitivo como propriedade.
+
+Quatro consequências de projeto decorrem disso, e nenhuma é opcional:
+
+- **Troca de adaptador não altera resultado.** Para as mesmas evidências, parâmetros e versões, o
+  resultado determinístico é idêntico em qualquer combinação de adaptadores declarados (`R119.6`,
+  `P21.19`) e em qualquer provedor ou modelo (`R98.9`, `P19.1`).
+- **A primeira execução completa é local** (`R119.5`): armazenamento local, banco local,
+  agendamento local. Nuvem é escolha posterior, não reescrita (`D93`).
+- **Cada execução registra os adaptadores aplicados** (`R119.7`), para que a reprodução saiba em
+  que combinação o resultado foi produzido.
+- **A degradação é declarada, nunca silenciosa.** Índice vetorial indisponível executa a análise
+  sem a etapa de recuperação, marca a etapa como não executada e **não altera** o resultado
+  determinístico (`R102.8`, `P19.14`); sinalizador de recurso desabilitado preserva o
+  determinismo e registra a capacidade como não executada (`R113.7`, `P21.9`).
+
+### Adaptadores declarados (`R119.2`)
+
+Cada adaptador implementa **um** contrato do núcleo. A coluna do contrato é o que torna a troca
+verificável: se a substituição exige tocar o núcleo, o contrato está errado.
+
+| Adaptador | Contrato que implementa | Implementações da primeira versão | Requisito |
+|-----------|-------------------------|-----------------------------------|-----------|
+| Armazenamento de arquivo | `ArmazenamentoDeArquivo` | disco local; S3 | `R119.2`, `R86.2` |
+| Banco de dados | `RepositorioTransacional` | PostgreSQL local; PostgreSQL gerenciado | `R119.2`, `R74` |
+| Agendamento | `Agendador` | cron local; agendador de nuvem; processo assíncrono | `R110.3`, `R110.4` |
+| Modelo de linguagem | `ProvedorDeModeloDeLinguagem` | OpenAI (`IA-001`); modelo local (`P1`) | `R98.1`, `R98.3`, `R98.8` |
+| Embedding | `ProvedorDeEmbedding` | OpenAI (`IA-002`) | `R98.2`, `R98.3` |
+| Índice vetorial | `IndiceVetorial` | pgvector | `R102.1`, `R102.9` |
+| Estratégia de captura | `EstrategiaDeCaptura` | página pública; endpoint; arquivo; varredura | `R107.4`, `D94` |
+| Canal de notificação | `CanalDeNotificacao` | local (`PLT-013`); canal externo (`P1`) | `R121.2`, `R121.3` |
+| Conector de fonte | `ConectorDeFonte` | CAIXA (`D58`) | `R85.1`, `R85.4` |
+
+`EstrategiaDeCaptura` é **entidade de infraestrutura** com quatro valores e **continua invisível
+ao domínio**: aparece apenas na Execução do Radar e na captura, e nenhuma entidade de negócio,
+regra, parâmetro de negócio ou motor a conhece (`R85.3`, `R106.8`, `D94`). `P20.4` verifica a
+invisibilidade por propriedade.
+
+### Pipeline de recuperação (`R101.1`)
+
+A recuperação é **explícita e ordenada**, com dez etapas, e o que ela entrega é **apoio à
+interpretação** — nunca evidência, valor de cálculo ou verdade transacional (`R101.11`, `D74`).
+
+```mermaid
+flowchart LR
+    E1[1 extração] --> E2[2 limpeza] --> E3[3 segmentação]
+    E3 --> E4[4 atribuição de metadados<br/>os treze de R101.2]
+    E4 --> E5[5 geração de representação vetorial] --> E6[6 indexação]
+    E6 --> E7[7 busca] --> E8[8 reordenação<br/>quando configurada]
+    E8 --> E9[9 montagem de contexto<br/>até IA-010 trechos]
+    E9 --> E10[10 entrega ao componente de linguagem]
+    E9 -. trecho sem citação resolvível .-> DESC[descartado do contexto<br/>ocorrência registrada<br/>R101.4]
+```
+
+Três coleções distintas, cada uma com política de atualização e validade própria (`R101.10`,
+`R72.7`, tabela `FRESH`): **conhecimento normativo**, **dados do imóvel** e **histórico**.
+Misturá-las é o defeito que faz uma hipótese histórica atravessar a fronteira como se fosse regra
+vigente — `P15.4` e `R72.9` são o que impedem.
+
+### Workflow de IA com estado explícito e retomada (`R103.1`)
+
+O workflow documental tem **onze** etapas na ordem obrigatória, e **cada etapa concluída registra
+o ponto de retomada correspondente** (`R103.4`). Retomar produz o mesmo resultado da execução
+contínua com as mesmas entradas e versões (`R103.5`, `P19.15`).
+
+```mermaid
+stateDiagram-v2
+    [*] --> CARREGAR_DOCUMENTOS
+    CARREGAR_DOCUMENTOS --> EXTRAIR_TEXTO
+    EXTRAIR_TEXTO --> CLASSIFICAR_DOCUMENTOS
+    CLASSIFICAR_DOCUMENTOS --> EXTRAIR_EVIDENCIAS_CANDIDATAS
+    EXTRAIR_EVIDENCIAS_CANDIDATAS --> VALIDAR_EVIDENCIAS_CANDIDATAS
+    VALIDAR_EVIDENCIAS_CANDIDATAS --> RECUPERAR_CONTEXTO
+    RECUPERAR_CONTEXTO --> ANALISAR_PENDENCIAS
+    ANALISAR_PENDENCIAS --> PROPOR_INTERPRETACAO
+    PROPOR_INTERPRETACAO --> VALIDAR_CONTRA_DOMINIO
+    VALIDAR_CONTRA_DOMINIO --> EXECUTAR_MOTOR_DETERMINISTICO
+    EXECUTAR_MOTOR_DETERMINISTICO --> PRODUZIR_EXPLICACAO
+    PRODUZIR_EXPLICACAO --> [*]
+
+    RECUPERAR_CONTEXTO --> ANALISAR_PENDENCIAS : falha da recuperação → limitação declarada (R103.7)
+    VALIDAR_EVIDENCIAS_CANDIDATAS --> INTERVENCAO_HUMANA : R103.9
+    PROPOR_INTERPRETACAO --> INTERVENCAO_HUMANA : saída não estruturada após IA-007 tentativas
+    INTERVENCAO_HUMANA --> VALIDAR_CONTRA_DOMINIO : ato humano registrado (R103.10)
+    EXECUTAR_MOTOR_DETERMINISTICO --> INCOMPLETA : não conclui → nenhuma decisão (R103.8)
+```
+
+Três fronteiras são normativas neste grafo. A etapa **executar o motor determinístico** é a
+única que produz resultado de domínio, e se ela não conclui **nenhuma decisão é emitida** e a
+análise fica registrada como incompleta (`R103.8`). A etapa de recuperação é **dispensável**: a
+sua falha registra limitação declarada e o workflow prossegue (`R103.7`). E o workflow **não
+altera** a ordem obrigatória do pipeline de `R70.1` nem a precedência de decisão de `R53`
+(`R103.14`): ele é a esteira que leva documento a evidência candidata, não um segundo motor.
+
+### Ciclo do Radar (`R106.2`)
+
+O ciclo do Radar tem **doze** etapas e **nenhuma delas decide**: a Execução do Radar não emite
+nenhum valor de `EstadoDeDecisao`, escore, valuation nem custo (`R106.6`, `P20.3`).
+
+```mermaid
+flowchart LR
+    C1[1 carregar conectores ativos] --> C2[2 capturar a fonte]
+    C2 --> C3[3 preservar a captura bruta] --> C4[4 validar a captura<br/>seis verificações de R107.1]
+    C4 --> C5[5 normalizar] --> C6[6 identificar] --> C7[7 deduplicar]
+    C7 --> C8[8 enriquecer quando necessário] --> C9[9 aplicar filtros]
+    C9 --> C10[10 aplicar o checklist de triagem] --> C11[11 gerar candidatos]
+    C11 --> C12[12 priorizar enriquecimento e análise]
+    C4 -. verificação não satisfeita .-> REJ[captura REJEITADA<br/>payload preservado<br/>nada propagado ao domínio<br/>R107.2]
+```
+
+As etapas 5 a 11 são **as mesmas** do pipeline único: o Radar não tem normalizador próprio, nem
+identidade própria, nem checklist próprio de decisão. A `Triagem_Rapida` é o prefixo das fases 1
+a 5 mais o gate `G1-P` (`D84`), e a priorização da etapa 12 usa o **potencial preliminar**, não o
+`EscoreDeOportunidade` (`R93.11`, `R5.2`).
+
+### Os vinte passos de `D91` e as vinte etapas do pipeline de `R70.1`
+
+São duas ordens distintas e é preciso não confundi-las. `R70.1` é a **ordem de execução** de uma
+análise e **não mudou**: vinte etapas, dezesseis fases persistidas. `D91` é a **ordem de
+construção** do produto: vinte passos, do primeiro comando ao congelamento. A tabela abaixo liga
+as duas — a coluna direita diz em que passo cada etapa de execução passa a existir.
+
+| Etapa do pipeline (`R70.1`) | Passo de construção (`D91`) |
+|-----------------------------|-----------------------------|
+| captura e preservação do payload bruto | 13 framework de conector · 14 conector CAIXA |
+| normalização | 2 domínio determinístico |
+| identificação e deduplicação | 2 domínio determinístico |
+| qualificação (`G1`) e consolidação de perfil | 2 domínio determinístico |
+| validade jurídica — 19 verificações | 2 domínio determinístico (evidência real no 4 e no 5) |
+| enriquecimento | 2 domínio determinístico · 10 recuperação · 15 Radar automático |
+| valuation e comparáveis | 2 domínio determinístico |
+| custo econômico total e métricas | 2 domínio determinístico |
+| risco, liquidez, estratégia e portfólio | 2 domínio determinístico |
+| escore, confiança e aderência | 2 domínio determinístico |
+| ranqueamento | 2 domínio determinístico |
+| decisão de onze camadas e explicabilidade | 2 domínio determinístico |
+| persistência do snapshot e da trilha | 3 persistência |
+| documentos, extração e evidência | 4 documentos e evidências |
+| execução ponta a ponta pela porta manual | 5 análise manual ponta a ponta |
+| nova versão e comparação | 6 versionamento e reanálise |
+| exposição e apresentação | 7 interface de programação · 8 interface do investidor |
+| interpretação documental por IA | 9 IA documental · 11 orquestração de workflow de IA · 12 agentes e ferramentas |
+| descoberta automática | 15 Radar automático |
+| monitoramento, reavaliação e notificação | 17 monitoramento e notificações |
+
+A leitura importante é a da linha da validade jurídica: o gate existe como **função** no passo 2 e
+passa a operar sobre **evidência real de documento** nos passos 4 e 5. É por isso que o primeiro
+marco funcional de `D91` é a análise manual de um imóvel da CAIXA, e não o gate isolado.
+
 ### Artefatos derivados e a hierarquia normativa única
 
 Este documento tem **um único cabeçalho de nível 1** e nenhuma cláusula de precedência interna
@@ -660,8 +957,14 @@ regra não existe. Seus títulos e conteúdos seguem a convenção de idioma de 
 
 ## Components and Interfaces
 
-São **27 componentes**. Os vinte primeiros são os do projeto anterior, renomeados em português;
-os sete últimos são exigidos pelo Domínio O (`R84` a `R97`).
+São **49 componentes**. Os vinte primeiros são os do projeto anterior, renomeados em português;
+os sete seguintes são exigidos pelo Domínio O (`R84` a `R97`); os vinte e dois últimos, pelos
+Domínios P a T (`R98` a `R126`).
+
+Cada componente dos Domínios P a T declara, além da assinatura, a **pré-condição**, a
+**pós-condição** e o requisito que realiza. Todos são nomeados em português conforme `D72` e
+`D103`, e nenhum deles é importado pelo núcleo: os contratos vivem no núcleo, as implementações
+vivem nos adaptadores (`R119.3`, `MT-10`, `P19.2`).
 
 Convenção das assinaturas: `Informado[T]` é o valor com estado de informação (definido em
 *Data Models*); `Desconhecido` é o sentinela explícito; nenhum parâmetro de domínio tem default
@@ -1288,6 +1591,17 @@ Gatilhos de revaluation (`R25`) ficam no Monitor: novo comparável de classe `A`
 raio e da janela; frescor de valuation excedido; aluguel variando `MON-005` ou mais; informação
 física relevante alterada. Mudança de estratégia ativa recalcula o **preço máximo** sem
 necessariamente recalcular o valor de mercado (`R25.5`).
+
+**Cobertura por propriedade.** Este componente era, até o fechamento arquitetural, o único motor
+determinístico sem família de propriedades: nenhuma das dezessete famílias anteriores cobria `R21` a
+`R25`, e a lacuna estava conhecida sem estar registrada (`D97`). A família `P18` a fecha, com quinze
+propriedades — determinismo e confluência da seleção (`P18.1`, `P18.2`), monotonicidade do raio, da
+janela e da confiança (`P18.3`, `P18.4`), cobertura total das faixas de confiança (`P18.5`),
+quantidade insuficiente que nunca produz precisão (`P18.6`), ordenação e contenção das referências de
+valor (`P18.7`, `P18.8`), independência da avaliação da fonte (`P18.9`), totalidade do método por
+tipo de ativo (`P18.10`), idempotência (`P18.11`), irrelevância do candidato reprovado (`P18.12`),
+limiar exato de revaluation (`P18.13`), comparável fora da janela (`P18.14`) e ausência de comparável
+qualificado que resulta em `DESCONHECIDO` (`P18.15`).
 
 ### 9. Motor de Cálculo — TCO e métricas econômicas (`R26`, `R27`, `R96`)
 
@@ -3228,6 +3542,1165 @@ desconhecidos e histórico completo (`R95.5`). Passo não executável reporta o 
 e identifica o passo e o requisito não satisfeitos (`R95.6`, `P17.22`) — nunca como parcialmente
 pronto.
 
+### 28. Provedor de modelo de linguagem e provedor de embedding (`R98`)
+
+Dois contratos, e nada mais, separam o produto de qualquer fornecedor de modelo. Trocar de
+fornecedor é implementar o contrato e registrar a configuração do ambiente: **nenhuma alteração
+de entidade de negócio, de regra, de parâmetro de negócio, de motor determinístico ou de esquema
+de dados de negócio** (`R98.4`).
+
+```python
+@dataclass(frozen=True)
+class CapacidadeDeModelo:
+    """R98.1 — capacidades declaradas do modelo. O chamador decide o que pedir a partir
+    daqui, em lugar de descobrir por erro em produção."""
+    provedor: str
+    modelo: str
+    versao: str
+    limite_de_tokens_de_entrada: int          # respeita IA-005
+    suporta_saida_estruturada: bool
+    suporta_ferramentas: bool
+    custo_por_mil_tokens_de_entrada: Decimal
+    custo_por_mil_tokens_de_saida: Decimal
+
+@dataclass(frozen=True)
+class IdentidadeDeEmbedding:
+    """R98.2, R100.3 — provedor, modelo, dimensões e versão. A dimensão é atributo da
+    representação vetorial, nunca do documento (R102.6)."""
+    provedor: str
+    modelo: str
+    dimensoes: int
+    versao: str
+
+@dataclass(frozen=True)
+class RegistroDeChamadaAProvedor:
+    """R98.11 — registro obrigatório de **toda** chamada a provedor. Append-only; é a base do
+    custo de R99.1 e da observabilidade de R111.2 (P19.3)."""
+    identificador_de_correlacao: UUID
+    tarefa: str
+    provedor: str
+    modelo: str
+    versao: str
+    tokens_de_entrada: int
+    tokens_de_saida: int
+    duracao_em_ms: int
+    custo_estimado: Decimal
+    truncada: bool                            # R99.9
+    ocorrido_em: datetime
+
+class ProvedorDeModeloDeLinguagem(Protocol):                        # E/S
+    """Contrato **único** de acesso a modelo de linguagem (R98.1).
+
+    Pré-condição: a chamada parte de um adaptador de R119.2, nunca do núcleo nem de um motor
+    determinístico (R98.5); a tarefa tem provedor e modelo resolvidos por IA-015 (R98.6); a
+    entrada não excede IA-005 tokens (R99.9).
+
+    Pós-condição: existe exatamente um RegistroDeChamadaAProvedor persistido por chamada, com
+    os onze atributos de R98.11; a saída estruturada satisfaz o esquema declarado ou é
+    rejeitada (R105.6); nenhuma interpretação é emitida sem resposta do provedor (R98.10).
+
+    Objeto de biblioteca externa não atravessa esta fronteira: LangChain e LangGraph são
+    infraestrutura de integração e de orquestração, e não aparecem em assinatura de domínio
+    (R98.7)."""
+    def completar(self, prompt: PromptVersionado, entrada: Mapping[str, object],
+                  orcamento: OrcamentoDeExecucaoDeIA) -> RespostaDeModelo: ...
+    def produzir_saida_estruturada(self, prompt: PromptVersionado,
+                                   entrada: Mapping[str, object],
+                                   esquema: EsquemaDeclarado,
+                                   orcamento: OrcamentoDeExecucaoDeIA) -> SaidaEstruturada: ...
+    def declarar_capacidade(self) -> CapacidadeDeModelo: ...
+
+class ProvedorDeEmbedding(Protocol):                                # E/S
+    """Contrato **único** de geração de representação vetorial (R98.2).
+
+    Pré-condição: o segmento existe, tem hash calculado e os treze metadados de R101.2.
+    Pós-condição: a representação vetorial registra provedor, modelo, dimensões, versão e data
+    da geração (R100.3); o cache de IA-012 é consultado antes de gerar (R99.6)."""
+    def gerar_representacao_vetorial(self, segmento: SegmentoDeDocumento
+                                     ) -> RepresentacaoVetorial: ...
+    def declarar_identidade(self) -> IdentidadeDeEmbedding: ...
+
+class ProvedorLocalDeModeloDeLinguagem(ProvedorDeModeloDeLinguagem):  # E/S
+    """R98.8 — modelo local aplica **o mesmo** contrato e registra o provedor como local.
+    Capacidade `P1` (D99); a primeira versão usa OpenAI (IA-001, IA-002, R98.3)."""
+```
+
+`P19.1` fixa o que este par de contratos existe para garantir: **para as mesmas evidências, os
+mesmos parâmetros e as mesmas versões de regra, o resultado determinístico é idêntico em qualquer
+provedor ou modelo** (`R98.9`). Indisponibilidade ou excesso de `IA-006` registra erro catalogado,
+mantém a execução retomável e **não** produz interpretação (`R98.10`, `R103.6`, `R114.2`).
+
+### 29. Gestor de Custo de IA (`R99`)
+
+```python
+@dataclass(frozen=True)
+class OrcamentoDeExecucaoDeIA:
+    """R99.2 — orçamento por execução, em tokens (IA-003) e em moeda (IA-004)."""
+    tokens: int
+    moeda: Decimal
+    identificador_de_correlacao: UUID
+
+@dataclass(frozen=True)
+class ConsumoDeIA:
+    """R99.1 — contabilidade por execução, por análise e por período."""
+    tokens_de_entrada: int
+    tokens_de_saida: int
+    quantidade_de_chamadas: int
+    custo_estimado: Decimal
+
+@dataclass(frozen=True)
+class InterrupcaoPorOrcamento:
+    """R99.3 — **resultado**, não exceção silenciosa. A execução fica parcial, com pendência
+    registrada, e a interrupção aparece na interface e na trilha de auditoria (R99.4)."""
+    orcamento: OrcamentoDeExecucaoDeIA
+    consumo_apurado: ConsumoDeIA
+    etapa_interrompida: str
+    pendencia_id: UUID
+
+class GestorDeCustoDeIA(Protocol):                                  # E/S
+    """R99.
+
+    Pré-condição: toda chamada a provedor passa por aqui antes de ser emitida; tarefa, versão
+    de prompt, versão de modelo e hash da entrada estão resolvidos.
+
+    Pós-condição: ou o consumo acumulado permanece dentro do orçamento, ou existe
+    InterrupcaoPorOrcamento registrada com orçamento, consumo e identificador de correlação
+    (P19.4). Ao concluir, tokens, custo estimado e quantidade de chamadas vão para a trilha
+    de auditoria da análise (R99.11)."""
+    def reservar(self, orcamento: OrcamentoDeExecucaoDeIA,
+                 estimativa: ConsumoDeIA) -> Autorizacao | InterrupcaoPorOrcamento: ...
+    def registrar(self, chamada: RegistroDeChamadaAProvedor) -> ConsumoDeIA: ...
+    def consumo_por_execucao(self, correlacao: UUID) -> ConsumoDeIA: ...
+    def consumo_por_periodo(self, de: date, ate: date) -> ConsumoDeIA: ...
+
+class CacheDeRespostaDeModelo(Protocol):                            # E/S
+    """R99.5 — indexado por tarefa, versão de prompt, versão de modelo e hash da entrada, com
+    validade IA-011. Acerto de cache **não** gera chamada a provedor (P19.5)."""
+    def obter(self, chave: ChaveDeCacheDeResposta) -> SaidaEstruturada | None: ...
+    def guardar(self, chave: ChaveDeCacheDeResposta, valor: SaidaEstruturada) -> None: ...
+
+class CacheDeRepresentacaoVetorial(Protocol):                       # E/S
+    """R99.6 — indexado por hash do segmento, provedor, modelo e versão, com validade IA-012:
+    sem expiração enquanto o modelo e o segmento não mudam.
+
+    Pós-condição: sem mudança de conteúdo, de modelo, de versão de prompt e de configuração de
+    segmentação, **nenhuma** nova geração é executada (R99.12, P19.6)."""
+    def obter(self, chave: ChaveDeCacheDeEmbedding) -> RepresentacaoVetorial | None: ...
+    def guardar(self, chave: ChaveDeCacheDeEmbedding,
+                valor: RepresentacaoVetorial) -> None: ...
+```
+
+Documento com hash já registrado reaproveita extração, segmentos e representações vetoriais
+existentes (`R99.7`, `R86.9`). A segmentação segue `IA-008` e `IA-009`, com tamanho e sobreposição
+registrados em cada segmento (`R99.8`). Extração, segmentação, geração de representação vetorial,
+recuperação e análise profunda executam **fora da requisição**, pelo `Executor_Assincrono`
+(`R99.10`, `R115.1`).
+
+### 30. Prompt versionado e registro de versões de IA (`R100`)
+
+```python
+@dataclass(frozen=True)
+class PromptVersionado:
+    """R100.1 — prompt é **configuração versionada**, não literal espalhado no código."""
+    prompt_id: str
+    versao: int
+    conteudo: str
+    tarefa: str
+    autor: str
+    criado_em: datetime
+
+@dataclass(frozen=True)
+class VersoesDeInterpretacao:
+    """R100.2, R100.8, R120.6 — o conjunto que torna uma interpretação reproduzível."""
+    prompt_id: str
+    versao_do_prompt: int
+    provedor: str
+    modelo: str
+    versao_do_modelo: str
+    versao_do_embedding: str
+    versao_da_segmentacao: str
+    versao_do_motor: VersaoDoMotor
+    data_de_corte: DataDeCorte
+    registrado_em: datetime
+
+def criar_versao_de_prompt(vigente: PromptVersionado, conteudo_novo: str,
+                           autor: str, motivo: str) -> PromptVersionado:
+    """R100.4 — alteração cria **nova versão**, com autor, data, motivo e diferença em relação
+    à anterior, preservando as versões anteriores (R62.1).
+
+    Pré-condição: `conteudo_novo` difere do vigente e `motivo` não é vazio.
+    Pós-condição: a nova versão é `vigente.versao + 1`, sem lacuna; nenhuma interpretação já
+    persistida é alterada (R100.10, R61.2, P19.8)."""
+
+def resolver_versoes_da_interpretacao(interpretacao_id: UUID) -> VersoesDeInterpretacao:
+    """R100.6 — para qualquer interpretação registrada, resolve **exatamente uma** versão de
+    prompt e uma versão de modelo (P19.7). Interpretação produzida por versão que não é mais a
+    vigente é apresentada com a versão registrada, nunca reescrita (R100.9)."""
+```
+
+Mudança de modelo ou de versão de modelo é registrada, e cada interpretação anterior permanece
+associada à versão que a produziu (`R100.5`, `REG-051`). O `Motor_de_Explicabilidade` apresenta a
+versão do prompt e a versão do modelo utilizados sempre que componente de linguagem participou da
+análise (`R100.7`, `R56`). Cada segmento e cada representação vetorial registram provedor, modelo,
+dimensões, versão e data da geração (`R100.3`).
+
+### 31. Motor de Recuperação (`R101`)
+
+```python
+class NaturezaDaInformacao(StrEnum):
+    """Enum **novo**, com quatro valores. R101.5 declara as três naturezas da informação
+    produzida; R123.4 acrescenta `PENDENTE` como a quarta natureza apresentável. Nenhum item
+    acumula mais de uma (P19.11, P22.5)."""
+    FATO_DO_DOCUMENTO = "FATO_DO_DOCUMENTO"
+    INTERPRETACAO_DA_IA = "INTERPRETACAO_DA_IA"
+    RESULTADO_DETERMINISTICO = "RESULTADO_DETERMINISTICO"
+    PENDENTE = "PENDENTE"
+
+@dataclass(frozen=True)
+class MetadadosDeSegmento:
+    """R101.2 — os **treze** metadados obrigatórios de todo segmento indexado (P19.10)."""
+    documento_id: UUID
+    versao_do_documento: int
+    imovel_id: UUID | None
+    oportunidade_id: UUID | None
+    pagina: int
+    trecho: str
+    tipo: TipoDeSegmentoDeConhecimento
+    data: date
+    origem: OrigemDeDocumento
+    hash_do_segmento: str
+    provedor_e_modelo_do_embedding: str
+    versao_do_embedding: str
+    versao_da_segmentacao: str
+
+@dataclass(frozen=True)
+class CitacaoResolvivel:
+    """R101.3 — citação que resolve documento, versão, página e trecho. Trecho sem citação
+    resolvível é **descartado do contexto**, com a ocorrência registrada (R101.4, P19.9)."""
+    documento_id: UUID
+    versao_do_documento: int
+    pagina: int
+    trecho: str
+
+class MotorDeRecuperacao(Protocol):                                 # E/S
+    """R101 — executa o pipeline de dez etapas de R101.1, na ordem declarada na seção
+    *Architecture*.
+
+    Pré-condição: a coleção consultada existe e declara provedor, modelo, dimensões, versão e
+    configuração de segmentação (R102.9); a consulta traz identificador de correlação.
+
+    Pós-condição: retorna no máximo IA-010 trechos, cada um com CitacaoResolvivel e pontuação;
+    registra consulta, coleção, trechos e versão do embedding (R101.9, R101.12).
+
+    Proibição: o resultado é **apoio à interpretação** e nunca evidência, valor de cálculo ou
+    verdade transacional (R101.11, D74); interpretação da IA nunca recebe a marcação de fato
+    do documento (R101.6)."""
+    def recuperar(self, consulta: str, colecao: NomeDeColecao,
+                  correlacao: UUID) -> Sequence[TrechoRecuperado]: ...
+    def montar_contexto(self, trechos: Sequence[TrechoRecuperado]) -> ContextoRecuperado: ...
+```
+
+Três coleções distintas — conhecimento normativo, dados do imóvel e histórico —, cada uma com
+política de atualização e validade própria (`R101.10`, `R72.7`, tabela `FRESH`). Falha total ou
+parcial de extração ou de OCR registra a causa de forma explícita, **preserva o arquivo original
+íntegro**, marca o conteúdo extraído como parcial e registra pendência (`R101.8`, `R86.2`). A
+interface abre o documento original na versão, na página e no trecho citados (`R101.7`, `R86.7`).
+
+### 32. Índice Vetorial e migração de representação vetorial (`R102`)
+
+O índice vetorial é **artefato derivado e reconstruível**, nunca fonte de verdade do domínio
+(`R102.1`). A verdade transacional vive em persistência relacional (`R102.10`, `R74`, `R86`), e o
+arquivo original, a extração e os segmentos vivem em persistência independente do índice
+(`R102.2`).
+
+```python
+@dataclass(frozen=True)
+class ColecaoDoIndiceVetorial:
+    """R102.9 — provedor, modelo, dimensões, versão, configuração de segmentação e data de
+    construção. Sem esses atributos, reindexar é adivinhação."""
+    nome: NomeDeColecao
+    provedor: str
+    modelo: str
+    dimensoes: int
+    versao: str
+    tamanho_do_segmento: int                  # IA-008
+    sobreposicao_do_segmento: int             # IA-009
+    construida_em: datetime
+
+class IndiceVetorial(Protocol):                                     # E/S
+    """R102.
+
+    Pré-condição: o arquivo original está preservado e íntegro (R86.2); a coleção de destino
+    está declarada.
+
+    Pós-condição: reindexar a partir do arquivo original **não altera** conteúdo nem hash do
+    original (R102.3, P19.13); reconstruir com o mesmo modelo e a mesma segmentação preserva
+    decisão, camada determinante, resultados determinísticos, versões de análise e evidências
+    (R102.7, P19.12, REG-050)."""
+    def indexar(self, representacoes: Sequence[RepresentacaoVetorial],
+                colecao: NomeDeColecao) -> None: ...
+    def buscar(self, vetor: Sequence[float], colecao: NomeDeColecao,
+               limite: int) -> Sequence[TrechoRecuperado]: ...
+    def reconstruir(self, colecao: NomeDeColecao) -> ColecaoDoIndiceVetorial: ...
+    def declarar_colecao(self, colecao: NomeDeColecao) -> ColecaoDoIndiceVetorial: ...
+
+def migrar_representacao_vetorial(origem: ColecaoDoIndiceVetorial,
+                                  destino: IdentidadeDeEmbedding,
+                                  manter_anterior: bool) -> ColecaoDoIndiceVetorial:  # E/S
+    """R102.4, R102.5 — ordem obrigatória: gerar a nova representação; validar a nova coleção;
+    publicar a nova coleção; manter ou remover a anterior conforme a configuração registrada.
+
+    Pré-condição: os arquivos originais e os segmentos existem em persistência transacional
+    independente do índice (R102.2).
+    Pós-condição: a dimensão é atributo da representação vetorial, não do documento (R102.6);
+    os resultados determinísticos permanecem inalterados (R102.7)."""
+```
+
+Índice indisponível executa a análise **sem** a etapa de recuperação, marca a etapa como não
+executada, registra pendência quando o checklist aplicável a exigia e **não altera por isso o
+resultado determinístico** (`R102.8`, `P19.14`).
+
+### 33. Orquestrador de Workflow de IA (`R103`)
+
+```python
+@dataclass(frozen=True)
+class EstadoDoWorkflowDeIA:
+    """R103.2 — estado **explícito**. Nada de estado implícito em fechamento de função: é o que
+    torna a retomada de R103.5 verificável (P19.15)."""
+    identificador_de_correlacao: UUID
+    analise_id: UUID
+    execucao_id: UUID
+    versoes: VersoesDeInterpretacao
+    versao_do_grafo: str                      # R103.13, R70.9
+    documentos: tuple[ReferenciaDeDocumento, ...]
+    evidencias_candidatas: tuple[PropostaDeEvidencia, ...]
+    mensagens: tuple[MensagemDoWorkflow, ...]
+    erros: tuple[ErroCatalogado, ...]
+    pontos_de_retomada: tuple[PontoDeRetomada, ...]
+    resultados_intermediarios: Mapping[str, object]
+    situacao: SituacaoDeTrabalhoAssincrono
+
+class OrquestradorDeWorkflowDeIA(Protocol):                         # E/S
+    """R103 — executa as onze etapas de R103.1 na ordem declarada na seção *Architecture*.
+
+    Pré-condição: a execução tem chave de idempotência (R103.12, R109.3); o orçamento de
+    execução de IA está reservado (R99.2); cada etapa tem limite de tempo IA-006 e até IA-007
+    tentativas (R103.3).
+
+    Pós-condição: cada etapa concluída registra o ponto de retomada correspondente (R103.4);
+    retomar produz o mesmo resultado da execução contínua com as mesmas entradas e versões
+    (R103.5, REG-056); falha após as tentativas marca a execução como **parcial**, preserva as
+    etapas concluídas e mantém a execução retomável (R103.6); a versão do grafo é registrada
+    em cada execução (R103.13, R70.9).
+
+    Proibições: não altera a ordem obrigatória do pipeline de R70.1 nem a precedência de
+    decisão de R53 (R103.14); não remove por configuração os pontos mínimos de intervenção
+    humana de R83.5 (R103.11); se a etapa do motor determinístico não conclui, **nenhuma
+    decisão é emitida** e a análise fica registrada como incompleta (R103.8)."""
+    def executar(self, estado: EstadoDoWorkflowDeIA) -> EstadoDoWorkflowDeIA: ...
+    def retomar(self, execucao_id: UUID) -> EstadoDoWorkflowDeIA: ...
+    def solicitar_intervencao(self, estado: EstadoDoWorkflowDeIA,
+                              motivo: MotivoDeIntervencao) -> SolicitacaoDeIntervencao: ...
+```
+
+A intervenção humana é **exigida e registrada** nas sete situações de `R103.9`: documento de
+qualidade insuficiente; evidência candidata ambígua; conflito entre fontes; processo judicial que
+exige interpretação; confiança de extração inferior a `IA-013`; saída estruturada inválida; e regra
+aplicável que exige confirmação. O interventor pode aceitar, corrigir, rejeitar, acrescentar
+evidência, registrar pendência e solicitar reanálise, e **cada ato vai para a trilha de auditoria**
+(`R103.10`, `R64.2`). Falha da etapa de recuperação **não interrompe** o workflow: as etapas que
+não dependem dela prosseguem e a ausência do contexto recuperado é registrada como limitação
+declarada da execução (`R103.7`).
+
+### 34. Agentes limitados e Servidor de Ferramentas (`R104`)
+
+```python
+@dataclass(frozen=True)
+class AgenteLimitado:
+    """R104.1 — escopo, ferramentas autorizadas, entradas e saídas admitidas, todos
+    declarados. Agente sem declaração não executa."""
+    nome: str
+    escopo: str
+    ferramentas_autorizadas: frozenset[str]
+    entradas_admitidas: frozenset[str]
+    saidas_admitidas: frozenset[str]
+
+AGENTES: Final[tuple[AgenteLimitado, ...]] = (
+    # R104.2 — exatamente cinco agentes, com o escopo de cada um:
+    # documental — localiza e extrai evidência candidata
+    # juridico — organiza informação jurídica e aponta lacuna
+    # de_mercado — localiza e organiza comparáveis candidatos
+    # de_diligencia — identifica pendências
+    # de_analise — coordena os demais
+)
+
+class ServidorDeFerramentas(Protocol):                              # E/S
+    """R104.6 a R104.13 — ferramentas de **leitura** e de **escrita** em catálogos distintos e
+    explicitamente rotulados.
+
+    Leitura (R104.7): consultar documento; buscar trecho de documento; consultar imóvel;
+    consultar oportunidade; consultar processo judicial; consultar comparáveis; consultar
+    parâmetros resolvidos.
+
+    Escrita (R104.8): registrar evidência candidata; atualizar rascunho de análise; registrar
+    revisão; registrar pendência; solicitar reanálise.
+
+    Pré-condição da escrita: ator autorizado, entrada válida contra o esquema declarado e
+    chave de idempotência presente (R104.9). Ausência de qualquer um dos três **rejeita a
+    invocação sem produzir efeito** (R104.10, P19.18, REG-057).
+
+    Pós-condição da escrita: exatamente um efeito persistido por chave, com o resultado da
+    primeira execução retornado nas repetições (R104.11, P19.17), e registro na trilha de
+    auditoria com ator, papel, data, entradas e saídas.
+
+    Proibição: nenhuma ferramenta altera captura registrada, evidência registrada, versão de
+    análise persistida, versão de regra ou versão de parâmetro (R104.12, R97.7). Cada
+    ferramenta invocada é registrada (R104.13, R71.10)."""
+    catalogo_de_leitura: Mapping[str, FerramentaDeLeitura]
+    catalogo_de_escrita: Mapping[str, FerramentaDeEscrita]
+
+    def invocar_leitura(self, nome: str, entrada: Mapping[str, object]) -> object: ...
+    def invocar_escrita(self, nome: str, entrada: Mapping[str, object], ator: Ator,
+                        chave: ChaveDeIdempotencia) -> ResultadoDeEscrita: ...
+```
+
+Nenhum agente recebe autoridade sobre parada absoluta, sobre o `Gate_Juridico`, sobre a precedência
+de decisão de `R53` e sobre os princípios invioláveis (`R104.3`). O agente **propõe** evidência
+candidata e **não registra** evidência (`R104.4`, `R71.5`), e nunca declara regularidade jurídica
+sem evidência documental suficiente (`R104.5`, `SAFE-003`, `R71.6`). `P19.22` é a propriedade que
+fecha a porta: para qualquer saída de qualquer agente, existindo `BLOQUEIO` jurídico ou parada
+absoluta acionada, a decisão permanece `BLOQUEAR` e o lance permanece não liberado.
+
+### 35. Avaliador de IA (`R105`)
+
+```python
+VERIFICACOES_DA_AVALIACAO_DE_IA: Final[tuple[str, ...]] = (
+    # R105.8 — exatamente nove verificações
+    "correcao_da_extracao", "correcao_da_citacao", "ausencia_de_alucinacao",
+    "preservacao_de_desconhecido", "consistencia_da_saida_estruturada",
+    "qualidade_da_recuperacao", "correcao_da_classificacao",
+    "regressao_de_prompt", "regressao_de_modelo",
+)
+
+class AvaliadorDeIA(Protocol):                                      # E/S
+    """R105.8 a R105.13 — suíte de avaliação **própria**, com casos-ouro de documento, reais
+    ou sintéticos representativos, com resultado esperado declarado por caso (R105.13).
+
+    Pós-condição: registra, por caso, documento, resultado esperado, resultado obtido, versão
+    do prompt e versão do modelo (R105.9); mudança de versão de prompt ou de modelo executa a
+    suíte e registra a comparação com a execução anterior (R105.10); regressão em qualquer
+    caso-ouro é reportada com caso, versão anterior e versão nova, e a nova versão **não é
+    promovida** sem registro explícito de aceitação (R105.11).
+
+    Proibição: esta suíte **não substitui** a suíte de propriedades do domínio determinístico e
+    não é substituída por ela (R105.12)."""
+    def executar(self, versoes: VersoesDeInterpretacao) -> RelatorioDeAvaliacaoDeIA: ...
+    def comparar(self, atual: RelatorioDeAvaliacaoDeIA,
+                 anterior: RelatorioDeAvaliacaoDeIA) -> Sequence[RegressaoDeIA]: ...
+```
+
+As regras anti-alucinação são de **fronteira**, não de prompt. Toda afirmação sobre o imóvel, a
+oportunidade ou o procedimento aponta trecho de documento citado (`R105.1`); sem trecho que a
+sustente, o campo é `DESCONHECIDO` ou a questão é `PENDENTE`, e **nenhuma afirmação é registrada**
+(`R105.2`, `P19.20`). São rejeitadas na saída: evidência sem documento; valor monetário sem trecho
+de origem; número de processo judicial sem documento; cláusula sem página; e data sem trecho de
+origem (`R105.3`). Conteúdo contraditório registra as duas leituras e marca o fato como conflitante
+(`R105.4`, `R20.5`). `DESCONHECIDO` permanece `DESCONHECIDO` em toda saída de componente de
+linguagem (`R105.5`, `SAFE-003`, `SAFE-004`, `P19.19`). Saída estruturada é exigida em toda
+extração, e saída que não satisfaz o esquema é rejeitada (`R105.6`, `P19.21`); rejeição após
+`IA-007` tentativas vai para intervenção humana (`R105.7`, `R103.9`).
+
+### 36. Motor do Radar e Execução do Radar (`R106`)
+
+```python
+class SituacaoDeExecucaoDoRadar(StrEnum):
+    """R106.4 — enum **novo** de infraestrutura, com seis valores."""
+    EM_EXECUCAO = "EM_EXECUCAO"; CONCLUIDA = "CONCLUIDA"
+    CONCLUIDA_COM_ERRO = "CONCLUIDA_COM_ERRO"; PARCIAL = "PARCIAL"
+    INTERROMPIDA = "INTERROMPIDA"; FALHA = "FALHA"
+
+@dataclass(frozen=True)
+class ExecucaoDoRadar:
+    """R106.1 — entidade de infraestrutura com **quinze** campos. Não é entidade de negócio e
+    não integra o dicionário de R74 (D96)."""
+    execucao_id: UUID
+    iniciada_em: datetime
+    concluida_em: datetime | None
+    fonte_id: UUID
+    conector_id: str
+    estrategia_de_captura: EstrategiaDeCaptura
+    versao: str
+    quantidade_capturada: int
+    quantidade_nova: int
+    quantidade_atualizada: int
+    quantidade_descartada: int
+    quantidade_candidata: int
+    erros: tuple[ErroDeExecucao, ...]
+    alertas: tuple[AlertaDeExecucao, ...]
+    situacao: SituacaoDeExecucaoDoRadar
+
+class MotorDoRadar(Protocol):                                       # E/S
+    """R106 — executa o ciclo de doze etapas de R106.2, na ordem declarada em *Architecture*.
+
+    Pré-condição: conectores ativos carregados; agendamento resolvido; chave de idempotência da
+    execução presente (R106.7, R109.2).
+
+    Pós-condição: exatamente uma ExecucaoDoRadar por ciclo disparado, com identificador de
+    correlação (R106.3, P20.2); a soma das quantidades classificadas por R108.2 é igual à
+    quantidade capturada (R106.5, P20.1); cada erro e cada alerta registram fonte, conector,
+    estratégia, página, identificador de correlação e causa (R106.11); interrupção preserva as
+    capturas registradas e o ponto de retomada, e mantém a execução retomável (R106.10,
+    R107.5).
+
+    Proibição: **nenhum** valor de `EstadoDeDecisao` é emitido (R106.6, R84.7, R93.4, P20.3). A
+    estratégia de captura é registrada apenas na execução e na captura, e não é exposta a
+    entidade, regra, parâmetro ou motor do domínio (R106.8, R85.3)."""
+    def executar_ciclo(self, fonte_id: UUID,
+                       chave: ChaveDeIdempotencia) -> ExecucaoDoRadar: ...
+    def retomar(self, execucao_id: UUID) -> ExecucaoDoRadar: ...
+    def historico(self, fonte_id: UUID) -> Sequence[ExecucaoDoRadar]: ...
+```
+
+A interface apresenta o histórico de execuções com data, fonte, conector, quantidades, erros,
+alertas e situação (`R106.9`).
+
+### 37. Validador de Captura e Estratégia de Captura (`R107`)
+
+```python
+VERIFICACOES_DE_CAPTURA: Final[tuple[str, ...]] = (
+    # R107.1 — exatamente seis verificações
+    "estrutura_esperada_da_fonte",
+    "quantidade_minima_plausivel",            # AQ-010
+    "presenca_dos_campos_essenciais",
+    "hash_do_conteudo",
+    "data_e_hora_da_obtencao",
+    "identificacao_da_fonte",
+)
+
+class ValidadorDeCaptura(Protocol):
+    """R107.1, R107.2 — função **pura** sobre o payload já preservado.
+
+    Pré-condição: o payload bruto está persistido de forma imutável (R85.6).
+
+    Pós-condição: toda captura recebe resultado nas seis verificações; verificação não
+    satisfeita registra erro observável nomeando **qual** falhou, grava a captura com estado
+    REJEITADA, preserva o payload e **não propaga o conteúdo ao domínio** (P20.5).
+
+    Resposta vazia é registrada como inválida por quantidade implausível e **nunca** classifica
+    ofertas conhecidas como removidas da fonte (R107.8, P20.7, REG-046). Resposta inválida ou
+    não interpretável preserva o payload, registra erro catalogado e mantém a última captura
+    válida como vigente (R107.9, R85.9, REG-047)."""
+    def validar(self, captura: RegistroDeCaptura,
+                referencia: RegistroDeCaptura | None) -> ResultadoDeValidacaoDeCaptura: ...
+
+class EstrategiaDeCaptura(Protocol):                                # E/S
+    """R107.4 a R107.11 — **adaptador** com quatro valores: página pública, endpoint, arquivo e
+    varredura (D94).
+
+    Aplica limite de tempo AQ-004, política de retry AQ-005, limite de taxa AQ-003, paginação
+    com limite AQ-006 e limite de itens AQ-007 (P20.10). Registra ponto de retomada a cada
+    AQ-012 e retoma do último ponto registrado (R107.5, P20.8).
+
+    Disjuntor: AQ-008 falhas consecutivas abrem o disjuntor, interrompem as chamadas àquela
+    fonte, registram a abertura com data, hora e causa, e a retomada só ocorre após AQ-009
+    (R107.7, P20.9, REG-060).
+
+    Pós-condição: cada campo essencial obtido é validado contra a estrutura declarada da fonte;
+    **nenhuma** dependência de seletor de página sem validação (R107.11)."""
+    valor: Literal["pagina_publica", "endpoint", "arquivo", "varredura"]
+
+    def obter_pagina(self, cursor: CursorDeCaptura) -> PaginaDeCaptura: ...
+    def ponto_de_retomada(self) -> PontoDeRetomada: ...
+```
+
+Mudança de estrutura além de `AQ-011` registra o erro catalogado `FONTE_ALTERADA`, notifica conforme
+`R121.1` e **não** registra a mudança como ausência de oferta (`R107.3`, `P20.6`, `REG-045`).
+Obtenção parcial das páginas registra a execução como `PARCIAL`, preserva as capturas obtidas e
+registra as páginas não obtidas (`R107.6`). Conteúdo idêntico a captura já registrada mantém um
+único registro e classifica o resultado como `SEM_ALTERACAO` (`R107.10`, `R2.3`); oferta obtida mais
+de uma vez na mesma execução mantém um único registro, com a duplicidade observada (`R107.12`).
+
+### 38. Classificação incremental da oferta na fonte (`R108`)
+
+```python
+class EstadoDaOfertaNaFonte(StrEnum):
+    """R108.2 — enum **novo** de infraestrutura, com seis valores. Toda oferta capturada recebe
+    exatamente um (P20.11)."""
+    NOVA = "NOVA"; ATUALIZADA = "ATUALIZADA"; SEM_ALTERACAO = "SEM_ALTERACAO"
+    REMOVIDA_DA_FONTE = "REMOVIDA_DA_FONTE"; INVALIDA = "INVALIDA"
+    INCONCLUSIVA = "INCONCLUSIVA"
+
+def classificar_oferta_capturada(atual: OfertaBruta,
+                                 ultima_valida: RegistroDeCaptura | None,
+                                 execucoes_sem_a_oferta: int) -> ClassificacaoIncremental:
+    """R108.1 a R108.8 — função **pura**. Compara por: hash do payload; hash de documento;
+    identificador externo; endereço canônico; matrícula; chave composta de oportunidade; e data
+    de atualização informada pela fonte.
+
+    Pós-condição: registra o critério que determinou a classificação e os valores comparados
+    (R108.8); `SEM_ALTERACAO` registra a verificação com data e hora e **não** reprocessa
+    normalização, enriquecimento, valuation e análise (R108.3, P20.12); `ATUALIZADA` registra
+    nova captura e submete a materialidade ao Monitor (R108.4, R57.2); `REMOVIDA_DA_FONTE`
+    exige AQ-013 execuções válidas consecutivas sem a oferta (R108.6) e **preserva
+    integralmente** imóvel, oportunidade, capturas, documentos, evidências e análises (R108.5,
+    P20.13, REG-048); comparação não conclusiva resulta em `INCONCLUSIVA` com pendência de
+    captura, **nunca** em `NOVA` (R108.7, P20.14).
+
+    Proibição: o estado da captura **não** deriva decisão, escore nem valuation — é
+    exclusivamente proveniência e gatilho de reavaliação (R108.11)."""
+```
+
+Oferta que volta a ser capturada depois de removida vincula-se ao imóvel e à oportunidade existentes
+(`R108.9`, `R9`), com o retorno registrado com data e hora. A interface apresenta, por oportunidade,
+o estado da última captura, a data da última verificação e o histórico de estados (`R108.10`).
+
+### 39. Chave de idempotência e as nove operações críticas (`R109`)
+
+```python
+class OperacaoCritica(StrEnum):
+    """R109.1 — exatamente **nove** operações críticas idempotentes."""
+    REGISTRO_DE_CAPTURA = "REGISTRO_DE_CAPTURA"
+    IMPORTACAO_DE_DOCUMENTO = "IMPORTACAO_DE_DOCUMENTO"
+    CRIACAO_DE_OPORTUNIDADE_A_PARTIR_DE_FONTE = "CRIACAO_DE_OPORTUNIDADE_A_PARTIR_DE_FONTE"
+    INDEXACAO_VETORIAL = "INDEXACAO_VETORIAL"
+    EXECUCAO_DE_ANALISE = "EXECUCAO_DE_ANALISE"
+    PROCESSAMENTO_DE_EVENTO = "PROCESSAMENTO_DE_EVENTO"
+    GERACAO_DE_CANDIDATO = "GERACAO_DE_CANDIDATO"
+    EXECUCAO_DO_RADAR = "EXECUCAO_DO_RADAR"
+    ESCRITA_POR_FERRAMENTA_DE_CONTEXTO = "ESCRITA_POR_FERRAMENTA_DE_CONTEXTO"
+
+@dataclass(frozen=True)
+class ChaveDeIdempotencia:
+    """R109.1 a R109.7 — **tipo próprio**, não texto solto no corpo da requisição. A validade é
+    PLT-007, e a chave aplicada é declarada por operação (R109.5)."""
+    valor: str
+    operacao: OperacaoCritica
+    expira_em: datetime
+
+def executar_idempotente(operacao: OperacaoCritica, chave: ChaveDeIdempotencia,
+                         efeito: Callable[[], T]) -> T:              # E/S
+    """R109.2 a R109.7.
+
+    Pré-condição: a chave existe ou a chave natural é derivável; ausência de ambas **rejeita a
+    operação informando a causa** (R109.6).
+
+    Pós-condição: exatamente um efeito persistido por chave dentro de PLT-007, com o resultado
+    da primeira execução retornado nas repetições (R109.3, P20.15, REG-049); repetição após
+    falha parcial completa o efeito faltante **sem duplicar** o já persistido (R109.4, P20.16);
+    cada repetição detectada é registrada na trilha com chave, data e resultado retornado
+    (R109.7).
+
+    A garantia é de **armazenamento** — restrição de unicidade, hash de conteúdo ou chave
+    natural declarada (R109.2) —, nunca de disciplina do chamador."""
+```
+
+A aplicação do esquema de dados e da carga inicial de parâmetros é idempotente (`R109.8`,
+`REG-028`), e reexecução com as mesmas entradas **não cria nova versão de análise** (`R109.9`,
+`R88.10`).
+
+### 40. Agendador e capacidades declaradas por fonte (`R110`)
+
+```python
+@dataclass(frozen=True)
+class ConfiguracaoDeAgendamento:
+    """R110.2 — **dez** atributos por fonte."""
+    fonte_id: UUID
+    frequencia: str                           # AQ-001
+    janela: tuple[time, time]                 # AQ-002
+    horario: time
+    ativa: bool
+    estrategia_de_captura: EstrategiaDeCaptura
+    checklist_de_triagem: str
+    filtros: Mapping[str, object]
+    limite_de_paginas: int                    # AQ-006
+    limite_de_itens: int                      # AQ-007
+    politica_de_retry: str                    # AQ-005
+
+@dataclass(frozen=True)
+class CapacidadeDeclaradaDeFonte:
+    """R110.6 — as dez capacidades declaradas, mais a data da última declaração (R110.11)."""
+    fonte_id: UUID
+    listagem_de_ofertas: bool
+    detalhe_da_oferta: bool
+    documentos_disponiveis: bool
+    imagens: bool
+    identificador_externo_estavel: bool
+    data_de_atualizacao: bool
+    matricula: bool
+    rodada_do_leilao: bool
+    valor_de_avaliacao: bool
+    endereco_completo: bool
+    declarada_em: datetime
+
+class Agendador(Protocol):                                          # E/S
+    """R110 — **adaptador**. Cron local, agendador de nuvem ou processo assíncrono mantêm a
+    mesma configuração e o mesmo registro de ExecucaoDoRadar (R110.4).
+
+    Pré-condição: a configuração de agendamento está ativa e resolvida.
+    Pós-condição: execução agendada que coincide com execução em curso da mesma fonte **não
+    inicia**, e a coincidência é registrada (R110.5, P20.17).
+
+    Proibição: o domínio não é acoplado ao mecanismo de agendamento — o disparo é operação do
+    Motor_do_Radar (R110.3)."""
+    def agendar(self, configuracao: ConfiguracaoDeAgendamento) -> None: ...
+    def disparar(self, fonte_id: UUID) -> ExecucaoDoRadar | Coincidencia: ...
+```
+
+A cobertura de dados de cada análise é resolvida a partir das capacidades declaradas da fonte, e
+**nenhuma fonte é presumida completa** (`R110.7`). Capacidade exigida por item do checklist aplicável
+e não declarada registra pendência com o item correspondente, e a ausência **nunca** é tratada como
+conformidade (`R110.8`, `P20.18`). Alteração de agendamento e de limites operacionais é restrita ao
+papel **Operador de Plataforma**, que não altera regra, parâmetro de negócio, evidência, análise nem
+decisão (`R110.9`), e vai para a trilha de auditoria (`R110.10`, `R64.2`). O `Conector_de_Fonte`
+informa as capacidades conforme `R85.1`, e a data da última declaração é registrada (`R110.11`).
+
+### 41. Gestor de Observabilidade (`R111`)
+
+```python
+@dataclass(frozen=True)
+class RegistroDeExecucaoRelevante:
+    """R111.2 — **treze** atributos por execução relevante."""
+    identificador_de_correlacao: UUID
+    identificador_de_rastro: str
+    execucao_id: UUID
+    log_estruturado: Mapping[str, object]
+    metricas: Mapping[str, Decimal]
+    duracao_em_ms: int
+    situacao: str
+    erro: ErroCatalogado | None
+    quantidade_de_repeticoes: int
+    custo_de_ia: Decimal
+    tokens: int
+    fonte: str
+    versoes_aplicadas: VersoesDeInterpretacao
+
+EXECUCOES_RELEVANTES: Final[tuple[str, ...]] = (
+    # R111.3 — treze espécies, no mínimo
+    "captura", "varredura", "processamento_de_documento", "extracao_e_ocr",
+    "geracao_de_representacao_vetorial", "recuperacao", "workflow_de_ia",
+    "invocacao_de_agente", "invocacao_de_ferramenta_de_contexto", "execucao_de_analise",
+    "reanalise", "execucao_do_radar", "envio_de_notificacao",
+)
+
+class GestorDeObservabilidade(Protocol):                            # E/S
+    """R111.
+
+    Pré-condição: toda execução relevante nasce com identificador de correlação atribuído
+    (R111.1) e o propaga a **todos** os registros daquela execução (P21.1).
+
+    Pós-condição: log estruturado consultável por campo (R111.4), retido por PLT-008 (R111.8);
+    erro registra identificador de correlação, código de R114.1, causa técnica e contexto
+    (R111.6); evento automático é distinguível de alteração manual (R111.9, R64.2).
+
+    Proibição: **nenhum** segredo, credencial ou token de acesso em log, métrica ou mensagem de
+    erro (R111.5, P21.2)."""
+    def abrir(self, especie: str, correlacao: UUID | None) -> RegistroDeExecucaoRelevante: ...
+    def fechar(self, registro: RegistroDeExecucaoRelevante) -> None: ...
+```
+
+O identificador de correlação é apresentado ao usuário em **toda** falha (`R111.7`, `R114.3`), e
+`MT-15` verifica que toda execução relevante o registra, falhando com o nome da execução sem
+identificador (`R111.10`).
+
+### 42. Gestor de Segurança (`R112`)
+
+```python
+VERIFICACOES_DE_UPLOAD: Final[tuple[str, ...]] = (
+    # R112.4 — exatamente quatro verificações
+    "tamanho_maximo",                         # PLT-001
+    "tipo_mime_aceito",                       # PLT-002
+    "coerencia_entre_extensao_mime_e_conteudo",
+    "nome_de_arquivo_sanitizado",
+)
+
+class GestorDeSeguranca(Protocol):                                  # E/S
+    """R112.
+
+    Pré-condição: a operação exposta está autenticada (R112.1, R79.8, R97.4) e autorizada pela
+    posse do recurso, pelo titular do ator e pelo papel exercido (R112.2, P21.7).
+
+    Pós-condição do upload: todo upload recebe resultado nas quatro verificações, e verificação
+    não satisfeita **impede a gravação** (P21.5); o arquivo é gravado com nome derivado do hash
+    e do identificador do documento, e o nome informado pelo remetente **nunca** é usado como
+    caminho de gravação (R112.6, P21.4); nome com travessia de caminho ou caminho absoluto é
+    recusado com a causa, a tentativa é registrada com identificador de correlação e **nada é
+    gravado** (R112.5, REG-053); tipo MIME fora de PLT-002 ou tamanho acima de PLT-001 produz o
+    erro catalogado `DOCUMENTO_INVALIDO` (R112.7).
+
+    Segredo e credencial vivem fora do código e fora do controle de versão, resolvidos por
+    ambiente (R112.3, R113.2). Cifragem em trânsito em toda comunicação externa, e em repouso
+    onde o armazenamento a oferecer (R112.12)."""
+    def autenticar(self, requisicao: Requisicao) -> Ator: ...
+    def autorizar(self, ator: Ator, recurso: Recurso, operacao: str) -> None: ...
+    def validar_upload(self, arquivo: ArquivoRecebido) -> ResultadoDeValidacaoDeUpload: ...
+
+@dataclass(frozen=True)
+class PoliticaDeProcessamentoDeDocumento:
+    """R112.10, IA-014 — política **explícita e registrada** por classe de documento: provedor,
+    finalidade, retenção e tratamento de dado pessoal."""
+    classe_do_documento: TipoDeDocumento
+    provedor: str
+    finalidade: str
+    retencao: str
+    tratamento_de_dado_pessoal: str
+    registrada_em: datetime
+
+def enviar_documento_a_provedor(documento: ReferenciaDeDocumento,
+                                politica: PoliticaDeProcessamentoDeDocumento | None
+                                ) -> EnvioAutorizado | RecusaDeEnvio:  # E/S
+    """R112.11 — sem política registrada para a classe do documento, o envio é **recusado**, a
+    recusa é registrada com identificador de correlação e pendência é aberta. Nenhum conteúdo é
+    transmitido ao provedor (P21.6, REG-052)."""
+```
+
+Acesso a documento e a download é controlado por posse, titular e papel (`R112.8`, `R86.7`), e cada
+ato de autenticação, autorização negada, upload e download vai para a trilha (`R112.9`, `R64.2`).
+
+### 43. Gestor de Configuração (`R113`)
+
+```python
+GRUPOS_DE_CONFIGURACAO: Final[tuple[str, ...]] = (
+    # R113.2 — dez grupos resolvidos por ambiente
+    "banco_de_dados", "armazenamento_de_arquivo", "provedor_de_modelo_de_linguagem",
+    "provedor_de_embedding", "indice_vetorial", "aquisicao", "agendamento",
+    "notificacoes", "limites_operacionais", "sinalizadores_de_recurso",
+)
+
+class GestorDeConfiguracao(Protocol):                               # E/S
+    """R113 — exatamente **três** ambientes de PLT-004: desenvolvimento, teste e produção
+    (R113.1).
+
+    Pré-condição: nenhuma credencial, segredo ou endereço sensível no código ou no controle de
+    versão (R113.3); credencial de interface de programação **própria por ambiente**, porque
+    assinatura de produto de conversação não é crédito de interface de programação (R113.4,
+    D98).
+
+    Pós-condição: configuração obrigatória ausente **impede a inicialização** do componente
+    dependente, registra a configuração ausente e **não aplica valor implícito** (R113.5,
+    P21.8); sinalizador desabilitado preserva o comportamento determinístico e registra a
+    capacidade como não executada (R113.7, P21.9); cada alteração de configuração de ambiente
+    vai para a trilha (R113.9, R64.2).
+
+    Proibição: **nenhum** sinalizador de recurso altera a precedência de decisão de R53, os
+    princípios invioláveis ou as paradas absolutas (R113.8)."""
+    def resolver(self, grupo: str, ambiente: str) -> Mapping[str, object]: ...
+    def sinalizador(self, nome: str, ambiente: str) -> bool: ...
+```
+
+Os sinalizadores de `PLT-012` — `radar_automatico`, `ia_documental`, `recuperacao_rag`, `agentes`,
+`ferramentas_mcp`, `notificacao_externa` e `modelo_local` — têm o estado vigente registrado por
+ambiente (`R113.6`).
+
+### 44. Gestor de Erros (`R114`)
+
+```python
+@dataclass(frozen=True)
+class ErroCatalogado:
+    """R114.1 — **cinco** atributos por erro: código; mensagem amigável em português; contexto;
+    identificador de correlação; e detalhe seguro."""
+    codigo: str
+    mensagem_amigavel: str
+    contexto: Mapping[str, object]
+    identificador_de_correlacao: UUID
+    detalhe_seguro: str
+    categoria: CategoriaDeErro
+
+class GestorDeErros(Protocol):                                      # E/S
+    """R114.
+
+    Pré-condição: a falha tem identificador de correlação atribuído (R111.1).
+
+    Pós-condição: toda falha resulta em **exatamente uma** das quinze categorias de R114.2
+    (P21.10); o usuário recebe mensagem amigável, ação possível e identificador de correlação
+    (R114.3); o detalhe técnico fica no log estruturado, associado ao mesmo identificador
+    (R114.4); cada erro apresentado é registrado com categoria, código, identificador e data
+    (R114.8); erro não catalogado é apresentado como falha interna com identificador de
+    correlação, com o detalhe técnico registrado e pendência de catalogação aberta (R114.7).
+
+    Proibição: **nenhuma** mensagem apresentada ao usuário contém rastro de execução, consulta ao
+    banco de dados, caminho de arquivo interno ou mensagem de biblioteca (R114.3). Este catálogo
+    **estende** R79.9 e R97.5 e é o **único** do produto: catálogo paralelo é defeito (R114.5,
+    D100)."""
+    def catalogar(self, erro: Exception, correlacao: UUID) -> ErroCatalogado: ...
+    def apresentar(self, erro: ErroCatalogado) -> RespostaDeErro: ...
+```
+
+O catálogo completo das quinze categorias, com código, mensagem amigável, contexto e estado HTTP,
+está na seção *Error Handling*. `MT-14` verifica que cada categoria tem código, mensagem amigável e
+mapeamento declarados, e que nenhuma mensagem apresentada contém detalhe técnico (`R114.9`).
+
+### 45. Executor Assíncrono (`R115`)
+
+```python
+class SituacaoDeTrabalhoAssincrono(StrEnum):
+    """R115.4 — enum **novo** de infraestrutura, com seis valores. A situação nunca regride de
+    concluída para em execução (P21.12)."""
+    ENFILEIRADO = "ENFILEIRADO"; EM_EXECUCAO = "EM_EXECUCAO"
+    CONCLUIDO = "CONCLUIDO"; CONCLUIDO_COM_ERRO = "CONCLUIDO_COM_ERRO"
+    INTERROMPIDO = "INTERROMPIDO"; FALHA = "FALHA"
+
+@dataclass(frozen=True)
+class TrabalhoAssincrono:
+    """R115.3 — identificador, tipo, situação, progresso, início, término, identificador de
+    correlação, erro quando houver e resultado."""
+    trabalho_id: UUID
+    tipo: str
+    situacao: SituacaoDeTrabalhoAssincrono
+    progresso: Decimal
+    iniciado_em: datetime
+    concluido_em: datetime | None
+    identificador_de_correlacao: UUID
+    erro: ErroCatalogado | None
+    resultado: Mapping[str, object] | None
+
+PROCESSAMENTOS_ASSINCRONOS: Final[tuple[str, ...]] = (
+    # R115.1 — oito processamentos executados fora da requisição
+    "extracao_e_ocr", "geracao_de_representacao_vetorial", "recuperacao",
+    "analise_profunda", "varredura", "download_de_documento_extenso", "reanalise",
+    "indexacao",
+)
+
+class ExecutorAssincrono(Protocol):                                 # E/S
+    """R115.
+
+    Pré-condição: o trabalho tem chave de idempotência (R115.8, R109.3).
+
+    Pós-condição: o disparo responde com identificador do trabalho e situação inicial (R115.2);
+    operação síncrona que excede PLT-009 é **convertida** em trabalho assíncrono, com o
+    identificador retornado e a conversão registrada (R115.6, R115.7, P21.11); falha preserva o
+    efeito já persistido, registra o erro catalogado e mantém o trabalho retomável quando a
+    operação for retomável (R115.9)."""
+    def submeter(self, tipo: str, entrada: Mapping[str, object],
+                 chave: ChaveDeIdempotencia) -> TrabalhoAssincrono: ...
+    def consultar(self, trabalho_id: UUID) -> TrabalhoAssincrono: ...
+```
+
+A interface apresenta situação e progresso de cada trabalho em curso (`R115.5`, `R122.7`).
+
+### 46. Contrato de programação versionável e eventos de domínio (`R116`, `R117`)
+
+```python
+@dataclass(frozen=True)
+class DeclaracaoDeOperacaoExposta:
+    """R116.2 — **oito** elementos declarados por operação exposta."""
+    requisicao: EsquemaDeclarado
+    resposta: EsquemaDeclarado
+    erros_possiveis: frozenset[CategoriaDeErro]
+    paginacao: DeclaracaoDePaginacao | None
+    filtros: frozenset[str]
+    ordenacao: frozenset[str]
+    autorizacao_exigida: frozenset[str]
+    chave_de_idempotencia_exigida: bool
+
+@dataclass(frozen=True)
+class Pagina(Generic[T]):
+    """R116.3 — tamanho padrão PLT-006 e máximo PLT-005, com total, página corrente e indicador
+    de continuação. Tamanho acima do máximo é **rejeitado informando o limite** (R116.4,
+    P21.14). A concatenação das páginas é exatamente a coleção ordenada, sem perda e sem
+    repetição (P21.13)."""
+    itens: tuple[T, ...]
+    total: int
+    pagina_corrente: int
+    tem_proxima: bool
+
+class EventoDeDominio(StrEnum):
+    """R117.1 — **onze** fatos publicados como evento de domínio."""
+    IMOVEL_CRIADO = "IMOVEL_CRIADO"; OPORTUNIDADE_CAPTURADA = "OPORTUNIDADE_CAPTURADA"
+    DOCUMENTO_ADICIONADO = "DOCUMENTO_ADICIONADO"
+    DOCUMENTO_PROCESSADO = "DOCUMENTO_PROCESSADO"
+    EVIDENCIA_REGISTRADA = "EVIDENCIA_REGISTRADA"
+    ANALISE_EXECUTADA = "ANALISE_EXECUTADA"; ANALISE_REANALISADA = "ANALISE_REANALISADA"
+    RISCO_ALTERADO = "RISCO_ALTERADO"; DECISAO_ALTERADA = "DECISAO_ALTERADA"
+    EXECUCAO_DO_RADAR_CONCLUIDA = "EXECUCAO_DO_RADAR_CONCLUIDA"
+    CANDIDATO_CRIADO = "CANDIDATO_CRIADO"
+```
+
+A interface de programação é **versionada**, com a versão declarada em cada recurso exposto
+(`R116.1`), e mudança incompatível publica nova versão mantendo a anterior declarada até a data de
+encerramento registrada (`R116.7`). Chave de idempotência é exigida na criação de oportunidade a
+partir de fonte, na importação de documento, na execução de análise, na reanálise, no disparo de
+execução do Radar e na escrita por ferramenta de contexto (`R116.5`). Recursos, campos e valores de
+domínio em português (`R116.8`, `R97.3`), sob as famílias de `R97.1` e as operações de `R97.2`, sem
+contrato paralelo (`R116.6`), e cada operação exposta vai para a trilha (`R116.9`, `R64.2`).
+
+Cada evento registra identificador, tipo, data e hora, identificador de correlação, **identificador
+do titular**, ator ou processo, entidade afetada e versão (`R117.2`). O processamento é idempotente
+(`R117.3`, `P21.15`) e **não emite decisão, não altera resultado determinístico e não altera
+precedência** (`R117.4`, `P21.16`). Onde a ordem de execução é exigida pelo pipeline de `R70.1`, a
+chamada permanece **direta**: evento não substitui ordem obrigatória (`R117.6`). Evento sem consumidor
+é registrado sem exigir consumidor (`R117.5`), e falha de processamento registra erro catalogado
+mantendo o evento reprocessável (`R117.7`).
+
+### 47. Versão do motor e data de corte (`R120`)
+
+```python
+@dataclass(frozen=True)
+class VersaoDoMotor:
+    """R120.1, PLT-003 — tipo de **primeira classe**, não texto solto. Registrada em cada
+    análise, cada decisão e cada resultado calculado (P21.20)."""
+    maior: int
+    menor: int
+    correcao: int
+
+@dataclass(frozen=True)
+class DataDeCorte:
+    """R120.4 — tipo de **primeira classe**. Nenhuma evidência com data de observação posterior
+    a ela é admitida naquela versão de análise (R120.5, P21.21, REG-058)."""
+    valor: date
+
+CONJUNTO_REPRODUZIVEL: Final[tuple[str, ...]] = (
+    # R120.6 — onze elementos registrados por análise
+    "documentos_e_versoes", "evidencias", "parametros_resolvidos_e_versoes",
+    "checklist_e_versao", "versao_das_regras", "versao_do_motor", "versao_do_prompt",
+    "versao_do_modelo", "versao_do_embedding", "versao_da_segmentacao", "data_de_corte",
+)
+
+def reproduzir_analise_historica(analise_id: UUID) -> ReproducaoDeAnalise:  # E/S
+    """R120.7, R120.10.
+
+    Pré-condição: a análise existe e registra os onze elementos do conjunto reproduzível.
+    Pós-condição: usa **exclusivamente** as versões registradas naquela análise e produz a mesma
+    decisão (R62.8, P21.22); se a reprodução depender de estado mutável atual, é reportada como
+    **não verificável** e não é apresentada como reprodução fiel (R120.10)."""
+```
+
+Regra alterada de modo que a decisão de alguma entrada mude **publica nova versão do motor**, com a
+mudança registrada (`R120.2`, `R62.1`), e cada análise é apresentada com a versão que a produziu,
+mantendo interpretável o histórico de versões anteriores (`R120.3`). Toda evidência registra a data
+de observação e é marcada como expirada conforme a tabela `FRESH`; evidência expirada **não** é
+apresentada como atual (`R120.8`). O `Motor_de_Backtest` registra, por execução, data de corte,
+versão do motor, versão das regras, fontes disponíveis e dados utilizados (`R120.9`, `R60.4`,
+`SAFE-015`).
+
+### 48. Gestor de Notificações e Gestor de Acompanhamento (`R121`)
+
+```python
+@dataclass(frozen=True)
+class Notificacao:
+    """R121.2 — contrato **único** de canal: destinatário, assunto, conteúdo, prioridade, data e
+    situação de entrega."""
+    destinatario: str
+    assunto: str
+    conteudo: str
+    prioridade: str
+    criada_em: datetime
+    situacao_de_entrega: str
+    evento: EventoDeDominio
+    canal: str
+
+class GestorDeNotificacoes(Protocol):                               # E/S
+    """R121.1 a R121.5 — dez eventos publicam notificação **local**: nova oportunidade;
+    oportunidade atualizada; preço alterado; documento novo; pendência resolvida; risco alterado;
+    decisão alterada; oportunidade removida da fonte; execução do Radar concluída; e erro de
+    captura.
+
+    Pré-condição: o evento correspondente existe em R117.1.
+
+    Pós-condição: cada evento do catálogo gera **exatamente uma** notificação local registrada,
+    com situação de entrega (R121.9, P21.23); canal externo habilitado em PLT-013 usa **o mesmo**
+    contrato (R121.3).
+
+    Proibição: a prioridade e o controle de fadiga de alerta são os de R59; catálogo de alerta
+    paralelo é defeito (R121.5). Entrega por canal externo é capacidade `P1`, e a notificação
+    local é o comportamento da primeira versão (R121.4)."""
+    def publicar(self, notificacao: Notificacao) -> None: ...
+
+EIXOS_DE_ACOMPANHAMENTO: Final[tuple[str, ...]] = (
+    # R121.6 — sete eixos
+    "preco", "rodada_do_leilao", "disponibilidade", "documentos", "riscos",
+    "processos_judiciais", "mudanca_de_decisao",
+)
+
+class GestorDeAcompanhamento(Protocol):                             # E/S
+    """R121.6 a R121.8.
+
+    Pós-condição: mudança relevante em eixo acompanhado publica o evento de R117.1, submete a
+    materialidade ao Monitor (R57.2) e permite a reanálise (R88.2); mudança em eixo **não**
+    acompanhado não gera notificação (P21.24). Cada acompanhamento registra ator, data de início,
+    eixos, condição de encerramento e situação (R121.8, R57, R58)."""
+    def acompanhar(self, oportunidade_id: UUID, eixos: frozenset[str],
+                   ator: Ator) -> Acompanhamento: ...
+```
+
+### 49. Design System e os nove estados de tela (`R122` a `R125`)
+
+O Domínio S **estende** `R66`, `R67`, `R68` e `R94`: não cria segunda interface nem segunda ficha de
+análise (`R123.7`).
+
+```python
+class EstadoDeTela(StrEnum):
+    """R122.1 — enum **novo** de infraestrutura, com nove valores. Toda tela e todo componente
+    que dependa de dado remoto declara os nove (MT-16, P22.1)."""
+    CARREGANDO = "CARREGANDO"; ESQUELETO = "ESQUELETO"; VAZIO = "VAZIO"
+    ERRO = "ERRO"; REPETICAO = "REPETICAO"; PARCIAL = "PARCIAL"
+    DADO_OBSOLETO = "DADO_OBSOLETO"; CONFIRMACAO = "CONFIRMACAO"; SUCESSO = "SUCESSO"
+
+@dataclass(frozen=True)
+class DeclaracaoDeTela:
+    """Declaração **verificável** por MT-16 e por P22.1: a tela é dado, não convenção de
+    implementação. É o que permite reprovar tela sem estado vazio (REG-054)."""
+    nome: str
+    destino: str                              # um dos nove destinos de R123.1
+    estados_declarados: frozenset[EstadoDeTela]
+    componentes: tuple[str, ...]
+    tabelas_com_alternativa_responsiva: frozenset[str]   # R124.3
+
+DESTINOS_DE_NAVEGACAO: Final[tuple[str, ...]] = (
+    # R123.1 — nove destinos
+    "painel", "radar", "imoveis", "oportunidades", "analises", "pendencias",
+    "documentos", "monitoramento", "configuracoes",
+)
+
+ORDEM_DE_LEITURA_DA_ANALISE: Final[tuple[str, ...]] = (
+    # R123.3 — oito blocos, nesta ordem: a decisão primeiro, os detalhes técnicos por último
+    "decisao", "justificativa", "bloqueios", "pendencias", "indicadores_financeiros",
+    "riscos", "evidencias", "detalhes_tecnicos",
+)
+
+FAMILIAS_DE_COMPONENTES: Final[tuple[str, ...]] = (
+    # R125.1 — nove famílias do DesignSystem
+    "cartao", "etiqueta", "indicador_de_situacao", "tabela", "formulario",
+    "caixa_de_dialogo", "alerta", "grafico", "esqueleto",
+)
+```
+
+**Estados de tela** (`R122`). Dado remoto em obtenção apresenta carregando ou esqueleto (`R122.2`);
+conjunto vazio apresenta o estado vazio com motivo e ação possível (`R122.3`); falha apresenta a
+mensagem amigável de `R114.3`, o identificador de correlação e a ação de repetição (`R122.4`);
+resultado parcial identifica o obtido e o que permanece pendente (`R122.5`); dado expirado conforme a
+tabela `FRESH` mostra o indicador de dado obsoleto com a data da observação (`R122.6`); trabalho
+assíncrono em curso mostra situação e progresso (`R122.7`); ação que altera estado de forma relevante
+exige confirmação e retorna sucesso (`R122.8`). **Tela sem conteúdo e sem explicação do estado é
+proibida** (`R122.9`).
+
+**Navegação e ordem de leitura** (`R123`). Nove destinos; da oportunidade listada até a análise em no
+máximo **dois** passos (`R123.2`, `P22.4`); a análise é lida na ordem canônica de oito blocos
+(`R123.3`, `P22.3`); cada informação recebe **exatamente uma** das quatro naturezas de
+`NaturezaDaInformacao` (`R123.4`, `P22.5`); cada fato do documento traz a citação até documento,
+versão, página e trecho (`R123.5`, `R101.3`); a camada determinante da decisão é apresentada
+(`R123.6`, `R53`, `R56`); cada pendência traz impacto, responsável, prazo e condição de encerramento
+(`R123.8`, `R37`); cada valor traz o estado de informação correspondente (`R123.9`, `R66.11`).
+
+**Responsividade** (`R124`). Todas as telas são utilizáveis em largura igual ou inferior a `PLT-011`
+e acima dela (`R124.1`). Em tela estreita: listas como cartões, detalhes em acordeões, resumo da
+decisão fixo, filtros em gaveta, documentos em lista e navegação de evidências simplificada
+(`R124.2`); **toda tabela complexa tem representação responsiva alternativa** (`R124.3`, `P22.7`); as
+ações principais da tela de análise permanecem alcançáveis em uso com uma das mãos (`R124.4`). Envio
+de documento funciona em qualquer largura, inclusive a partir da câmera e da galeria do dispositivo
+(`R124.5`, `R112.4`). Decisão, bloqueios, pendências e explicação são preservados em qualquer largura
+(`R124.7`, `P22.6`). Aplicativo móvel nativo é fora de escopo; a interface web responsiva é
+obrigatória desde a primeira versão (`R124.6`, `D92`).
+
+**Design system e acessibilidade** (`R125`). Catálogo único de cores semânticas, tipografia e
+espaçamento, mais nove famílias de componentes (`R125.1`), com uma cor semântica para cada estado de
+`EstadoDeDecisao` e cada nível de severidade de risco (`R125.2`). A interface usa **exclusivamente**
+o catálogo (`R125.3`, `P22.8`). Toda função é operável por teclado, com ordem de foco declarada e
+foco visível (`R125.4`, `P22.11`); cada campo tem rótulo associado e cada mensagem de erro está
+associada ao campo correspondente (`R125.5`, `P22.10`); contraste igual ou superior a `PLT-010`
+(`R125.6`); texto alternativo em cada imagem, gráfico e ícone que comunique informação (`R125.7`);
+atributos ARIA onde não há semântica nativa equivalente (`R125.8`); **estado e decisão nunca dependem
+só de cor** (`R125.9`, `P22.9`); todo rótulo, mensagem e estado em português (`R125.10`, `R94.2`).
+
 ---
 
 ## Data Models
@@ -3235,7 +4708,8 @@ pronto.
 Esta seção é a **fonte do modelo físico** do produto. Ela absorve o modelo de dados que antes
 vivia em documento separado e passa a normatizar, por si, o esquema PostgreSQL, os modelos ORM e
 as migrações. A lista de integridade ao fim da seção vem de `D.9` do requirements, ampliada pelas
-entidades novas do Domínio O, e é exigência, não recomendação.
+entidades novas do Domínio O e pelas entidades de infraestrutura e de plataforma dos Domínios P a T,
+e é exigência, não recomendação.
 
 Todas as tabelas, colunas, índices, restrições e enums são nomeados em **português** (`D72`). A
 renomeação do esquema existente em `db/schema.sql`, dos modelos ORM em `src/radar/db/` e dos
@@ -3458,6 +4932,65 @@ São **61 entidades**. As marcadas **nova** vêm do Domínio O ou do dicionário
 | `intervencoes_humanas` | Ator, papel, data, objeto afetado e justificativa de cada um dos **sete** pontos mínimos de `R83.5`, inclusive promoção manual de candidato (`R93.7`). | `R83.7`. |
 | `falhas_de_integridade` | **Nova** (`R86.8`): documento, versão, hash registrado, hash recalculado, data da detecção, pendência crítica aberta, situação. | Enquanto aberta, impede apresentar o conteúdo extraído como evidência. |
 
+### Entidades de infraestrutura e de plataforma — 15 entidades, **fora** do conjunto de `R74`
+
+As entidades abaixo vêm dos Domínios P a T e são **entidades de infraestrutura e de plataforma**.
+Elas **não integram** o dicionário de entidades de negócio de `R74`, e a contagem de **61 entidades
+de negócio permanece inalterada** (`D96`). A distinção não é cosmética: entidade de negócio carrega
+`tenant_id` e `usuario_responsavel_id` por `R118.1` e é objeto de `MT-13`; entidade de
+infraestrutura carrega titular apenas quando o dado é do titular, e nunca participa de cálculo de
+negócio, de escore, de decisão nem de precedência.
+
+| Entidade | Conteúdo | Chaves e notas |
+|----------|----------|----------------|
+| `execucoes_do_radar` | **Nova** (`R106.1`): os **quinze** campos — identificador, início, término, fonte, conector, estratégia de captura, versão, quantidade capturada, nova, atualizada, descartada e candidata, erros, alertas e situação. | `UNIQUE (fonte_id, janela, agendamento_id)` — uma execução por ciclo (`R106.7`, `P20.2`). Append-only. **Sem** coluna de decisão, escore, valuation ou custo (`R106.6`). |
+| `trabalhos_assincronos` | **Nova** (`R115.3`): identificador, tipo, situação, progresso, início, término, identificador de correlação, erro e resultado. | Índice em `(situacao, iniciado_em)`; `UNIQUE (tipo, chave_de_idempotencia)` (`R115.8`). |
+| `prompts_versionados` | **Nova** (`R100.1`): `prompt_id`, versão, conteúdo, tarefa, autor, data, motivo e diferença em relação à versão anterior. | `UNIQUE (prompt_id, versao)`; `CHECK (versao >= 1)` e gatilho de contiguidade (`R100.4`). Append-only. |
+| `colecoes_do_indice_vetorial` | **Nova** (`R102.9`): nome, provedor, modelo, dimensões, versão, tamanho e sobreposição de segmento, data de construção, situação de publicação. | `UNIQUE (nome, versao)`. Artefato **derivado e reconstruível** (`R102.1`). |
+| `representacoes_vetoriais` | **Nova** (`R100.3`, `R102.6`): segmento, provedor, modelo, **dimensões**, versão, data da geração, coleção, vetor. | `UNIQUE (segmento_id, provedor, modelo, versao)`. É esta tabela que desacopla a dimensão do documento: o vetor sai de `segmentos_de_documento` e passa a viver aqui, o que é o que torna a migração de `R102.5` possível sem tocar o original. |
+| `configuracoes_de_agendamento` | **Nova** (`R110.2`): os **dez** atributos por fonte — frequência, janela, horário, situação, estratégia de captura, checklist de triagem, filtros, limite de páginas, limite de itens e política de retry. | `UNIQUE (fonte_id, ativa)` parcial para `ativa = true`. Alteração restrita ao Operador de Plataforma e registrada na trilha (`R110.9`, `R110.10`). |
+| `capacidades_declaradas_de_fonte` | **Nova** (`R110.6`): as dez capacidades declaradas mais a data da última declaração. | `UNIQUE (fonte_id, declarada_em)`. Capacidade ausente exigida por item de checklist gera pendência (`R110.8`, `P20.18`). |
+| `sinalizadores_de_recurso` | **Nova** (`R113.6`, `PLT-012`): nome, ambiente, estado vigente, autor da última alteração, data. | `UNIQUE (nome, ambiente)`. Nenhum sinalizador altera precedência, princípio inviolável ou parada absoluta (`R113.8`). |
+| `erros_catalogados` | **Nova** (`R114.1`): código, categoria entre as **quinze** de `R114.2`, mensagem amigável em português, contexto, identificador de correlação, detalhe seguro, data. | `UNIQUE (codigo)` no catálogo e append-only no registro de ocorrência (`R114.8`). Catálogo **único** do produto (`R114.5`, `D100`). |
+| `notificacoes` | **Nova** (`R121.2`): evento, canal, destinatário, assunto, conteúdo, prioridade, data, situação de entrega. | Append-only (`R121.9`). Uma notificação local por evento do catálogo (`P21.23`). |
+| `acompanhamentos` | **Nova** (`R121.6`): oportunidade, ator, data de início, eixos entre os **sete** de `R121.6`, condição de encerramento, situação. | `UNIQUE (oportunidade_id, ator_id)`; histórico preservado (`R121.8`). |
+| `politicas_de_processamento_de_documento` | **Nova** (`R112.10`, `IA-014`): classe do documento, provedor, finalidade, retenção, tratamento de dado pessoal, data do registro. | `UNIQUE (classe_do_documento, provedor)`. Sem política registrada, **nenhum** conteúdo é transmitido ao provedor (`R112.11`, `REG-052`). |
+| `chaves_de_idempotencia` | **Nova** (`R109.1`): valor, operação crítica entre as **nove** de `R109.1`, efeito persistido, resultado retornado, data, validade `PLT-007`. | `UNIQUE (operacao, valor)` com validade — é a restrição de armazenamento que **é** a garantia de `R109.2`, não a disciplina do chamador. |
+| `registros_de_chamada_a_provedor` | **Nova** (`R98.11`): identificador de correlação, tarefa, provedor, modelo, versão, tokens de entrada e de saída, duração, custo estimado, truncamento, data. | Append-only. Base do custo de `R99.1` e da observabilidade de `R111.2` (`P19.3`). |
+| `eventos_de_dominio` | **Nova** (`R117.2`): identificador, tipo entre os **onze** de `R117.1`, data e hora, identificador de correlação, **identificador do titular**, ator ou processo, entidade afetada, versão, situação de processamento. | Append-only; `UNIQUE (tipo, entidade_afetada, versao)` para tornar o processamento idempotente (`R117.3`, `P21.15`). Evento **não** decide (`R117.4`, `P21.16`). |
+
+Duas entidades **já existentes** são citadas aqui por completude da visão de plataforma e **não são
+recontadas** entre as quinze acima:
+
+- `segmentos_de_documento` continua sendo a entidade do dicionário, **ampliada** com os treze
+  metadados obrigatórios de `R101.2`; o vetor migra para `representacoes_vetoriais`, porque a
+  dimensão é atributo da representação e não do documento (`R102.6`).
+- `falhas_de_integridade` continua declarada no dicionário de entidades (`R86.8`) e serve às duas
+  leituras: é registro de negócio da pendência crítica e é sinal de plataforma na verificação de
+  integridade do download.
+
+### Titular e usuário responsável em cada entidade de negócio (`R118`)
+
+**Toda** entidade de negócio do dicionário declara `tenant_id` e `usuario_responsavel_id`
+(`R118.1`). Não é campo opcional acrescentado por conveniência: é a condição para que abrir o
+produto a outros investidores **não exija migração** das 61 entidades já gravadas (`R118.9`,
+`D96`).
+
+| Consequência física | Declaração |
+|---------------------|------------|
+| Coluna em toda tabela de negócio | `tenant_id UUID NOT NULL` e `usuario_responsavel_id UUID NOT NULL`, com chave estrangeira para `titulares` e `usuarios`. |
+| Índice de isolamento | Índice por `tenant_id` em **toda** tabela de negócio, e índice composto `(tenant_id, <chave de acesso>)` onde a consulta é por chave de negócio. |
+| Isolamento em toda consulta | Toda consulta, listagem e operação exposta filtra por titular (`R118.2`); consulta sem o identificador do titular é **rejeitada informando a causa**, sem retornar dado (`R118.5`, `P21.17`, `REG-059`). |
+| Autorização | Posse do recurso mais titular do ator mais papel exercido (`R118.3`, `R112.2`). |
+| Configuração resolvível por titular | Parâmetro, checklist, perfil e sinalizador de recurso resolvem por titular na hierarquia de escopo do Catálogo Normativo de Parâmetros (`R118.4`). |
+| Titular único | Operação de titular único registra o **titular padrão do ambiente** e mantém ativas a coluna e a verificação de isolamento (`R118.7`). |
+| Auditoria | O identificador do titular é registrado em cada evento de auditoria (`R118.6`, `R64.2`) e em cada evento de domínio (`R117.2`). |
+| Fora de escopo | Plano comercial, limite comercial, medição para cobrança e cobrança permanecem fora desta versão, com as abstrações de titular, usuário, consumo de IA, armazenamento e auditoria **declaradas** (`R118.8`, `D96`). |
+
+`MT-13` é o meta-teste que impede a regressão: ele percorre as entidades de negócio do dicionário e
+**falha nomeando a entidade** que não declara os dois identificadores (`R118.10`). `P21.18` verifica,
+por propriedade, que toda entidade de negócio persistida tem os dois campos preenchidos.
+
 ### Cardinalidades
 
 - `fontes` 1—N `conectores` · 1—N `capturas` · 1—N `documentos`
@@ -3487,7 +5020,9 @@ São **61 entidades**. As marcadas **nova** vêm do Domínio O ou do dicionário
 
 Os enums do banco espelham exatamente os enums de domínio, todos nomeados em português, e as
 contagens abaixo são parte do contrato: alterar qualquer uma delas é mudança de nível `alto` ou
-`critico` por `R62.4`, verificada por `MT-09`. São **60 enums**.
+`critico` por `R62.4`, verificada por `MT-09`. São **60 enums de negócio**, contagem que o
+fechamento arquitetural **não altera**; os **7 enums de infraestrutura** dos Domínios P a T são
+declarados na subseção seguinte e contados separadamente.
 
 | Enum (implementação) | Rótulo no requirements | Valores | Requisito |
 |----------------------|------------------------|---------|-----------|
@@ -3553,10 +5088,34 @@ contagens abaixo são parte do contrato: alterar qualquer uma delas é mudança 
 `PortaDeEntrada` com exatamente **dois** valores é a forma estrutural de `R84.1`: uma terceira
 porta não é configurável, é mudança de esquema com revisão de nível `critico`.
 
+#### Enums de infraestrutura — 7 enums
+
+Estes sete enums são **de infraestrutura e de plataforma**: nenhum deles participa de cálculo de
+negócio, de escore, de decisão ou de precedência. As contagens são igualmente contrato e são
+verificadas por `MT-09` junto com as dos enums de negócio.
+
+| Enum (implementação) | Valores | Requisito |
+|----------------------|---------|-----------|
+| `SituacaoDeExecucaoDoRadar` | **6** — `EM_EXECUCAO`, `CONCLUIDA`, `CONCLUIDA_COM_ERRO`, `PARCIAL`, `INTERROMPIDA`, `FALHA` | `R106.4` |
+| `EstadoDaOfertaNaFonte` | **6** — `NOVA`, `ATUALIZADA`, `SEM_ALTERACAO`, `REMOVIDA_DA_FONTE`, `INVALIDA`, `INCONCLUSIVA` | `R108.2` |
+| `EstrategiaDeCaptura` | **4** — página pública, endpoint, arquivo, varredura | `R106.1`, `D94` |
+| `CategoriaDeErro` | **15** — o catálogo de `R114.2`, detalhado em *Error Handling* | `R114.2` |
+| `SituacaoDeTrabalhoAssincrono` | **6** — `ENFILEIRADO`, `EM_EXECUCAO`, `CONCLUIDO`, `CONCLUIDO_COM_ERRO`, `INTERROMPIDO`, `FALHA` | `R115.4` |
+| `EstadoDeTela` | **9** — carregando, esqueleto, vazio, erro, repetição, parcial, dado obsoleto, confirmação, sucesso | `R122.1` |
+| `NaturezaDaInformacao` | **4** — fato do documento, interpretação da IA, resultado determinístico, pendente | `R101.5`, `R123.4` |
+
+Duas observações que são contrato e não redação. `EstrategiaDeCaptura` tem quatro valores e é
+**invisível ao domínio**: aparece na Execução do Radar e na captura, e em nenhuma entidade de
+negócio, regra, parâmetro de negócio ou motor (`R85.3`, `R106.8`, `D94`, `P20.4`).
+`NaturezaDaInformacao` tem **quatro** valores porque `R101.5` declara três naturezas da informação
+produzida e `R123.4` acrescenta `PENDENTE` como a quarta natureza apresentável na interface; o enum
+é único e cobre as duas exigências, em lugar de dois enums que divergiriam.
+
 ### Integridade — lista normativa
 
-Cada item abaixo é exigência de `D.9` ou do Domínio O. O esquema físico declara todos; nenhum é
-opcional. São **dezesseis** itens.
+Cada item abaixo é exigência de `D.9`, do Domínio O ou dos Domínios P a T. O esquema físico declara
+todos; nenhum é opcional. São **vinte e quatro** itens: os dezesseis do projeto anterior e os oito
+acrescentados pelo fechamento arquitetural, do item 17 ao 24.
 
 1. **Índice único parcial de matrícula.** `CREATE UNIQUE INDEX ... ON identificadores_de_imovel (tipo, valor) WHERE tipo = 'matricula'`. O `UNIQUE (imovel_id, tipo, valor)` anterior permitia a mesma matrícula em dois imóveis distintos, o que contradiz `R9.1`: matrícula é evidência decisiva de identidade. O identificador ganha também coluna de origem (`fonte_id` ou `documento_id`).
 2. **Unicidade de documento por vínculo e hash.** `UNIQUE (imovel_id, oportunidade_id, hash_do_arquivo)` em `documentos`, substituindo o `UNIQUE (hash)` global do esquema anterior. Duas exigências se encontram aqui: o mesmo edital coletado por duas fontes distintas deve registrar as duas proveniências em lugar de falhar na segunda (`D.9.3`); e o mesmo arquivo reenviado no **mesmo** vínculo é o mesmo documento e mantém um único registro (`R86.9`, `P17.4`).
@@ -3574,6 +5133,14 @@ opcional. São **dezesseis** itens.
 14. **Unicidade de execução de checklist por análise.** `UNIQUE (analise_id)` em `execucoes_de_checklist` e `UNIQUE (execucao_id, item_id)` em `resultados_de_item_de_checklist`. Exatamente uma execução por análise e exatamente um resultado por item aplicável, ou `nao_aplicavel` com justificativa não nula — é a restrição que torna `P16.1` e `P17.16` verificáveis no banco, não só em memória (`R92.4`, `R92.7`).
 15. **Append-only nas novas tabelas de snapshot.** Gatilhos que rejeitam `UPDATE` e `DELETE` em `versoes_de_documento`, `resultados_de_triagem`, `execucoes_de_checklist`, `resultados_de_item_de_checklist`, `andamentos_processuais`, `diferencas_de_comparacao`, `analises_documentos` e `intervencoes_humanas`. Cada uma dessas tabelas é registro do que foi observado em um instante; reescrevê-las apagaria a diferença entre "mudou" e "sempre foi assim", que é exatamente o que `R88` precisa medir.
 16. **Duas dimensões de versão independentes, garantidas no banco.** Nenhuma restrição, gatilho, sequência ou coluna calculada relaciona `versoes_de_documento.versao` a `analises.versao`. A independência é verificada por `P17.8` e a ausência de acoplamento é revisada como parte do item 12 — derivar uma da outra é o defeito que a restrição existe para impedir (`R87.3`).
+17. **Unicidade de execução do Radar por fonte, janela e agendamento.** `UNIQUE (fonte_id, janela, agendamento_id)` em `execucoes_do_radar`. É o que torna estrutural a exigência de uma execução por ciclo disparado: disparo repetido do mesmo ciclo não cria segunda execução, e a segunda tentativa recebe o resultado da primeira (`R106.7`, `R109.2`, `P20.2`). A exclusão mútua de execuções em curso para a mesma fonte é a mesma restrição vista de outro ângulo (`R110.5`, `P20.17`).
+18. **Append-only nas tabelas de infraestrutura que são registro do observado.** Gatilhos que rejeitam `UPDATE` e `DELETE` em `execucoes_do_radar`, `registros_de_chamada_a_provedor`, `notificacoes`, `prompts_versionados` e `eventos_de_dominio`. Cada uma delas registra o que aconteceu num instante: reescrevê-las apagaria a diferença entre "mudou" e "sempre foi assim", que é exatamente o que a auditoria de `R64`, o custo de `R99.1` e a rastreabilidade de versão de `R100.2` precisam medir.
+19. **`CHECK` de contiguidade de versão de prompt.** `UNIQUE (prompt_id, versao)`, `CHECK (versao >= 1)` e gatilho que rejeita inserção cuja versão não seja `máximo(versao) + 1` para aquele `prompt_id`. Sem o gatilho, `UNIQUE` admite a sequência 1, 2, 5, e a diferença em relação à versão anterior exigida por `R100.4` deixa de ser calculável. É o mesmo tratamento do item 12 aplicado a prompt, e pela mesma razão.
+20. **Unicidade de segmento por extração e índice.** `UNIQUE (extracao_id, indice_do_segmento)` em `segmentos_de_documento` e `UNIQUE (segmento_id, provedor, modelo, versao)` em `representacoes_vetoriais`. A primeira restrição é o que torna a reingestão idempotente (`R99.7`, `P15.3`); a segunda é o que permite conviver mais de um provedor e mais de uma dimensão sobre o mesmo segmento durante a migração de `R102.5`, sem duplicar segmento.
+21. **Unicidade de chave de idempotência com validade.** `UNIQUE (operacao, valor)` em `chaves_de_idempotencia`, com `expira_em` derivado de `PLT-007` e índice por `expira_em` para expurgo. A garantia de idempotência das nove operações críticas é **de armazenamento**, não de disciplina do chamador (`R109.2`, `R109.3`, `P20.15`): repetição dentro da validade retorna o resultado da primeira execução, e repetição após falha parcial completa o efeito faltante sem duplicar o já persistido (`R109.4`, `P20.16`).
+22. **Índice por `tenant_id` em toda tabela de negócio.** Índice por `tenant_id` nas 61 tabelas de entidade de negócio, e índice composto `(tenant_id, <chave de acesso>)` onde a consulta é por chave de negócio. Sem ele, o isolamento de `R118.2` custa varredura completa em cada listagem, e o que deveria ser restrição de segurança viraria opção de desempenho.
+23. **Restrição que impede consulta a entidade de negócio sem titular.** O acesso a entidade de negócio passa por repositório que **exige** o identificador do titular na assinatura, e a política de acesso no banco rejeita consulta sem o predicado de titular. Consulta sem titular é rejeitada informando a causa, sem retornar dado (`R118.5`, `P21.17`, `REG-059`). A dupla barreira é deliberada: a assinatura impede o erro na aplicação, a política impede o erro em consulta manual e em rotina de manutenção.
+24. **`CHECK` que impede evidência com data de observação posterior à data de corte.** Restrição que rejeita vincular a uma versão de análise evidência cuja data de observação seja posterior à `data_de_corte` registrada naquela versão. A evidência **não** é apagada nem alterada: ela permanece disponível para uma **nova** versão de análise, e a recusa é registrada (`R120.4`, `R120.5`, `P21.21`, `REG-058`). É o antiviés temporal de `SAFE-015` levado da regra ao esquema.
 
 ### Ponto único de verdade dos limites por estratégia
 
@@ -3601,7 +5168,7 @@ execuções válidas de um sistema — essencialmente, uma afirmação formal so
 deve fazer. As propriedades são a ponte entre a especificação legível por humanos e as
 garantias de correção verificáveis por máquina.*
 
-Esta seção é a **imagem exata** das famílias `P1` a `P17` do requirements. A rastreabilidade é
+Esta seção é a **imagem exata** das famílias `P1` a `P22` do requirements. A rastreabilidade é
 bidirecional e total: nenhuma propriedade do requirements fica sem correspondente aqui, e nenhuma
 propriedade aqui existe sem origem lá. O identificador de origem vem **entre parênteses no título**
 de cada propriedade, para que a verificação de rastreabilidade seja mecânica (meta-teste `MT-01`).
@@ -3609,15 +5176,24 @@ de cada propriedade, para que a verificação de rastreabilidade seja mecânica 
 Os títulos e os enunciados usam os identificadores de implementação em português, conforme a
 tabela de correspondência de rótulos normativos do Overview.
 
-**Total: 171 propriedades executáveis**, numeradas de 1 a 171, distribuídas em dezessete famílias.
-O requirements arrola **172** entradas; a diferença é `P7.12`, que não é propriedade: é um
-contraexemplo verificado, registrado ao fim da família 7 como teste dirigido.
+**Total: 262 propriedades executáveis**, numeradas de 1 a 262, distribuídas em **vinte e duas
+famílias**. O requirements arrola **263** entradas; a diferença é `P7.12`, que não é propriedade: é
+um contraexemplo verificado, registrado ao fim da família 7 como teste dirigido.
 
 ```
 P1   5 · P2  13 · P3  11 · P4   8 · P5   5 · P6  12 · P7  11 · P8   8 · P9   5
 P10 20 · P11 19 · P12  5 · P13 10 · P14  7 · P15  4 · P16  6 · P17 22
-5+13+11+8+5+12+11+8+5+20+19+5+10+7+4+6+22 = 171
+P18 15 · P19 22 · P20 18 · P21 24 · P22 12
+5+13+11+8+5+12+11+8+5+20+19+5+10+7+4+6+22 = 171   (famílias 1 a 17)
+15+22+18+24+12 = 91                               (famílias 18 a 22)
+171 + 91 = 262
 ```
+
+As cinco famílias novas vêm de `D97`. `P18` fecha a lacuna registrada lá: antes dela **nenhuma**
+propriedade cobria `R21` a `R25`, e mercado, comparáveis e valuation eram verificados apenas por
+exemplo dirigido. As famílias `P19` a `P21` cobrem infraestrutura de IA, aquisição resiliente e
+plataforma; `P22` cobre experiência do investidor e fechamento arquitetural. A versão anterior deste
+design declarava **171 propriedades em dezessete famílias** — registro histórico, superado por este.
 
 **Família 1 — Preservação e identidade da captura**
 
@@ -4521,13 +6097,495 @@ fixas (`REG-033`), e o teto conservador permanece rotulado como referência info
 *Para qualquer* execução do ciclo de prova do MVP, cada um dos dezoito passos possui requisito associado e resultado verificável, e nenhum passo é reportado como satisfeito sem execução registrada. Gerador: execuções completas e parciais do ciclo.
 **Validates: Requirements 95.1, 95.2, 95.6**
 
+**Família 18 — Mercado, comparáveis e valuation**
+
+Esta família fecha a lacuna registrada em `D97`. Ela é a razão pela qual o valuation deixa de ser
+verificado apenas por exemplo dirigido: o `Motor_de_Valuation` é função pura sobre conjuntos de
+comparáveis, e é exatamente o tipo de componente em que a variação de entrada revela o defeito.
+
+### Property 172: Determinismo da seleção de comparáveis (`P18.1`)
+
+*Para qualquer* conjunto de candidatos com os mesmos parâmetros resolvidos, a seleção produz sempre o mesmo conjunto selecionado. Gerador: conjuntos de candidatos arbitrários.
+**Validates: Requirements 21.1**
+
+### Property 173: Confluência da seleção de comparáveis (`P18.2`)
+
+*Para qualquer* permutação da ordem dos candidatos, o conjunto selecionado e as faixas de valor são idênticos. Gerador: permutações do mesmo conjunto.
+**Validates: Requirements 21.1, 22.1**
+
+### Property 174: Monotonicidade do raio e da janela (`P18.3`)
+
+*Para qualquer* ampliação do raio de `VAL-003` ou da janela de `VAL-004`, o conjunto de comparáveis elegíveis nunca diminui. Gerador: raios e janelas crescentes.
+**Validates: Requirements 21.2**
+
+### Property 175: Monotonicidade da confiança do valuation (`P18.4`)
+
+*Para qualquer* acréscimo de comparável qualificado, a confiança do valuation nunca diminui. Gerador: conjuntos com incremento de comparáveis.
+**Validates: Requirements 22.1, 22.2**
+
+### Property 176: Cobertura total das faixas de confiança do valuation (`P18.5`)
+
+*Para qualquer* quantidade e qualidade de comparáveis, a classificação retorna exatamente uma faixa de confiança, sem lacuna e sem sobreposição. Gerador: quantidades de 0 a 50 combinadas com qualidades `A` a `E`.
+**Validates: Requirements 22.2**
+
+### Property 177: Quantidade insuficiente nunca produz precisão (`P18.6`)
+
+*Para qualquer* conjunto com menos de `VAL-001` comparáveis qualificados, o valuation nunca é apresentado como preciso. Gerador: conjuntos com zero a quatro comparáveis.
+**Validates: Requirements 22.3**
+
+### Property 178: Ordenação das referências de valor (`P18.7`)
+
+*Para qualquer* conjunto coerente de premissas, venda rápida ≤ conservador ≤ provável ≤ otimista. Gerador: premissas coerentes arbitrárias.
+**Validates: Requirements 23.1**
+
+### Property 179: Contenção do valor provável (`P18.8`)
+
+*Para qualquer* conjunto de premissas, o valor de mercado provável está entre a referência conservadora e a otimista. Gerador: conjuntos arbitrários de premissas.
+**Validates: Requirements 23.1, 23.2**
+
+### Property 180: Independência da avaliação da fonte (`P18.9`)
+
+*Para qualquer* oferta, alterar apenas a avaliação da fonte não altera nenhuma faixa de valor nem a confiança do valuation. Gerador: ofertas com avaliação da fonte variada.
+**Validates: Requirements 21.8, 3.10**
+
+### Property 181: Totalidade do método de valuation por tipo de ativo (`P18.10`)
+
+*Para qualquer* tipo de ativo declarado, resolve-se exatamente um método de valuation aplicável. Gerador: tipos de ativo declarados.
+**Validates: Requirements 24.1**
+
+### Property 182: Idempotência do valuation (`P18.11`)
+
+*Para qualquer* conjunto de comparáveis e parâmetros, recalcular o valuation produz o mesmo resultado. Gerador: conjuntos arbitrários.
+**Validates: Requirements 22.1**
+
+### Property 183: Candidato reprovado não influencia o resultado (`P18.12`)
+
+*Para qualquer* conjunto com candidatos reprovados pelos critérios de qualificação, removê-los não altera nenhuma faixa de valor. Gerador: conjuntos com candidatos reprovados.
+**Validates: Requirements 21.3**
+
+### Property 184: Limiar de revaluation dispara no valor exato (`P18.13`)
+
+*Para qualquer* mudança de magnitude igual ou superior ao limiar, o revaluation é disparado; magnitude inferior não dispara. Gerador: magnitudes em torno de cada limiar, incluindo o valor exato.
+**Validates: Requirements 25.1, 25.2**
+
+### Property 185: Comparável fora da janela nunca é atual (`P18.14`)
+
+*Para qualquer* comparável com data fora da janela de `VAL-004`, ele não entra no conjunto de referência do valor corrente. Gerador: comparáveis com datas variadas.
+**Validates: Requirements 21.2**
+
+### Property 186: Ausência de comparável qualificado resulta em DESCONHECIDO (`P18.15`)
+
+*Para qualquer* conjunto vazio ou integralmente reprovado, o valuation é `DESCONHECIDO`, nunca valor derivado da avaliação da fonte. Gerador: conjuntos vazios e conjuntos integralmente reprovados.
+**Validates: Requirements 22.4**
+
+**Família 19 — Infraestrutura de IA, provedores, custo e avaliação**
+
+### Property 187: Invariância de provedor (`P19.1`)
+
+*Para qualquer* par de execuções com provedores ou modelos distintos, o resultado determinístico é idêntico para as mesmas evidências, parâmetros e versões de regra. Gerador: pares de execuções com provedores distintos, por dublê de provedor; teste baseado em modelo.
+**Validates: Requirements 98.9, 98.5**
+
+### Property 188: Isolamento do núcleo (`P19.2`)
+
+*Para qualquer* módulo do núcleo, o fechamento transitivo de importações não contém cliente de modelo de linguagem, de embedding, de armazenamento externo nem de agendamento. Gerador: grafo de importações do núcleo.
+**Validates: Requirements 98.5, 119.3**
+
+### Property 189: Registro completo de chamada a provedor (`P19.3`)
+
+*Para qualquer* sequência de chamadas, cada uma persiste identificador de correlação, tarefa, provedor, modelo, versão, tokens de entrada, tokens de saída, duração e custo. Gerador: sequências de chamadas com dublês.
+**Validates: Requirements 98.11**
+
+### Property 190: Orçamento nunca é excedido em silêncio (`P19.4`)
+
+*Para qualquer* sequência de chamadas, ou o consumo acumulado permanece dentro do orçamento, ou existe registro de interrupção com orçamento, consumo e identificador de correlação. Gerador: sequências de chamadas com custos e tokens variados.
+**Validates: Requirements 99.2, 99.3, 99.4**
+
+### Property 191: Idempotência do cache de resposta (`P19.5`)
+
+*Para qualquer* consulta repetida com a mesma tarefa, versão de prompt, versão de modelo e hash de entrada, o valor retornado é o mesmo e nenhuma nova chamada a provedor é gerada. Gerador: consultas repetidas arbitrárias.
+**Validates: Requirements 99.5**
+
+### Property 192: Reprocessamento mínimo (`P19.6`)
+
+*Para qualquer* sequência de submissões do mesmo documento sem mudança de conteúdo, de modelo, de versão de prompt e de configuração de segmentação, nenhuma nova geração de representação vetorial é executada. Gerador: sequências de submissões do mesmo documento.
+**Validates: Requirements 99.7, 99.12**
+
+### Property 193: Rastreabilidade de versão da interpretação (`P19.7`)
+
+*Para qualquer* interpretação registrada, resolve-se exatamente uma versão de prompt e uma versão de modelo. Gerador: interpretações arbitrárias.
+**Validates: Requirements 100.2, 100.6**
+
+### Property 194: Imutabilidade da interpretação registrada (`P19.8`)
+
+*Para qualquer* sequência de mudanças de prompt e de modelo, as interpretações já persistidas permanecem inalteradas. Gerador: sequências de mudanças de versão.
+**Validates: Requirements 100.5, 100.9, 100.10**
+
+### Property 195: Citação sempre resolvível (`P19.9`)
+
+*Para qualquer* trecho entregue no contexto, a citação resolve documento, versão, página e trecho existentes. Gerador: conjuntos de segmentos arbitrários, incluindo documentos com página única e com páginas ausentes.
+**Validates: Requirements 101.3, 101.4**
+
+### Property 196: Metadados mínimos do segmento (`P19.10`)
+
+*Para qualquer* segmento indexado, os treze metadados obrigatórios estão preenchidos. Gerador: documentos arbitrários.
+**Validates: Requirements 101.2**
+
+### Property 197: Separação de naturezas da informação (`P19.11`)
+
+*Para qualquer* saída de análise, nenhum item acumula mais de uma natureza, e interpretação da IA nunca recebe a marcação de fato do documento. Gerador: saídas de análise arbitrárias.
+**Validates: Requirements 101.5, 101.6**
+
+### Property 198: Reconstrução do índice não altera resultado (`P19.12`)
+
+*Para qualquer* estado submetido a reconstrução com o mesmo modelo e a mesma segmentação, decisão, camada determinante e resultados determinísticos são preservados. Gerador: estados arbitrários submetidos a reconstrução.
+**Validates: Requirements 102.7**
+
+### Property 199: Reindexação preserva o arquivo original (`P19.13`)
+
+*Para qualquer* sequência de reindexações, trocas de provedor e mudanças de segmentação, o conteúdo e o hash de cada arquivo original permanecem inalterados. Gerador: sequências arbitrárias de migração.
+**Validates: Requirements 102.3, 102.6, 86.2**
+
+### Property 200: Degradação sem contaminação (`P19.14`)
+
+*Para qualquer* estado, com o índice vetorial indisponível o resultado determinístico é igual ao obtido com o índice disponível, e a etapa de recuperação é registrada como não executada. Gerador: estados com e sem índice disponível.
+**Validates: Requirements 102.8**
+
+### Property 201: Retomada equivalente do workflow (`P19.15`)
+
+*Para qualquer* ponto de retomada registrado, retomar a execução interrompida produz o mesmo resultado da execução contínua com as mesmas entradas e versões. Gerador: pontos de interrupção arbitrários no grafo de etapas; teste baseado em modelo.
+**Validates: Requirements 103.5, 103.6**
+
+### Property 202: Idempotência da execução do workflow (`P19.16`)
+
+*Para qualquer* chave de idempotência e qualquer `n`, disparar a mesma execução `n` vezes persiste exatamente uma execução. Gerador: chave e `n` em 1 a 10.
+**Validates: Requirements 103.12, 109.3**
+
+### Property 203: Escrita por ferramenta é idempotente e auditada (`P19.17`)
+
+*Para qualquer* ferramenta de escrita, chave e `n`, invocá-la `n` vezes com a mesma chave produz exatamente um efeito persistido e `n` registros de auditoria. Gerador: ferramenta, chave e `n` em 1 a 10.
+**Validates: Requirements 104.9, 104.11**
+
+### Property 204: Autorização é necessária na escrita por ferramenta (`P19.18`)
+
+*Para qualquer* invocação de ferramenta de escrita sem autorização, com entrada inválida ou sem chave de idempotência, nenhum efeito é persistido. Gerador: invocações com atributos ausentes e inválidos.
+**Validates: Requirements 104.10**
+
+### Property 205: Preservação de DESCONHECIDO na extração por IA (`P19.19`)
+
+*Para qualquer* documento em que o campo não está presente, a extração retorna `DESCONHECIDO`, nunca valor inferido. Gerador: documentos com subconjuntos aleatórios de campos omitidos.
+**Validates: Requirements 105.2, 105.5**
+
+### Property 206: Ausência de evidência nunca vira afirmação (`P19.20`)
+
+*Para qualquer* saída de componente de linguagem sem trecho de origem, o resultado registrado é `DESCONHECIDO` ou `PENDENTE`. Gerador: saídas geradas com e sem citação.
+**Validates: Requirements 105.1, 105.2, 105.3**
+
+### Property 207: Totalidade do esquema de saída estruturada (`P19.21`)
+
+*Para qualquer* saída, ela satisfaz o esquema declarado e é aceita, ou não o satisfaz e é rejeitada. Gerador: saídas arbitrárias, incluindo malformadas, truncadas e com campos extras.
+**Validates: Requirements 105.6, 105.7**
+
+### Property 208: Nenhum agente supera parada absoluta (`P19.22`)
+
+*Para qualquer* saída de qualquer `Agente_Limitado`, existindo `BLOQUEIO` jurídico ou parada absoluta acionada, a decisão permanece `BLOQUEAR` e o lance permanece não liberado. Gerador: saídas de agente arbitrárias combinadas com estados de bloqueio.
+**Validates: Requirements 104.3, 53.4**
+
+**Família 20 — Aquisição resiliente, captura incremental e agendamento**
+
+### Property 209: Conservação das quantidades da execução (`P20.1`)
+
+*Para qualquer* execução, a soma das ofertas classificadas nos seis estados é igual à quantidade capturada registrada. Gerador: execuções arbitrárias.
+**Validates: Requirements 106.5, 108.2**
+
+### Property 210: Uma execução por ciclo (`P20.2`)
+
+*Para qualquer* ciclo e qualquer `n`, disparar o mesmo ciclo `n` vezes para a mesma fonte, janela e agendamento persiste exatamente uma execução. Gerador: ciclo e `n` em 1 a 10.
+**Validates: Requirements 106.7, 109.2**
+
+### Property 211: A execução do Radar nunca decide (`P20.3`)
+
+*Para qualquer* execução do Radar, nenhum valor de `EstadoDeDecisao`, `EscoreDeOportunidade`, `EscoreDeAderencia`, valuation ou custo econômico total é produzido. Gerador: execuções arbitrárias.
+**Validates: Requirements 106.6, 93.2**
+
+### Property 212: Estratégia de captura invisível ao domínio (`P20.4`)
+
+*Para qualquer* payload obtido por estratégias de captura distintas, a oferta normalizada, o resultado determinístico e a decisão são idênticos, e a estratégia aparece apenas na execução e na captura. Gerador: payloads iguais obtidos por estratégias distintas.
+**Validates: Requirements 106.8, 85.3**
+
+### Property 213: Totalidade da validação de captura (`P20.5`)
+
+*Para qualquer* captura, existe resultado nas seis verificações, e qualquer verificação não satisfeita impede a propagação ao domínio. Gerador: capturas arbitrárias, incluindo truncadas, vazias e sem hash.
+**Validates: Requirements 107.1, 107.2**
+
+### Property 214: Mudança de estrutura da fonte é observável (`P20.6`)
+
+*Para qualquer* captura cuja estrutura difira da última válida além do tolerado, existe erro registrado e nenhum dado é propagado ao domínio. Gerador: capturas com campos removidos, renomeados, reordenados e com tipos alterados.
+**Validates: Requirements 107.3**
+
+### Property 215: Resposta vazia nunca remove oferta (`P20.7`)
+
+*Para qualquer* execução com resposta vazia, nenhuma oferta conhecida é classificada como removida da fonte. Gerador: respostas vazias combinadas com conjuntos conhecidos arbitrários.
+**Validates: Requirements 107.8**
+
+### Property 216: Retomada da captura (`P20.8`)
+
+*Para qualquer* ponto de retomada registrado, retomar a captura produz o mesmo conjunto de capturas da execução contínua. Gerador: pontos de interrupção arbitrários entre páginas.
+**Validates: Requirements 107.5, 107.6**
+
+### Property 217: Disjuntor monotônico nas falhas (`P20.9`)
+
+*Para qualquer* sequência de falhas e sucessos, atingido o limiar de falhas consecutivas nenhuma nova chamada à fonte ocorre antes do intervalo de reabertura. Gerador: sequências de falhas e sucessos.
+**Validates: Requirements 107.7**
+
+### Property 218: Limite de taxa respeitado (`P20.10`)
+
+*Para qualquer* execução, a quantidade de requisições por minuto a uma fonte nunca excede o limite configurado. Gerador: execuções com volumes e concorrência variados.
+**Validates: Requirements 107.4**
+
+### Property 219: Totalidade da classificação incremental (`P20.11`)
+
+*Para qualquer* par de capturas da mesma oferta, a oferta capturada recebe exatamente um dos seis estados. Gerador: pares de capturas arbitrárias da mesma oferta.
+**Validates: Requirements 108.2**
+
+### Property 220: Idempotência da captura incremental (`P20.12`)
+
+*Para qualquer* oferta e qualquer `n`, capturá-la `n` vezes sem alteração produz uma única captura registrada e `n` verificações com estado `SEM_ALTERACAO`. Gerador: oferta e `n` em 1 a 10.
+**Validates: Requirements 108.3, 2.3**
+
+### Property 221: Remoção na fonte não apaga histórico (`P20.13`)
+
+*Para qualquer* sequência que inclua remoção e retorno da oferta, as quantidades de capturas, documentos, evidências e versões de análise nunca diminuem. Gerador: sequências com remoção, ausência prolongada e retorno.
+**Validates: Requirements 108.5, 108.9**
+
+### Property 222: Comparação inconclusiva nunca cria oferta nova (`P20.14`)
+
+*Para qualquer* par com evidência insuficiente de identidade, o estado é `INCONCLUSIVA` com pendência registrada, nunca `NOVA`. Gerador: pares com evidência fraca de identidade.
+**Validates: Requirements 108.7**
+
+### Property 223: Idempotência das nove operações críticas (`P20.15`)
+
+*Para cada uma* das nove operações críticas, qualquer chave e qualquer `n`, executá-la `n` vezes com a mesma chave produz exatamente um efeito persistido. Gerador: operação, chave e `n` em 1 a 10.
+**Validates: Requirements 109.1, 109.3**
+
+### Property 224: Retry completa sem duplicar (`P20.16`)
+
+*Para qualquer* falha parcial, repetir a operação completa o efeito faltante e não duplica o efeito já persistido. Gerador: falhas parciais injetadas em pontos arbitrários.
+**Validates: Requirements 109.4**
+
+### Property 225: Exclusão mútua de execuções (`P20.17`)
+
+*Para qualquer* conjunto de disparos concorrentes, nunca existem duas execuções em curso para a mesma fonte. Gerador: disparos concorrentes arbitrários.
+**Validates: Requirements 110.5**
+
+### Property 226: Capacidade ausente gera pendência (`P20.18`)
+
+*Para qualquer* item de checklist que dependa de capacidade não declarada pela fonte, existe pendência registrada e nenhuma conformidade presumida. Gerador: combinações de capacidades declaradas e de itens aplicáveis.
+**Validates: Requirements 110.7, 110.8**
+
+**Família 21 — Plataforma: observabilidade, segurança, erros, versões e titular**
+
+### Property 227: Identificador de correlação total (`P21.1`)
+
+*Para qualquer* execução relevante, existe identificador de correlação registrado, e todos os registros daquela execução compartilham o mesmo valor. Gerador: execuções relevantes arbitrárias, incluindo aninhadas.
+**Validates: Requirements 111.1, 111.3**
+
+### Property 228: Log sem segredo (`P21.2`)
+
+*Para qualquer* entrada que contenha credencial, segredo ou token, nenhum log, métrica ou mensagem de erro contém o valor. Gerador: entradas com segredos sintéticos em campos, cabeçalhos e corpos.
+**Validates: Requirements 111.5**
+
+### Property 229: Erro sempre correlacionável (`P21.3`)
+
+*Para qualquer* falha apresentada ao usuário, o identificador de correlação apresentado resolve o registro técnico correspondente. Gerador: falhas arbitrárias, catalogadas e não catalogadas.
+**Validates: Requirements 111.6, 111.7, 114.3**
+
+### Property 230: Upload sem travessia de caminho (`P21.4`)
+
+*Para qualquer* nome de arquivo, o caminho de gravação é derivado do hash e do identificador, e nenhum caminho gravado escapa do diretório de armazenamento. Gerador: nomes arbitrários, incluindo travessia relativa, caminho absoluto, separadores mistos, unicode e nome vazio.
+**Validates: Requirements 112.5, 112.6**
+
+### Property 231: Validação de upload é total (`P21.5`)
+
+*Para qualquer* upload, existe resultado nas quatro verificações, e qualquer verificação não satisfeita impede a gravação. Gerador: arquivos com tamanho, tipo MIME, extensão e nome variados.
+**Validates: Requirements 112.4, 112.7**
+
+### Property 232: Política obrigatória antes do envio ao provedor (`P21.6`)
+
+*Para qualquer* documento sem política de processamento registrada para a sua classe, nenhuma chamada a provedor transmite o conteúdo. Gerador: documentos com e sem política registrada.
+**Validates: Requirements 112.10, 112.11**
+
+### Property 233: Autorização é necessária em toda operação exposta (`P21.7`)
+
+*Para qualquer* requisição, nenhuma operação exposta produz efeito nem retorna dado sem autenticação e autorização satisfeitas. Gerador: requisições com credenciais, papéis e posses variados.
+**Validates: Requirements 112.1, 112.2**
+
+### Property 234: Configuração ausente impede inicialização (`P21.8`)
+
+*Para qualquer* configuração obrigatória ausente, o componente dependente não inicializa e nenhum valor implícito é aplicado. Gerador: conjuntos de configuração com omissões.
+**Validates: Requirements 113.5**
+
+### Property 235: Sinalizador de recurso não altera decisão (`P21.9`)
+
+*Para qualquer* combinação de sinalizadores de recurso, a decisão, a camada determinante e os resultados determinísticos permanecem os mesmos para as mesmas evidências e parâmetros. Gerador: combinações dos sinalizadores de `PLT-012`.
+**Validates: Requirements 113.7, 113.8**
+
+### Property 236: Totalidade do catálogo de erros (`P21.10`)
+
+*Para qualquer* falha, o resultado é exatamente uma das quinze categorias, e nenhuma mensagem apresentada contém rastro de execução, consulta ao banco, caminho interno ou mensagem de biblioteca. Gerador: falhas arbitrárias, incluindo não catalogadas.
+**Validates: Requirements 114.2, 114.3, 114.7**
+
+### Property 237: Conversão para assíncrono (`P21.11`)
+
+*Para qualquer* operação, nenhuma resposta síncrona excede o limite; excedido o limite, existe trabalho assíncrono registrado com identificador retornado. Gerador: operações com durações variadas em torno de `PLT-009`.
+**Validates: Requirements 115.6, 115.7**
+
+### Property 238: Totalidade e monotonicidade da situação do trabalho (`P21.12`)
+
+*Para qualquer* sequência de transições, todo trabalho tem exatamente uma das seis situações, e a situação nunca regride de concluída para em execução. Gerador: sequências de transições arbitrárias.
+**Validates: Requirements 115.4**
+
+### Property 239: Paginação sem perda e sem repetição (`P21.13`)
+
+*Para qualquer* coleção e qualquer tamanho de página válido, a concatenação das páginas é exatamente a coleção ordenada. Gerador: coleções de 0 a 1.000 itens e tamanhos de página de 1 a `PLT-005`.
+**Validates: Requirements 116.3**
+
+### Property 240: Limite de página respeitado (`P21.14`)
+
+*Para qualquer* tamanho de página fora da faixa válida, a requisição é rejeitada informando o limite. Gerador: tamanhos arbitrários, incluindo zero, negativos e acima do máximo.
+**Validates: Requirements 116.4**
+
+### Property 241: Idempotência do processamento de evento (`P21.15`)
+
+*Para qualquer* evento e qualquer `n`, processá-lo `n` vezes produz exatamente um efeito persistido. Gerador: evento e `n` em 1 a 10.
+**Validates: Requirements 117.3, 109.1**
+
+### Property 242: Evento não decide (`P21.16`)
+
+*Para qualquer* sequência de eventos processados, nenhuma decisão, nenhum resultado determinístico e nenhuma precedência é alterada. Gerador: sequências de eventos arbitrárias.
+**Validates: Requirements 117.4**
+
+### Property 243: Isolamento por titular (`P21.17`)
+
+*Para qualquer* consulta a entidade de negócio, o conjunto retornado contém exclusivamente registros do titular do ator, e consulta sem titular é rejeitada. Gerador: bases com múltiplos titulares e consultas arbitrárias.
+**Validates: Requirements 118.2, 118.5**
+
+### Property 244: Presença do titular em toda entidade de negócio (`P21.18`)
+
+*Para qualquer* sequência de escrita sobre as entidades de negócio, todas têm identificador de titular e identificador de usuário responsável preenchidos. Gerador: sequências de escrita sobre todas as entidades de negócio.
+**Validates: Requirements 118.1, 118.7**
+
+### Property 245: Invariância de adaptador (`P21.19`)
+
+*Para qualquer* combinação de adaptadores declarados, o resultado determinístico é idêntico para as mesmas evidências, parâmetros e versões. Gerador: pares de execuções com adaptadores distintos; teste baseado em modelo.
+**Validates: Requirements 119.4, 119.6**
+
+### Property 246: Versão do motor sempre registrada (`P21.20`)
+
+*Para qualquer* execução, toda análise, toda decisão e todo resultado calculado persistem a versão do motor. Gerador: execuções arbitrárias.
+**Validates: Requirements 120.1**
+
+### Property 247: Data de corte nunca admite evidência posterior (`P21.21`)
+
+*Para qualquer* versão de análise, nenhuma evidência utilizada tem data de observação posterior à data de corte registrada. Gerador: conjuntos de evidências com datas em torno da data de corte, incluindo o valor exato.
+**Validates: Requirements 120.4, 120.5**
+
+### Property 248: Reprodução usa apenas versões registradas (`P21.22`)
+
+*Para qualquer* análise histórica, reproduzi-la produz a mesma decisão e não consulta estado mutável atual. Gerador: análises históricas arbitrárias com estado atual alterado.
+**Validates: Requirements 120.7, 120.10**
+
+### Property 249: Notificação por evento (`P21.23`)
+
+*Para qualquer* evento do catálogo de notificação, existe exatamente uma notificação local registrada, com situação de entrega. Gerador: sequências de eventos arbitrárias.
+**Validates: Requirements 121.1, 121.9**
+
+### Property 250: Acompanhamento dispara reavaliação (`P21.24`)
+
+*Para qualquer* mudança relevante em eixo acompanhado, existe evento gerado e reanálise permitida; mudança em eixo não acompanhado não gera notificação. Gerador: mudanças distribuídas pelos sete eixos.
+**Validates: Requirements 121.6, 121.7**
+
+**Família 22 — Experiência do investidor e fechamento arquitetural**
+
+**Nota de verificação.** As propriedades `P22.1` a `P22.11` são verificadas sobre a **declaração**
+de telas, componentes e árvore de interação — `DeclaracaoDeTela`, `DESTINOS_DE_NAVEGACAO`,
+`ORDEM_DE_LEITURA_DA_ANALISE` e `FAMILIAS_DE_COMPONENTES` — e sobre a **renderização em teste de
+componentes**. As verificações que exigem tecnologia assistiva real — leitor de tela, ampliador,
+navegação por voz — **permanecem fora do teste automatizado** e são declaradas como verificação
+manual em `R125`. Declarar isso é o que impede que o verde da suíte seja lido como acessibilidade
+comprovada.
+
+### Property 251: Totalidade dos estados de tela (`P22.1`)
+
+*Para qualquer* tela e qualquer componente que dependa de dado remoto, os nove estados estão declarados, e nenhum caminho de renderização produz tela sem conteúdo e sem explicação. Gerador: telas declaradas combinadas com respostas vazias, com erro, parciais e obsoletas.
+**Validates: Requirements 122.1, 122.9**
+
+### Property 252: Estado corresponde à resposta (`P22.2`)
+
+*Para qualquer* classe de resposta, o estado apresentado é exatamente o correspondente declarado. Gerador: respostas arbitrárias por classe.
+**Validates: Requirements 122.2, 122.3, 122.4, 122.5, 122.6**
+
+### Property 253: Ordem de leitura da análise (`P22.3`)
+
+*Para qualquer* análise, a sequência de blocos apresentados é a ordem canônica de oito blocos. Gerador: análises arbitrárias, incluindo com bloqueio e com pendência.
+**Validates: Requirements 123.3**
+
+### Property 254: Distância de navegação (`P22.4`)
+
+*Para qualquer* oportunidade listada, a análise é alcançável em no máximo dois passos de navegação. Gerador: grafo de navegação declarado.
+**Validates: Requirements 123.2**
+
+### Property 255: Natureza única por informação (`P22.5`)
+
+*Para qualquer* informação apresentada, ela recebe exatamente uma das quatro naturezas. Gerador: análises arbitrárias.
+**Validates: Requirements 123.4**
+
+### Property 256: Preservação em tela estreita (`P22.6`)
+
+*Para qualquer* largura declarada, decisão, bloqueios, pendências e explicação permanecem apresentados. Gerador: larguras de 320 a 2.560 pixels.
+**Validates: Requirements 124.1, 124.7**
+
+### Property 257: Tabela sempre tem alternativa responsiva (`P22.7`)
+
+*Para qualquer* tabela declarada, existe representação alternativa em largura igual ou inferior ao ponto de quebra. Gerador: tabelas declaradas.
+**Validates: Requirements 124.3**
+
+### Property 258: Catálogo visual fechado (`P22.8`)
+
+*Para qualquer* componente da árvore declarada, toda cor, tipografia e espaçamento aplicados pertencem ao catálogo do `DesignSystem`. Gerador: árvore de componentes declarada.
+**Validates: Requirements 125.1, 125.3**
+
+### Property 259: Estado nunca depende só de cor (`P22.9`)
+
+*Para qualquer* estado e qualquer decisão apresentados, existe representação textual ou de forma além da cor. Gerador: estados e decisões arbitrários.
+**Validates: Requirements 125.9**
+
+### Property 260: Acessibilidade de formulário (`P22.10`)
+
+*Para qualquer* formulário declarado, todo campo tem rótulo associado e toda mensagem de erro está associada ao campo correspondente. Gerador: formulários declarados com combinações de erros.
+**Validates: Requirements 125.5**
+
+### Property 261: Operação por teclado (`P22.11`)
+
+*Para qualquer* função alcançável por ponteiro, ela é alcançável por teclado, com foco visível e ordem de foco declarada. Gerador: árvore de interação declarada.
+**Validates: Requirements 125.4**
+
+### Property 262: Fechamento total (`P22.12`)
+
+*Para cada uma* das quarenta perguntas de fechamento, ela resolve ao menos um requisito numerado existente do requirements, e nenhum identificador citado é inexistente. Gerador: conjunto das quarenta perguntas confrontado com o Índice de Requisitos.
+**Validates: Requirements 126.41, 126.42**
+
 ### Rastreabilidade
 
 A correspondência entre esta seção e o requirements é verificada por meta-teste, não por leitura.
-`MT-01` extrai os identificadores `P1.1` a `P17.22` do requirements e os identificadores entre
+`MT-01` extrai os identificadores `P1.1` a `P22.12` do requirements e os identificadores entre
 parênteses nos títulos das propriedades deste design e exige igualdade dos dois conjuntos, com uma
 única exceção declarada: `P7.12`, que é contraexemplo e não propriedade. Qualquer propriedade
 acrescentada de um lado sem o outro falha o meta-teste.
+
+Duas verificações adicionais de rastreabilidade valem para as famílias `P18` a `P22` e são parte de
+`MT-01`: **todo requisito citado em `Validates` existe no intervalo de 1 a 126**, e nenhuma
+propriedade cita requisito fora dele. É o que impede que uma propriedade nova aponte para um
+critério que só existia em rascunho.
 
 ---
 
@@ -4630,6 +6688,143 @@ A distinção entre as três famílias é operacional: a primeira é culpa do ch
 responde `409` ou `422` conforme seja conflito de estado ou entrada inválida, sempre com registro
 na trilha de auditoria; a terceira é indisponibilidade e responde `503`, **sem** degradar o
 resultado do domínio.
+
+A quarta família vem dos Domínios P a T e segue a mesma disciplina: nenhuma falha de plataforma, de
+IA ou de aquisição produz resultado favorável, e nenhuma delas degrada o resultado determinístico.
+
+```python
+class ErroDeProvedorDeIA(ErroDoRadar):
+    """Falha de provedor de modelo de linguagem ou de embedding. Registra erro catalogado,
+    mantém a execução retomável e **abstém-se** de emitir interpretação sem resposta do
+    provedor (R98.10, R103.6)."""
+
+class ErroDeTempoExcedidoDeIA(ErroDeProvedorDeIA):
+    """Limite de tempo IA-006 excedido na etapa. Conta como tentativa; esgotadas as IA-007
+    tentativas, a etapa vai para intervenção humana (R103.3, R103.9, R105.7)."""
+
+class ErroDeRecuperacao(ErroDoRadar):
+    """Falha da etapa de recuperação. O workflow prossegue nas etapas que não dependem dela e a
+    ausência do contexto recuperado é registrada como limitação declarada da execução (R103.7).
+    Com o índice indisponível, o resultado determinístico **não muda** (R102.8, P19.14)."""
+
+class ErroDeOrcamentoDeIAAtingido(ErroDoRadar):
+    """Orçamento de execução de IA atingido. Interrompe as chamadas, registra orçamento, consumo
+    apurado e identificador de correlação, marca a execução como parcial e registra pendência. A
+    interrupção é apresentada na interface e na trilha: nenhuma interrupção por custo permanece
+    implícita (R99.3, R99.4, P19.4, REG-055)."""
+
+class ErroDeFonteAlterada(ErroDoRadar):
+    """Estrutura da fonte difere da última captura válida além de AQ-011. Preserva o payload
+    bruto, rejeita a captura nomeando a verificação não satisfeita, notifica por R121.1 e
+    **abstém-se** de registrar a mudança como ausência de oferta (R107.2, R107.3, P20.6,
+    REG-045)."""
+
+class ErroDeCapturaInvalida(ErroDoRadar):
+    """Captura que não satisfaz uma das seis verificações de R107.1. Estado REJEITADA, payload
+    preservado, nada propagado ao domínio. Resposta vazia é inválida por quantidade implausível e
+    **nunca** classifica oferta conhecida como removida da fonte (R107.8, REG-046)."""
+
+class ErroDeDisjuntorAberto(ErroDeFonteIndisponivel):
+    """AQ-008 falhas consecutivas abriram o disjuntor daquela fonte. Nenhuma nova chamada antes de
+    AQ-009; a abertura fica registrada com data, hora e causa (R107.7, P20.9, REG-060)."""
+
+class ErroDeExecucaoDoRadar(ErroDoRadar):
+    """Falha do ciclo do Radar. Preserva as capturas já registradas, registra o ponto de retomada e
+    mantém a execução retomável (R106.10, R107.5)."""
+
+class ErroDeIdempotenciaAusente(ErroDeValidacaoDeDominio):
+    """Operação crítica recebida sem chave de idempotência e sem chave natural derivável.
+    Rejeitada informando a causa (R109.6)."""
+
+class ErroDeAutorizacaoDeFerramenta(ErroDoRadar):
+    """Ferramenta de escrita invocada sem autorização, com entrada inválida ou sem chave de
+    idempotência. Rejeita informando a causa e **não produz efeito** (R104.10, P19.18,
+    REG-057)."""
+
+class ErroDeUploadInvalido(ErroDeValidacaoDeDominio):
+    """Upload que não satisfaz uma das quatro verificações de R112.4. Nome com travessia de
+    caminho ou caminho absoluto é recusado, a tentativa é registrada com identificador de
+    correlação e **nada é gravado** (R112.5, R112.7, P21.4, REG-053)."""
+
+class ErroDePoliticaDeProcessamentoAusente(ErroDoRadar):
+    """Documento submetido a provedor sem política de processamento registrada para a sua classe.
+    Recusa o envio, registra a recusa com identificador de correlação e abre pendência: nenhum
+    conteúdo é transmitido (R112.11, IA-014, P21.6, REG-052)."""
+
+class ErroDeConfiguracaoAusente(ErroDoRadar):
+    """Configuração obrigatória do ambiente ausente. **Impede a inicialização** do componente
+    dependente e abstém-se de aplicar valor implícito (R113.5, P21.8)."""
+
+class ErroDeConsultaSemTitular(ErroDoRadar):
+    """Consulta a entidade de negócio sem o identificador do titular. Rejeitada informando a causa,
+    sem retornar dado (R118.5, P21.17, REG-059)."""
+
+class ErroDeEvidenciaPosteriorADataDeCorte(ErroDoRadar):
+    """Evidência com data de observação posterior à data de corte da versão de análise. Recusada
+    naquela versão, com a recusa registrada; a evidência permanece disponível para nova versão
+    (R120.4, R120.5, P21.21, REG-058)."""
+```
+
+### Catálogo de erros apresentáveis — 15 categorias (`R114`)
+
+Este catálogo **estende** a taxonomia já exigida por `R79.9` e `R97.5` e é o **único catálogo de
+erro do produto**: catálogo paralelo é defeito, não alternativa (`R114.5`, `D100`). As exigências
+anteriores permanecem válidas e passam a ser casos dele — valor fora de domínio é
+`ERRO_DE_VALIDACAO` (`R114.6`) e recurso inexistente é `NAO_ENCONTRADO`.
+
+Cada erro tem os **cinco** atributos de `R114.1`: código; mensagem amigável em português; contexto;
+identificador de correlação; e detalhe seguro.
+
+| Categoria (`CategoriaDeErro`) | Código | Mensagem amigável apresentada | Contexto registrado | HTTP |
+|-------------------------------|--------|-------------------------------|---------------------|------|
+| `ERRO_DE_VALIDACAO` | `RAD-400` | "Um dos valores informados não é válido. Confira o campo indicado e tente novamente." | campo, valor recusado, regra de validação | `422` |
+| `NAO_ENCONTRADO` | `RAD-404` | "Não encontramos o item solicitado." | recurso, identificador procurado | `404` |
+| `CONFLITO` | `RAD-409` | "Esta operação conflita com o estado atual do registro." | recurso, estado atual, estado exigido | `409` |
+| `NAO_AUTENTICADO` | `RAD-401` | "Sua sessão não está ativa. Entre novamente para continuar." | operação, ausência de credencial | `401` |
+| `NAO_AUTORIZADO` | `RAD-403` | "Você não tem permissão para esta operação." | ator, papel, recurso, titular | `403` |
+| `DOCUMENTO_INVALIDO` | `RAD-415` | "Este arquivo não pode ser aceito. Verifique o tipo e o tamanho." | verificação não satisfeita de `R112.4`, tipo MIME, tamanho | `422` |
+| `ERRO_DE_PROCESSAMENTO_DE_DOCUMENTO` | `RAD-422` | "Não conseguimos ler todo o conteúdo deste documento. O arquivo original está preservado e a leitura ficou registrada como parcial." | documento, versão, etapa, páginas não lidas | `422` |
+| `FONTE_INDISPONIVEL` | `RAD-503` | "A fonte de origem não respondeu agora. Os dados anteriores continuam válidos." | fonte, conector, causa, disjuntor | `503` |
+| `FONTE_ALTERADA` | `RAD-512` | "A fonte mudou de formato. A captura foi recusada para não corromper os dados, e a equipe foi notificada." | fonte, campos essenciais ausentes, comparação com a última captura válida | `503` |
+| `ERRO_DE_EXECUCAO_DO_RADAR` | `RAD-513` | "A varredura não concluiu. O que já foi capturado está preservado e pode ser retomado." | execução, fonte, ponto de retomada, páginas não obtidas | `503` |
+| `ERRO_DE_PROVEDOR_DE_IA` | `RAD-521` | "A leitura assistida não está disponível agora. A análise determinística não é afetada." | tarefa, provedor, modelo, causa | `503` |
+| `TEMPO_EXCEDIDO_DE_IA` | `RAD-522` | "A leitura assistida demorou mais do que o previsto e foi interrompida." | etapa, limite `IA-006`, tentativas | `504` |
+| `ERRO_DE_RECUPERACAO` | `RAD-523` | "Não foi possível consultar os documentos indexados. A análise segue sem essa etapa, e isso está registrado." | coleção, consulta, versão do embedding | `503` |
+| `ERRO_DE_ANALISE` | `RAD-531` | "A análise não concluiu. Nenhuma decisão foi emitida e a execução está registrada como incompleta." | análise, etapa, causa, pendência aberta | `409` |
+| `ERRO_DE_REGRA_DE_NEGOCIO` | `RAD-540` | "Esta operação contraria uma regra do produto. O motivo está descrito abaixo." | regra, versão da regra, motivo objetivo | `409` |
+
+Três exigências valem para **toda** linha desta tabela, e são o que `MT-14` verifica:
+
+- **Nenhuma mensagem apresentada ao usuário contém rastro de execução, consulta ao banco de dados,
+  caminho de arquivo interno ou mensagem de biblioteca** (`R114.3`). A mensagem diz o que aconteceu,
+  o que fazer e nada mais.
+- **Toda falha apresentada traz o identificador de correlação**, e ele resolve o registro técnico
+  correspondente no log estruturado (`R111.7`, `R114.4`, `P21.3`).
+- **Erro não catalogado é apresentado como falha interna com identificador de correlação**, com o
+  detalhe técnico registrado e **pendência de catalogação aberta** (`R114.7`). Não existe caminho em
+  que a ausência de categoria vire silêncio.
+
+O mapa de estado HTTP declarado adiante é **estendido** pelas classes da quarta família, com os
+estados da coluna direita desta tabela. A correspondência entre classe de exceção e categoria é
+declarada como dado, não deduzida por convenção de nome:
+
+| Classe de exceção | Categoria |
+|-------------------|-----------|
+| `ErroDeValidacaoDeDominio`, `ErroDeFronteiraDeEnum`, `ErroDePreCondicao`, `ErroDeEntradaAmbigua` | `ERRO_DE_VALIDACAO` |
+| `ErroDeReferenciaInexistente` | `NAO_ENCONTRADO` |
+| `ErroDePromocaoDeEvidencia`, `ErroDeViolacaoDeImutabilidade`, `ErroDeParametroSemVigencia`, `ErroDeParametroPendenteDeDecisao`, `ErroDeExcecaoSobreBloqueio`, `ErroDeEntidadeAusenteNoDicionario`, `ErroDeOperacaoNaoPermitida` | `CONFLITO` |
+| `ErroDeEvidenciaSemFonte`, `ErroDeConfiguracaoDeChecklist`, `ErroDeConfiguracaoDeSupervisao`, `ErroDeNormalizadorNaoEncontrado`, `ErroDeIdempotenciaAusente` | `ERRO_DE_REGRA_DE_NEGOCIO` ou `ERRO_DE_VALIDACAO`, conforme a causa declarada |
+| `ErroDeIntegridadeDeDocumento`, `ErroDeUploadInvalido` | `DOCUMENTO_INVALIDO` |
+| falha de extração ou de OCR (`R101.8`) | `ERRO_DE_PROCESSAMENTO_DE_DOCUMENTO` |
+| `ErroDeFonteIndisponivel`, `ErroDeObtencaoDoConector`, `ErroDeDisjuntorAberto`, `ErroDeCapturaInvalida` | `FONTE_INDISPONIVEL` |
+| `ErroDeFonteAlterada` | `FONTE_ALTERADA` |
+| `ErroDeExecucaoDoRadar` | `ERRO_DE_EXECUCAO_DO_RADAR` |
+| `ErroDeProvedorDeIA`, `ErroDeOrcamentoDeIAAtingido` | `ERRO_DE_PROVEDOR_DE_IA` |
+| `ErroDeTempoExcedidoDeIA` | `TEMPO_EXCEDIDO_DE_IA` |
+| `ErroDeRecuperacao` | `ERRO_DE_RECUPERACAO` |
+| `ErroDeConsultaSemTitular`, `ErroDeAutorizacaoDeFerramenta` | `NAO_AUTORIZADO` |
+| `ErroDeConfiguracaoAusente`, `ErroDePoliticaDeProcessamentoAusente`, `ErroDeEvidenciaPosteriorADataDeCorte` | `ERRO_DE_REGRA_DE_NEGOCIO` |
+| análise que não conclui (`R103.8`) | `ERRO_DE_ANALISE` |
 
 ### Falha que é estado registrado, não exceção
 
@@ -4737,7 +6932,7 @@ resolve (`R62.11`).
 ## Testing Strategy
 
 A estratégia é dupla e as duas metades são necessárias. Os testes de propriedade verificam as
-**171** propriedades universais sobre espaços de entrada grandes; os testes por exemplo verificam
+**262** propriedades universais sobre espaços de entrada grandes; os testes por exemplo verificam
 casos concretos, fronteiras nomeadas, condições de erro e os oráculos numéricos dos Golden Cases.
 Nenhuma das duas substitui a outra: a propriedade encontra a **classe** de defeito, o exemplo prova
 o **número** publicado.
@@ -4754,7 +6949,7 @@ Regras de execução:
 - cada teste de propriedade referencia a propriedade do design em comentário, no formato
   **`Feature: radar-imobiliario-especificacao-completa, Property {n}: {texto}`**;
 - **uma** propriedade do design corresponde a **um** teste de propriedade — a numeração de **1 a
-  171** é a chave;
+  262** é a chave;
 - `deadline` desativado apenas onde a operação é legitimamente lenta, com justificativa no próprio
   teste.
 
@@ -4780,11 +6975,24 @@ português (`D72`):
 | Decisão e lance | `entrada_de_decisao()`, `checklist_de_lance()` |
 | Governança | `hierarquia_de_parametros()`, `registro_de_excecao()`, `segmento_de_conhecimento()` |
 | Domínio O | `documento()`, `versao_de_documento()`, `par_de_versoes_de_analise()`, `configuracao_de_checklist()`, `conjunto_de_debitos()`, `processo_judicial()`, `payload_de_conector()`, `porta_de_entrada()`, `candidato_do_radar()` |
+| Mercado e valuation (`P18`) | `conjunto_de_comparaveis()`, `premissas_de_valuation()`, `raio_e_janela()`, `tipo_de_ativo()` |
+| Infraestrutura de IA (`P19`) | `dubla_de_provedor_de_modelo()`, `dubla_de_provedor_de_embedding()`, `prompt_versionado()`, `segmento_com_metadados()`, `saida_estruturada()`, `estado_de_workflow()`, `ponto_de_interrupcao()`, `invocacao_de_ferramenta()`, `grafo_de_importacoes()` |
+| Aquisição resiliente (`P20`) | `execucao_do_radar()`, `payload_por_estrategia()`, `captura_invalida()`, `sequencia_de_falhas()`, `par_de_capturas_da_mesma_oferta()`, `chave_de_idempotencia()`, `capacidades_declaradas()` |
+| Plataforma (`P21`) | `segredo_sintetico()`, `nome_de_arquivo_hostil()`, `combinacao_de_sinalizadores()`, `combinacao_de_adaptadores()`, `colecao_paginavel()`, `base_multi_titular()`, `evidencia_em_torno_da_data_de_corte()`, `sequencia_de_eventos()` |
+| Experiência (`P22`) | `declaracao_de_tela()`, `classe_de_resposta()`, `largura_de_viewport()`, `arvore_de_componentes()`, `formulario_declarado()` |
 
 Compartilhá-los é o que impede que duas propriedades sobre a mesma entidade divirjam na noção de
 entrada válida. Os geradores do Domínio O são o que torna `P17.1` a `P17.22` executáveis: sem
 `par_de_versoes_de_analise()` e `configuracao_de_checklist()`, as propriedades de comparação e de
 parametrização viram inspeção manual.
+
+Os geradores das famílias novas têm a mesma função e duas exigências próprias. **Provedor de modelo
+e provedor de embedding só entram nas propriedades por dublê** — `dubla_de_provedor_de_modelo()` e
+`dubla_de_provedor_de_embedding()` —, porque 100 iterações contra provedor real custariam dinheiro e
+tornariam a suíte não determinística; o provedor real é exercitado por integração com um a três
+exemplos e pela suíte de avaliação de IA. E `nome_de_arquivo_hostil()` injeta explicitamente
+travessia relativa, caminho absoluto, separadores mistos, unicode e nome vazio: é o gerador que
+sustenta `P21.4`, e sem esses casos ele não prova nada.
 
 ### Valores de fronteira obrigatórios
 
@@ -4900,8 +7108,11 @@ Cada Golden Case declara também a **lista de fatos que invalidariam o resultado
 
 ### Testes de regressão
 
-Os **44** testes de `REG-001` a `REG-044` do Anexo E são obrigatórios e nomeados pelo
-identificador, **um teste por linha**.
+Os **60** testes de `REG-001` a `REG-060` do Anexo E são obrigatórios e nomeados pelo
+identificador, **um teste por linha**. A regra "um teste por linha do Anexo E" está declarada no
+próprio requisito (`R73.8`, `D101`), e é ela que impede a reincidência da divergência: a versão
+anterior exigia `REG-001` a `REG-035` enquanto o anexo já tabulava 44 linhas — registro histórico,
+superado por esta faixa.
 
 `REG-001` a `REG-035` cobrem o que as propriedades não cobrem por serem cenários específicos:
 interpretação de `"47.76"` e `"2.5%"`, enum fora de domínio, chamada sem gate jurídico informado,
@@ -4926,24 +7137,129 @@ anterior deixava aberta:
 | `REG-043` | candidato reprovado no gate de promoção `G1-P` | análise profunda não executada; critério não satisfeito registrado; oportunidade disponível para reavaliação; **nenhum** `EstadoDeDecisao` emitido pela triagem (`R93.4`, `R93.6`) |
 | `REG-044` | nova versão de documento contradizendo evidência vigente | ambas as evidências preservadas, fato marcado como conflitante e versões de documento numeradas sem lacuna (`R87.1`, `R87.5`) |
 
+`REG-045` a `REG-060` são os cenários dos Domínios P a T, e cada um fecha uma porta que o
+fechamento arquitetural encontrou aberta:
+
+| Teste | Cenário | Verificação |
+|-------|---------|-------------|
+| `REG-045` | a página da fonte muda de estrutura e os seletores deixam de encontrar campos essenciais | captura rejeitada com a verificação não satisfeita nomeada, erro `FONTE_ALTERADA` registrado, payload bruto preservado, notificação emitida e **nenhum** dado propagado ao domínio (`R107.2`, `R107.3`, `R114.2`) |
+| `REG-046` | a fonte responde com lista vazia em uma execução | resultado inválido por quantidade implausível; **nenhuma** oferta conhecida classificada como removida da fonte; última captura válida permanece vigente (`R107.8`, `AQ-010`) |
+| `REG-047` | a fonte responde com conteúdo inválido ou não interpretável | payload bruto preservado, erro catalogado registrado, última captura válida mantida como vigente e **nenhuma** normalização executada (`R107.9`, `R85.9`) |
+| `REG-048` | a oferta desaparece da fonte por duas execuções válidas consecutivas | estado `REMOVIDA_DA_FONTE` registrado com data e hora; imóvel, oportunidade, capturas, documentos, evidências e análises preservados integralmente (`R108.5`, `R108.6`) |
+| `REG-049` | a mesma captura, a mesma importação de documento e a mesma execução de análise repetidas com a mesma chave de idempotência | exatamente um efeito persistido em cada caso, resultado da primeira execução retornado e repetição registrada na auditoria (`R109.3`, `R109.7`) |
+| `REG-050` | o índice vetorial é reconstruído com o mesmo modelo e a mesma segmentação | decisão, camada determinante, resultados determinísticos, versões de análise e evidências permanecem inalterados (`R102.7`) |
+| `REG-051` | nova versão de prompt altera a interpretação de um documento | interpretação anterior preservada com a versão que a produziu, interpretação nova registrada com a nova versão, e a análise identifica qual versão produziu cada interpretação (`R100.2`, `R100.5`, `R100.9`) |
+| `REG-052` | documento sensível submetido a provedor de modelo de linguagem sem política de processamento registrada | envio recusado, recusa registrada com identificador de correlação, pendência registrada e **nenhum** conteúdo transmitido ao provedor (`R112.10`, `R112.11`, `IA-014`) |
+| `REG-053` | upload com nome contendo travessia de caminho, e upload com caminho absoluto | recusado nos dois casos com a causa informada, tentativa registrada e **nenhum** arquivo gravado (`R112.5`, `R112.6`) |
+| `REG-054` | tela que depende de dado remoto declarada sem estado vazio | tela reprovada por `MT-16`, com a tela e o estado ausente nomeados (`R122.1`, `R122.10`) |
+| `REG-055` | execução de IA que atinge o orçamento de tokens no meio do workflow | chamadas interrompidas, interrupção registrada com orçamento, consumo e identificador de correlação, execução marcada como parcial, pendência registrada e interrupção visível na interface (`R99.3`, `R99.4`) |
+| `REG-056` | workflow de IA interrompido após a etapa de extração e retomado em seguida | retomada a partir do último ponto registrado, etapas concluídas preservadas e resultado igual ao da execução contínua com as mesmas entradas (`R103.4`, `R103.5`) |
+| `REG-057` | escrita por ferramenta de contexto invocada sem autorização, e a mesma escrita repetida com a mesma chave de idempotência | primeira invocação recusada sem efeito e com a causa informada; repetição autorizada produz exatamente um efeito persistido, com auditoria nos dois casos (`R104.9`, `R104.10`, `R104.11`) |
+| `REG-058` | evidência com data de observação posterior à data de corte apresentada a uma versão de análise | evidência recusada naquela versão, recusa registrada e data de corte preservada; a evidência permanece disponível para nova versão de análise (`R120.4`, `R120.5`) |
+| `REG-059` | consulta a entidade de negócio executada sem o identificador do titular | consulta rejeitada com a causa informada e **nenhum** dado retornado (`R118.5`, `R118.2`) |
+| `REG-060` | a fonte acumula cinco falhas consecutivas de captura | disjuntor aberto, chamadas àquela fonte interrompidas, abertura registrada com data, hora e causa, e retomada apenas após o intervalo configurado (`R107.7`, `AQ-008`, `AQ-009`) |
+
+### Suíte de avaliação de IA — separada, com casos-ouro de documento
+
+A avaliação de IA é **suíte própria**, separada da suíte de propriedades do domínio determinístico,
+e uma **não substitui** a outra (`R105.8`, `R105.12`, `D97`). O motivo é de natureza da medida: a
+suíte de propriedades verifica invariante de função sobre entrada gerada; a suíte de avaliação mede
+**qualidade de interpretação** contra casos-ouro de documento, com resultado esperado declarado por
+caso (`R105.13`). Confundi-las produziria dois defeitos ao mesmo tempo: propriedade que falha por
+qualidade de modelo e avaliação que passa por acaso de geração.
+
+Diretório próprio, `testes/avaliacao_de_ia/`, e barreira própria. As **nove** verificações de
+`R105.8`:
+
+| # | Verificação | O que mede |
+|---|-------------|------------|
+| 1 | correção da extração | o valor extraído é o do documento, campo a campo |
+| 2 | correção da citação | a citação resolve documento, versão, página e trecho corretos (`R101.3`) |
+| 3 | ausência de alucinação | nenhuma afirmação sem trecho de origem (`R105.1`, `R105.3`) |
+| 4 | preservação de `DESCONHECIDO` | campo ausente no documento permanece `DESCONHECIDO` (`R105.5`) |
+| 5 | consistência da saída estruturada | toda saída satisfaz o esquema declarado (`R105.6`) |
+| 6 | qualidade da recuperação | os trechos recuperados contêm a informação buscada, dentro de `IA-010` |
+| 7 | correção da classificação | o documento é classificado no tipo correto entre os nove de `R86.4` |
+| 8 | regressão de prompt | a nova versão de prompt não piora nenhum caso-ouro (`R105.10`) |
+| 9 | regressão de modelo | a nova versão de modelo não piora nenhum caso-ouro (`R105.10`) |
+
+Cada execução registra, por caso, documento, resultado esperado, resultado obtido, versão do prompt
+e versão do modelo (`R105.9`). Mudança de versão de prompt ou de modelo **executa a suíte** e
+registra a comparação com a execução anterior (`R105.10`); regressão em qualquer caso-ouro é
+reportada com caso, versão anterior e versão nova, e a nova versão **não é promovida** sem registro
+explícito de aceitação (`R105.11`, `REG-051`).
+
+### Testes marcados por dependência externa
+
+Três dependências externas exigem marcação, porque a suíte precisa rodar completa sem nenhuma
+delas. A regra é a mesma nos três casos: **dublê nas propriedades, um a três exemplos
+representativos na integração**.
+
+| Marca | Dependência | Uso na propriedade | Uso na integração |
+|-------|-------------|--------------------|-------------------|
+| `@pytest.mark.db` | PostgreSQL com pgvector | repositório em memória, ou propriedade sobre a função pura | lista de integridade dos 24 itens, gatilhos append-only, unicidades, `CHECK` de escala e de versão, política de titular (`REG-026` a `REG-028`, `REG-059`) |
+| `@pytest.mark.fonte_externa` | portal da instituição vendedora, leiloeiro, portais de mercado | `payload_de_conector()` e `payload_por_estrategia()` como dublê | cobertura declarada, obtenção de documentos, falha que preserva a última captura válida, estrutura alterada, resposta vazia e disjuntor (`REG-045` a `REG-047`, `REG-060`) |
+| `@pytest.mark.provedor_de_modelo` | provedor de modelo de linguagem e de embedding | `dubla_de_provedor_de_modelo()` e `dubla_de_provedor_de_embedding()` | um a três exemplos por tarefa, mais a suíte de avaliação de IA com os casos-ouro |
+
+As três marcas são **desabilitadas por default** e habilitadas explicitamente na integração
+contínua. A consequência de projeto é direta: as 262 propriedades rodam em qualquer máquina, sem
+banco, sem rede e sem crédito de provedor. Propriedade que precise de rede é propriedade mal
+escrita — ou é, na verdade, teste de integração.
+
+### Verificação de acessibilidade: o que é automatizável e o que não é
+
+A separação é declarada para que o verde da suíte não seja lido como acessibilidade comprovada
+(`R125`, nota de `P22`).
+
+**Automatizável, e verificado por propriedade sobre declaração e renderização:** presença dos nove
+estados por tela declarada (`P22.1`); correspondência entre classe de resposta e estado apresentado
+(`P22.2`); ordem canônica dos oito blocos da análise (`P22.3`); distância máxima de dois passos de
+navegação (`P22.4`); natureza única por informação (`P22.5`); preservação de decisão, bloqueios,
+pendências e explicação em toda largura declarada (`P22.6`); alternativa responsiva para toda tabela
+(`P22.7`); catálogo visual fechado (`P22.8`); estado com representação textual ou de forma além da
+cor (`P22.9`); rótulo associado a campo e mensagem de erro associada ao campo (`P22.10`); e
+alcançabilidade por teclado com ordem de foco declarada e foco visível (`P22.11`). Contraste de
+`PLT-010` é calculável sobre o catálogo do `DesignSystem` e entra na mesma barreira.
+
+**Não automatizável, e declarado como verificação manual:** leitura efetiva por leitor de tela,
+inclusive a ordem percebida e a clareza dos rótulos anunciados; navegação por voz; uso com
+ampliador; percepção de contraste em condição real de luz; e usabilidade com uma das mãos exigida
+por `R124.4`. Cada uma dessas verificações tem roteiro declarado e é executada antes do
+congelamento, com o resultado registrado. **Nenhuma delas é reportada como satisfeita por inferência
+a partir da declaração.**
+
 ### Meta-testes
 
 | ID | Verifica | Falha quando |
 |----|----------|--------------|
-| `MT-01` | Rastreabilidade de propriedades: o conjunto de identificadores `P1.1` a `P17.22` do requirements é igual ao conjunto dos identificadores de origem das **171** propriedades deste design, com a única exceção declarada de `P7.12` | propriedade acrescentada ou removida de um lado só |
-| `MT-02` | Cada uma das **171** propriedades tem exatamente um teste com a etiqueta `Property {n}` | propriedade sem teste, ou dois testes para a mesma |
+| `MT-01` | Rastreabilidade de propriedades: o conjunto de identificadores `P1.1` a `P22.12` do requirements é igual ao conjunto dos identificadores de origem das **262** propriedades deste design, com a única exceção declarada de `P7.12`; e todo requisito citado em `Validates` existe no intervalo de 1 a **126** | propriedade acrescentada ou removida de um lado só, ou citação de requisito inexistente |
+| `MT-02` | Cada uma das **262** propriedades tem exatamente um teste com a etiqueta `Property {n}` | propriedade sem teste, ou dois testes para a mesma |
 | `MT-03` | Cobertura de catálogo de checklist em **qualquer** versão configurada: para toda `VersaoDeChecklist` ativa, todo item aplicável ao escopo resolvido tem resultado registrado; e a versão 1 do checklist padrão declara `MC-001` a `MC-136`, `B-01` a `B-27` e `C-01` a `C-71` — 136 + 27 + 71 = **234** (`R92.7`, `D83`) | item ausente do catálogo, ou versão configurada com item aplicável sem resultado |
 | `MT-04` | Cobertura de regras: `RULE-*` do Anexo D estão todos em `CATALOGO_DE_REGRAS` — **55** regras | regra ausente ou sobrando |
 | `MT-05` | Cobertura de disciplina de lance: `HS-01..09`, `PL-01..12`, `E01..09`, `RL-01..12`, `HL-01..06` declarados | item ausente |
-| `MT-06` | Cobertura de prioridade: os **97** requisitos têm exatamente uma prioridade, com as contagens **85 `P0`**, **11 `P1`** e **1 `P2`** (`D89`), e o resumo declarado no Índice de Requisitos coincide com a tabulação linha a linha | requisito sem prioridade, contagem divergente, ou resumo em desacordo com a tabulação |
+| `MT-06` | Cobertura de prioridade: os **126** requisitos têm exatamente uma prioridade, com as contagens **112 `P0`**, **13 `P1`** e **1 `P2`** (`D89`, `D102`), e o resumo declarado no Índice de Requisitos coincide com a tabulação linha a linha | requisito sem prioridade, contagem divergente, ou resumo em desacordo com a tabulação |
 | `MT-07` | Ponto único de verdade: tabela `STR` do requirements, constantes Python e seed do banco coincidem | qualquer divergência entre as três representações |
 | `MT-08` | Soma de pesos: `SCORE-001`, as cinco colunas de `SCORE-002`, os sete de `SCORE-006` e os sete de `R40.3` somam 1,00; `SCORE-005` soma 100 | qualquer conjunto fora da soma |
-| `MT-09` | Contagem de enums: cada um dos **60** enums declarados em *Data Models* tem exatamente a quantidade de valores ali fixada, incluindo os enums do Domínio O — `PortaDeEntrada` com 2, `OrigemDeEvidencia` com 5, `QualidadeDaEvidencia` com 5 e `TipoDeSegmentoDeConhecimento` com 15 | valor acrescentado ou removido sem revisão |
-| `MT-10` | **Isolamento da IA**: nenhum módulo em `radar/motores/**` nem em `radar/pipeline/**` importa, direta ou transitivamente, qualquer cliente de modelo de linguagem — `langchain*`, `langgraph`, `openai` ou equivalente | import introduzido |
+| `MT-09` | Contagem de enums: cada um dos **60 enums de negócio** e dos **7 enums de infraestrutura** declarados em *Data Models* tem exatamente a quantidade de valores ali fixada — `PortaDeEntrada` com 2, `OrigemDeEvidencia` com 5, `QualidadeDaEvidencia` com 5, `TipoDeSegmentoDeConhecimento` com 15, `SituacaoDeExecucaoDoRadar` com 6, `EstadoDaOfertaNaFonte` com 6, `EstrategiaDeCaptura` com 4, `CategoriaDeErro` com 15, `SituacaoDeTrabalhoAssincrono` com 6, `EstadoDeTela` com 9 e `NaturezaDaInformacao` com 4 | valor acrescentado ou removido sem revisão |
+| `MT-10` | **Isolamento do núcleo**: nenhum módulo do núcleo — `radar/nucleo/**`, `radar/motores/**`, `radar/pipeline/**`, `radar/regras/**`, `radar/radar/**` — importa, direta ou transitivamente, cliente de modelo de linguagem (`langchain*`, `langgraph`, `openai` ou equivalente), cliente de embedding, cliente de armazenamento externo (`boto3` ou equivalente) e cliente de agendamento (`R71.1`, `R71.2`, `R98.5`, `R119.3`) | import proibido introduzido, com o caminho completo reportado |
 | `MT-11` | **Convenção de idioma** (`D72`): percorre os identificadores de implementação — módulos, pacotes, classes, funções, parâmetros, tabelas, colunas, índices, enums e valores de enum — em `src/radar/**`, `db/schema.sql` e `scripts/**`, e exige que estejam em português | identificador em inglês fora da lista de exceções permitidas |
+
+| `MT-12` | **Cobertura das quarenta perguntas de fechamento**: cada um dos critérios `R126.1` a `R126.40` possui requisito numerado que o satisfaça, e todo identificador citado existe (`R126.41`, `R126.42`, `P22.12`) | pergunta órfã, nomeada pela falha; ou identificador citado inexistente |
+| `MT-13` | **Titular em toda entidade de negócio**: cada uma das **61** entidades do dicionário declara `tenant_id` e `usuario_responsavel_id`, com índice por `tenant_id` (`R118.1`, `R118.10`) | entidade sem os dois identificadores, nomeada pela falha |
+| `MT-14` | **Catálogo de erros completo e sem detalhe técnico**: cada uma das **15** categorias de `R114.2` tem código, mensagem amigável em português e mapeamento declarados; e nenhuma mensagem apresentada ao usuário contém rastro de execução, consulta ao banco, caminho interno ou mensagem de biblioteca (`R114.9`) | categoria sem código, sem mensagem ou sem mapeamento; ou mensagem com detalhe técnico, nomeada pela falha |
+| `MT-15` | **Identificador de correlação em toda execução relevante**: cada uma das treze espécies de `R111.3` registra identificador de correlação e os treze atributos de `R111.2` (`R111.10`) | execução relevante sem identificador, nomeada pela falha |
+| `MT-16` | **Nove estados por tela**: cada `DeclaracaoDeTela` declara os nove valores de `EstadoDeTela` (`R122.1`, `R122.10`) | tela com estado ausente, nomeando a tela e o estado (`REG-054`) |
 
 `MT-01` é descrito na subseção *Rastreabilidade* da seção *Correctness Properties* e este quadro
 apenas o tabula: a mesma regra, a mesma exceção declarada, nenhum acréscimo.
+
+Os cinco meta-testes acrescentados por `D101` — `MT-12` a `MT-16` — têm a mesma natureza dos onze
+anteriores: verificam **declaração contra declaração**, não comportamento em execução. É o que os
+torna baratos e é o que os torna eficazes. `MT-12` é o único cuja falha significa que a
+especificação **não está fechada** (`R126.42`), e por isso ele entra na sequência de validação
+anterior ao congelamento junto com `MT-06` e a suíte de regressão (`D104`). A versão anterior deste
+design declarava **onze meta-testes**, `MT-01` a `MT-11` — registro histórico, superado por esta
+lista de dezesseis.
 
 `MT-10` é o teste que transforma `R71.1` e `R71.2` de intenção em topologia verificada. Ele percorre
 a árvore de imports a partir de cada módulo dos dois pacotes e falha com o caminho completo do
@@ -4957,7 +7273,7 @@ exatamente as três classes declaradas na *Convenção de idioma* deste design �
 de biblioteca externa, identificador exigido por contrato ou formato de terceiro, e palavra
 reservada — mais a lista de códigos estáveis (`RULE-*`, `MC-*`, `B-*`, `C-*`, `REG-*`, `MT-*`,
 `CUS-*`, `GLB-*`, `INV-*`, `LOC-*`, `TIP-*`, `PRI-*`, `VAL-*`, `CMP-*`, `REN-*`, `LIQ-*`, `RISK-*`,
-`CONF-*`, `FRESH`, `SCORE-*`, `STR`, `PORT-*`, `EXC-*`, `ALT-*`, `MON-*`, `HS-*`, `PL-*`, `RL-*`,
+`CONF-*`, `FRESH`, `SCORE-*`, `STR`, `PORT-*`, `EXC-*`, `ALT-*`, `MON-*`, `IA-*`, `AQ-*`, `PLT-*`, `HS-*`, `PL-*`, `RL-*`,
 `HL-*`, `E01` a `E09`, gates `G0` a `G7` e `G1-P`, níveis `I0` a `I4`, `SAFE-*`, `P-A` a `P-E`,
 `D*`, `R*`, `P*`), que **não** são renomeados. A lista de exceções é dado versionado, e acrescentar
 entrada a ela é mudança revisável — não escape silencioso.
@@ -4985,53 +7301,93 @@ regride na primeira pressa.
 
 Duas ordens distintas governam esta seção, e confundi-las é o erro que ela existe para evitar.
 
-A primeira é a **ordem de construção do produto**, fixada em `D88`: onze passos, começando pelo
-domínio determinístico e terminando em auditoria e Golden Cases. **A construção não começa pelo
-coletor.** O primeiro marco funcional é a análise manual real de um imóvel da CAIXA — do envio dos
-documentos até a decisão apresentada na interface, com complementação de evidência e reanálise —, e
-o Radar automático vem depois. O motivo é o de `P-C`: a varredura de portais é a parte mais frágil
-e a que menos prova valor, e começar por ela produz um coletor sem ninguém para quem entregar.
+A primeira é a **ordem de construção do produto**, fixada em **`D91`, que substitui `D88`**: **vinte
+passos**, da fundação do projeto ao congelamento. `D88` fixava onze passos e o plano de implementação
+derivava treze etapas — **registro histórico**, superado por `D91`. Os vinte passos não contradizem
+os onze: são **refinamento** que insere IA documental, recuperação, orquestração de workflow de IA,
+agentes e ferramentas de contexto, framework de conector, observabilidade e endurecimento entre os
+marcos que `D88` já tinha.
 
-A segunda é a **regra de priorização** já vigente, derivada de `R75` e do Índice de Requisitos:
-**todo requisito `P1` e `P2` vem depois de todos os `P0`.**
+**As duas invariantes de `D88` são preservadas integralmente.** O primeiro marco funcional continua
+sendo a **análise manual real de um imóvel da CAIXA** — do envio dos documentos até a decisão
+apresentada na interface, incluindo complementação de evidência e reanálise. E **a construção não
+começa pelo coletor**. O motivo é o de `P-C`: a varredura de portais é a parte mais frágil e a que
+menos prova valor, e começar por ela produz um coletor sem ninguém para quem entregar.
 
-As duas se combinam de forma simples: os onze passos de `D88` realizam os **85 requisitos `P0`** e
-definem a sequência entre eles; as duas etapas finais aplicam a regra de priorização aos **11 `P1`**
-e ao **único `P2`**. Dentro de cada passo, a ordem segue a dependência técnica.
+A segunda ordem é a **regra de priorização** já vigente, derivada de `R75` e do Índice de
+Requisitos: **todo requisito `P1` e `P2` vem depois de todos os `P0`.**
+
+As duas se combinam de forma simples: os vinte passos de `D91` realizam os **112 requisitos `P0`** e
+definem a sequência entre eles; depois deles, a regra de priorização aplica-se aos **13 `P1`** e ao
+**único `P2`**. Dentro de cada passo, a ordem segue a dependência técnica.
 
 **Ordem de construção e prioridade de requisito são dimensões distintas.** Um requisito `P0`
-construído no passo 10 continua `P0`: os checklists parametrizáveis por escopo (`R92`) e o Radar
-automático (`R93`) são `P0` e são construídos tarde, porque dependem do motor único e do catálogo
-estabilizado, não porque sejam menos exigidos. Prioridade responde "o MVP existe sem isto?";
-ordem de construção responde "o que precisa estar pronto antes?". Nenhuma das duas se deduz da
-outra.
+construído no passo 18 continua `P0`: a observabilidade (`R111`), o endurecimento de segurança
+(`R112`) e os checklists parametrizáveis por escopo (`R92`) são `P0` e são construídos tarde, porque
+dependem do motor único e do catálogo estabilizado, não porque sejam menos exigidos. Prioridade
+responde "o MVP existe sem isto?"; ordem de construção responde "o que precisa estar pronto
+antes?". Nenhuma das duas se deduz da outra.
 
-### Etapas
+**O preparo estrutural é exceção deliberada a essa distinção, e vem no começo.** Identificador de
+correlação, identificador de titular, versão do motor, data de corte, catálogo de erros, contratos
+de provedor e separação entre núcleo, adaptadores e infraestrutura são executados nos passos 1 a 3,
+**antes** de as 61 entidades de negócio estarem gravadas. O motivo é aritmético, não estético:
+retroajustá-los depois é **migração**, não ajuste (`D96`, `R118.9`).
 
-| # | Marco de construção (`D88`) | Conteúdo de engenharia | Requisitos realizados |
+### Os vinte passos (`D91`)
+
+| # | Passo de construção (`D91`) | Conteúdo de engenharia | Requisitos realizados |
 |---|-----------------------------|------------------------|-----------------------|
-| 1 | Domínio determinístico | Fundação de tipos e infraestrutura de teste; correções numéricas verificadas; captura, identidade, perfil e localização; gate jurídico de 19 verificações; mercado, comparáveis, valuation e revaluation; economia, preço máximo e cenários; risco, liquidez, estratégia, portfólio, escore e ranqueamento; decisão de onze camadas e explicabilidade; due diligence, análise profunda e disciplina de lance; orquestração e catálogos como dados. Detalhamento na tabela seguinte | `R1` a `R4`, `R6` a `R30`, `R32` a `R41`, `R44` a `R47`, `R49` a `R56`, `R70`, `R71`, `R73` a `R78`, `R82`, `R83`, `R96` (fórmulas) |
-| 2 | Persistência | Modelo físico das 61 entidades; os onze itens de integridade de `D.9`; ORM de todas as tabelas; migrações versionadas com seed **gerado** a partir de `STR`; gatilhos que rejeitam `UPDATE` e `DELETE` nas tabelas append-only; `Gestor_de_Parametros` com hierarquia de escopo e vigência temporal | `R2`, `R61`, `R62`, `R64`, `R74` · `D.9.1` a `D.9.11` |
-| 3 | Documentos e evidências | `Gestor_de_Documentos` com arquivo original imutável, versões de documento, extração derivada e verificação de integridade com pendência crítica; `Camada_de_Evidencia` append-only com proveniência obrigatória; evidência de origem manual; processo judicial e andamentos; débito como entidade que compõe `CUS-005` e `CUS-006` | `R20`, `R86`, `R87`, `R89`, `R90`, `R91` |
-| 4 | Análise manual ponta a ponta | Porta 1 de `R84`; criação de imóvel com identificação mínima de `G0`; cadastro da oportunidade da CAIXA; envio de edital e matrícula; registro de IPTU, condomínio e processos; execução da análise sobre evidência real; decisão, custo econômico total decomposto, valuation, riscos e pendências | `R84`, `R95` (passos 1 a 13), `R96` |
-| 5 | Reanálise e versionamento | Nova versão de análise sem sobrescrita; `Comparador_de_Versoes` com as cinco categorias de `R88.5` e motivo obrigatório em `decisao_alterada`; reexecução sem mudança de entrada que não versiona e é registrada na trilha; independência entre versão de documento e versão de análise | `R61`, `R87`, `R88`, `R95` (passos 14 a 18) |
-| 6 | Interface de programação | As famílias de recursos de `R97.1` e as operações de `R97.2`; autenticação e autorização em toda operação exposta; taxonomia de erro traduzida na fronteira; configuração que falha fechada; contrato completo dos treze componentes do custo; referência inexistente rejeitada com recurso e causa; nenhuma rota que altere captura, evidência ou versão persistida | `R79`, `R97` · `D.10.1` a `D.10.8` |
-| 7 | Interface do investidor | Interface React integralmente em português; painel, nova análise, ficha da oportunidade, documentos, evidências, pendências, comparação e parâmetros; visão financeira oficial navegável de cada componente até a evidência de origem | `R66`, `R67`, `R68`, `R94`, `R96.8` |
-| 8 | Conector CAIXA | Contrato único de `Conector_de_Fonte` — listar, obter detalhe, obter documentos, declarar cobertura; CAIXA como primeira implementação; captura imutável com identificador e versão do conector; payload reprovado em `G0` registrado como captura rejeitada, sem criar oportunidade; falha de obtenção que preserva a última captura válida; entrega dos arquivos ao `Gestor_de_Documentos` com tipo declarado | `R1`, `R2`, `R85` |
-| 9 | Radar automático | Porta 2 de `R84`; `Triagem_Rapida` como **prefixo** das fases 1 a 5 do mesmo pipeline; gate de promoção `G1-P`; candidatos ordenados por potencial preliminar; promoção manual com autor, data e motivo; abstenção estrutural de decisão, escore, valuation e custo na triagem | `R84`, `R93`, `R95.4` |
-| 10 | Checklists parametrizáveis por escopo | Catálogo de checklists versionado; escopo por instituição, localização, tipo e estratégia; os dois limites invioláveis de `R92.5` e `R92.6` validados na carga; execução única por análise com cobertura apurada e versão registrada; pendência por documento exigido e ausente | `R36`, `R37`, `R92` |
-| 11 | Auditoria e Golden Cases | Trilha append-only dos 22 tipos de evento; monitoramento contínuo e materialidade; reentrada e abandono de tese; exceções auditáveis; pontos mínimos de supervisão humana; invariantes de `R73`; controle de escopo de `R75`; os quatro Golden Cases dos Anexos E e F com os números publicados; os 44 testes `REG-001` a `REG-044`; `MT-01` a `MT-11`; o ciclo de prova de `R95` completo, nas duas portas | `R57`, `R58`, `R63`, `R64`, `R73`, `R75`, `R83`, `R95`, Anexos E e F |
-| 12 | Requisitos `P1` | Enriquecimento progressivo; financiamento; estratégias de saída e operações híbridas; monitoramento de liquidez; simulação de alocação antes da decisão; alertas acionáveis; resultado real, backtest com coortes e controle de sobreajuste; controle de qualidade das regras; relatórios de negócio; qualidade de evidência e indicadores de aprendizado; alocação, eficiência de capital e faixas de ação | `R5`, `R31`, `R42`, `R43`, `R48`, `R59`, `R60`, `R65`, `R69`, `R80`, `R81` |
-| 13 | Requisito `P2` | Esteira de conhecimento e RAG: os quinze tipos de segmento, `texto_fonte` e `parafrase` separados, as três camadas de memória, índice vetorial reconstruído após a carga | `R72` |
+| 1 | Fundação do projeto | Fundação de tipos e infraestrutura de teste — `Informado[T]`, `Desconhecido`, enums fechados, `classificar_por_faixa`, geradores compartilhados, perfis do `hypothesis`, esqueleto de `MT-01` a `MT-16`; e o **preparo estrutural**: `IdentificadorDeCorrelacao`, `VersaoDoMotor`, `DataDeCorte`, catálogo de erros, contratos de provedor, três camadas declaradas com o grafo de importação proibida, e configuração por ambiente que falha fechada | transversal · `R111` (identificador), `R113`, `R114`, `R119`, `R120` |
+| 2 | Domínio determinístico | Correções numéricas verificadas; captura, identidade, perfil e localização; gate jurídico de 19 verificações; mercado, comparáveis, valuation e revaluation; economia, preço máximo e cenários; risco, liquidez, estratégia, portfólio, escore e ranqueamento; decisão de onze camadas e explicabilidade; due diligence, análise profunda e disciplina de lance; orquestração e catálogos como dados. Detalhamento na tabela seguinte | `R1` a `R4`, `R6` a `R30`, `R32` a `R41`, `R44` a `R47`, `R49` a `R56`, `R70`, `R71`, `R73` a `R78`, `R82`, `R83`, `R96` (fórmulas) |
+| 3 | Persistência | Modelo físico das **61 entidades de negócio** e das **15 entidades de infraestrutura**; os **24** itens de integridade; `tenant_id` e `usuario_responsavel_id` em toda entidade de negócio, com índice e política de isolamento; ORM de todas as tabelas; migrações versionadas com seed **gerado** a partir de `STR`; gatilhos que rejeitam `UPDATE` e `DELETE` nas tabelas append-only; `Gestor_de_Parametros` com hierarquia de escopo e vigência temporal; chave de idempotência como tabela | `R2`, `R61`, `R62`, `R64`, `R74`, `R109`, `R118` · `D.9.1` a `D.9.11` |
+| 4 | Documentos e evidências | `Gestor_de_Documentos` com arquivo original imutável, versões de documento, extração derivada e verificação de integridade com pendência crítica; `Camada_de_Evidencia` append-only com proveniência obrigatória; evidência de origem manual; processo judicial e andamentos; débito como entidade que compõe `CUS-005` e `CUS-006` | `R20`, `R86`, `R87`, `R89`, `R90`, `R91` |
+| 5 | Análise manual ponta a ponta | **Primeiro marco funcional.** Porta 1 de `R84`; criação de imóvel com identificação mínima de `G0`; cadastro da oportunidade da CAIXA; envio de edital e matrícula; registro de IPTU, condomínio e processos; execução da análise sobre evidência real; decisão, custo econômico total decomposto, valuation, riscos e pendências | `R84`, `R95` (passos 1 a 13), `R96` |
+| 6 | Versionamento e reanálise | Nova versão de análise sem sobrescrita; `Comparador_de_Versoes` com as cinco categorias de `R88.5` e motivo obrigatório em `decisao_alterada`; reexecução sem mudança de entrada que não versiona e é registrada na trilha; independência entre versão de documento e versão de análise; data de corte por versão | `R61`, `R87`, `R88`, `R120`, `R95` (passos 14 a 18) |
+| 7 | Interface de programação | As famílias de recursos de `R97.1` e as operações de `R97.2`; versionamento do contrato, paginação e chave de idempotência declaradas por operação; autenticação e autorização em toda operação exposta; catálogo de erros traduzido na fronteira; contrato completo dos treze componentes do custo; referência inexistente rejeitada com recurso e causa; nenhuma rota que altere captura, evidência ou versão persistida | `R79`, `R97`, `R114`, `R116` · `D.10.1` a `D.10.8` |
+| 8 | Interface do investidor | Interface React integralmente em português; painel, nova análise, ficha da oportunidade, documentos, evidências, pendências, comparação e parâmetros; visão financeira oficial navegável de cada componente até a evidência de origem; os **nove estados de tela** declarados, os nove destinos de navegação, a ordem canônica de leitura da análise, responsividade em tela estreita, `DesignSystem` e acessibilidade | `R66`, `R67`, `R68`, `R94`, `R96.8`, `R122` a `R125` |
+| 9 | IA documental | `ProvedorDeModeloDeLinguagem` e `ProvedorDeEmbedding` implementados como adaptadores; registro de chamada a provedor; `Gestor_de_Custo_de_IA` com orçamento, cache de resposta e cache de representação vetorial; prompt versionado com registro de versões; extração e OCR com falha explícita e conteúdo parcial; regras anti-alucinação na fronteira da saída estruturada | `R98`, `R99`, `R100`, `R105` (fronteira), `R101.8` |
+| 10 | Recuperação | Pipeline de dez etapas de `R101.1`; os treze metadados por segmento; citação resolvível e descarte do trecho sem citação; `NaturezaDaInformacao`; três coleções com validade própria; `IndiceVetorial` reconstruível, `representacoes_vetoriais` com dimensão própria e migração de representação vetorial; degradação declarada com índice indisponível | `R101`, `R102` |
+| 11 | Orquestração de workflow de IA | As onze etapas de `R103.1`; estado explícito; ponto de retomada por etapa; limite de tempo e tentativas; execução parcial retomável; os sete pontos de intervenção humana registrada; idempotência da execução; versão do grafo registrada | `R103` |
+| 12 | Agentes e ferramentas de contexto | Os cinco `AgenteLimitado` com escopo e ferramentas declarados; `ServidorDeFerramentas` com catálogos separados de leitura e de escrita; autorização, validação de esquema, idempotência e auditoria em toda escrita; `AvaliadorDeIA` com a suíte própria e as nove verificações | `R104`, `R105` |
+| 13 | Framework de conector | Contrato único de `Conector_de_Fonte` — listar, obter detalhe, obter documentos, declarar cobertura; `EstrategiaDeCaptura` como adaptador com os quatro valores; `ValidadorDeCaptura` com as seis verificações; limite de tempo, retry, limite de taxa, paginação, ponto de retomada e disjuntor; capacidades declaradas por fonte | `R85`, `R107`, `R110` (capacidades) |
+| 14 | Conector CAIXA | CAIXA como **primeira** implementação do contrato; captura imutável com identificador e versão do conector; payload reprovado em `G0` registrado como captura rejeitada, sem criar oportunidade; falha de obtenção que preserva a última captura válida; entrega dos arquivos ao `Gestor_de_Documentos` com tipo declarado | `R1`, `R2`, `R85.4` |
+| 15 | Radar automático | Porta 2 de `R84`; `Triagem_Rapida` como **prefixo** das fases 1 a 5 do mesmo pipeline; gate de promoção `G1-P`; candidatos ordenados por potencial preliminar; promoção manual com autor, data e motivo; `MotorDoRadar` com Execução do Radar auditável de quinze campos; classificação incremental em seis estados; idempotência das nove operações críticas; `Agendador` configurável; abstenção estrutural de decisão, escore, valuation e custo | `R84`, `R93`, `R95.4`, `R106`, `R108`, `R109`, `R110` |
+| 16 | Checklists parametrizáveis por escopo | Catálogo de checklists versionado; escopo por instituição, localização, tipo e estratégia; os dois limites invioláveis de `R92.5` e `R92.6` validados na carga; execução única por análise com cobertura apurada e versão registrada; pendência por documento exigido e ausente, e por capacidade de fonte não declarada | `R36`, `R37`, `R92`, `R110.8` |
+| 17 | Monitoramento e notificações | Monitoramento contínuo e materialidade; reentrada e abandono de tese; `GestorDeNotificacoes` com contrato único de canal e notificação local para os dez eventos; `GestorDeAcompanhamento` com os sete eixos; eventos de domínio para os onze fatos, idempotentes e sem poder de decisão | `R57`, `R58`, `R117`, `R121` |
+| 18 | Observabilidade | `GestorDeObservabilidade` com identificador de correlação propagado, os treze atributos por execução relevante, log estruturado consultável por campo, retenção de `PLT-008`, ausência de segredo em log e distinção entre evento automático e alteração manual | `R111` |
+| 19 | Endurecimento de segurança e desempenho | `GestorDeSeguranca` com autenticação, autorização por posse, titular e papel, as quatro verificações de upload, gravação por hash e política de envio de documento a provedor; `ExecutorAssincrono` com os oito processamentos fora da requisição, situação e progresso; conversão de operação síncrona que excede `PLT-009`; conclusão da configuração por ambiente e dos sinalizadores de recurso | `R112`, `R113`, `R115` |
+| 20 | Golden Cases, regressão e validação final | Trilha append-only dos 22 tipos de evento; exceções auditáveis; pontos mínimos de supervisão humana; invariantes de `R73`; controle de escopo de `R75`; os quatro Golden Cases dos Anexos E e F com os números publicados; os **60** testes `REG-001` a `REG-060`; `MT-01` a `MT-16`; a suíte de avaliação de IA; o ciclo de prova de `R95` completo, nas duas portas; e o **portão de congelamento** de `R126` com as quarenta perguntas de fechamento respondidas por requisito numerado | `R63`, `R64`, `R73`, `R75`, `R83`, `R95`, `R126`, Anexos E e F |
 
-### Ordenação interna da etapa 1
+### Requisitos `P1` e `P2` depois de todos os `P0`
 
-A etapa 1 é a maior e é a única cuja ordem interna precisa ser explícita, porque quase toda
-propriedade depende dela.
+Os vinte passos realizam os 112 requisitos `P0`. A regra de priorização de `R75` aplica-se depois
+deles, e os requisitos abaixo continuam nomeados individualmente para que a fila não fique implícita.
+
+| Prioridade | Conteúdo de engenharia | Requisitos |
+|------------|------------------------|------------|
+| `P1` | Enriquecimento progressivo; financiamento; estratégias de saída e operações híbridas; monitoramento de liquidez; simulação de alocação antes da decisão; alertas acionáveis; resultado real, backtest com coortes e controle de sobreajuste; controle de qualidade das regras; relatórios de negócio; qualidade de evidência e indicadores de aprendizado; alocação, eficiência de capital e faixas de ação; eventos de domínio como mecanismo de desacoplamento; notificações e acompanhamento por canal externo | `R5`, `R31`, `R42`, `R43`, `R48`, `R59`, `R60`, `R65`, `R69`, `R80`, `R81`, `R117`, `R121` |
+| `P2` | Esteira de conhecimento e RAG: os quinze tipos de segmento, `texto_fonte` e `parafrase` separados, as três camadas de memória, índice vetorial reconstruído após a carga | `R72` |
+
+Duas observações sobre esta tabela, porque a leitura apressada produz conclusão errada. `R117` e
+`R121` são `P1` por `D102`, mas **partes** deles são exercidas antes: os eventos de domínio e a
+notificação local entram no passo 17 porque o monitoramento os usa; o que é `P1` é a **entrega por
+canal externo** (`R121.4`) e o uso de evento como substituto de chamada direta onde a ordem não é
+exigida. E `R72` continua `P2` mesmo com a recuperação sendo `P0`: `R101` e `R102` são o **motor de
+recuperação**, `R72` é a **esteira de conhecimento normativo** que o alimenta — construir o motor não
+exige a esteira pronta.
+
+### Ordenação interna dos passos 1 e 2
+
+Os passos 1 e 2 são os maiores e são os únicos cuja ordem interna precisa ser explícita, porque quase
+toda propriedade depende deles. A numeração dos blocos abaixo é a do projeto anterior, preservada
+para não romper referência: os blocos `1.1` e `1.1-A` compõem o **passo 1** de `D91`, e os blocos
+`1.2` a `1.10` compõem o **passo 2**.
 
 | # | Bloco | Conteúdo | Requisitos |
 |---|-------|----------|------------|
-| 1.1 | Fundação de tipos e teste | `Informado[T]`, `Desconhecido`, enums fechados com as contagens de *Data Models*, `classificar_por_faixa`, geradores compartilhados, perfis do `hypothesis`, esqueleto de `MT-01` a `MT-11` | transversal |
+| 1.1 | Fundação de tipos e teste | `Informado[T]`, `Desconhecido`, enums fechados com as contagens de *Data Models*, `classificar_por_faixa`, geradores compartilhados, perfis do `hypothesis`, esqueleto de `MT-01` a `MT-16` | transversal |
+| 1.1-A | Preparo estrutural | `IdentificadorDeCorrelacao`, `VersaoDoMotor`, `DataDeCorte`, catálogo de erros com as quinze categorias, contratos `ProvedorDeModeloDeLinguagem` e `ProvedorDeEmbedding`, três camadas declaradas com o grafo de importação proibida e `MT-10`, configuração por ambiente que falha fechada | `R111` (identificador), `R113`, `R114`, `R119`, `R120` |
 | 1.2 | Correções numéricas verificadas | `interpretar_decimal`, `interpretar_percentual`, `Decimal` em todo o caminho monetário, faixas sem lacuna, `roi_anualizado` | `R3`, `R27`, `R30.3` · `D.1.3` a `D.1.5` |
 | 1.3 | Captura, identidade e perfil | Normalizador com despacho por tipo de fonte, identidade `I0` a `I4`, deduplicação com veredicto de três valores, qualificação `G1`, perfil consolidado, classificação de localização, divergências entre fontes | `R1` a `R4`, `R6` a `R11`, `R74` |
 | 1.4 | Gate jurídico | As 19 verificações declarativas, `ResultadoDeVerificacao` com `NAO_APLICAVEL`, ocupação e locação como risco econômico, evidência com proveniência obrigatória, `SituacaoJuridica` fechada | `R12` a `R20` · `D.5`, `D.2.7`, `D.2.8` |
@@ -5055,39 +7411,75 @@ escritos e os oráculos já aceitos, e obrigaria a republicar Golden Cases.
 
 **Por que a persistência vem depois dos motores e não antes.** O modelo físico precisa das
 entidades que os motores exigem. Inverter a ordem produziria o esquema morto de `D.9.9`, com tabelas
-mapeadas e nunca gravadas. É por isso que a etapa 2 de `D88` — persistência — vem depois da etapa 1
-— domínio determinístico —, e não há contradição entre `D88` e esta observação: o domínio
+mapeadas e nunca gravadas. É por isso que o passo 3 de `D91` — persistência — vem depois do passo 2
+— domínio determinístico —, e não há contradição entre `D91` e esta observação: o domínio
 determinístico **é** o conjunto dos motores.
+
+**Por que o preparo estrutural é exceção a essa regra.** Identificador de correlação, titular,
+versão do motor, data de corte, catálogo de erros, contratos de provedor e separação de camadas
+entram no passo 1, **antes** dos motores, porque não são entidades: são **colunas em toda entidade**
+e **contratos que os motores consomem**. Acrescentá-los depois de as 61 tabelas de negócio estarem
+gravadas é migração de todas elas (`D96`).
+
+**Por que a IA documental vem depois da análise manual, e não antes.** Os passos 9 a 12 dependem de
+existir análise real produzindo decisão sobre evidência real: sem isso, não há como medir se a
+interpretação assistida ajuda, nem contra o que avaliar os casos-ouro. É a mesma razão de `P-C` que
+mantém o coletor no fim.
 
 ### Três consequências que a tabela não mostra
 
-**O primeiro marco funcional de `D88` fecha ao fim da etapa 7, não da etapa 4.** A análise manual
-ponta a ponta "até a decisão apresentada na interface" exige interface de programação (etapa 6) e
-interface do investidor (etapa 7). As etapas 4 a 7 são, portanto, o caminho crítico desse marco, e
-as etapas 8 e 9 — conector e Radar — são deliberadamente posteriores a ele.
+**O primeiro marco funcional de `D91` fecha ao fim do passo 8, não do passo 5.** A análise manual
+ponta a ponta "até a decisão apresentada na interface" exige interface de programação (passo 7) e
+interface do investidor (passo 8). Os passos 5 a 8 são, portanto, o caminho crítico desse marco, e
+os passos 13 a 15 — framework de conector, conector CAIXA e Radar — são deliberadamente posteriores
+a ele. A invariante de `D88` é preservada exatamente nesse ponto: **não se começa pelo coletor**.
 
-**A etapa 11 é barreira, não evento.** Golden Cases, testes de regressão e meta-testes entram na
-barreira de integração ao longo de todo o caminho, e a etapa 11 é onde o conjunto fica **completo**.
-As etapas 12 e 13 os reexecutam integralmente; nenhum requisito `P1` ou `P2` entra sem que os 44
-testes de regressão e os onze meta-testes estejam verdes.
+**O passo 20 é barreira, não evento.** Golden Cases, testes de regressão e meta-testes entram na
+barreira de integração ao longo de todo o caminho, e o passo 20 é onde o conjunto fica **completo** e
+onde o portão de congelamento de `R126` é atravessado. Os requisitos `P1` e `P2` os reexecutam
+integralmente; nenhum deles entra sem que os **60** testes de regressão e os **dezesseis**
+meta-testes estejam verdes. A versão anterior desta seção falava de 44 testes de regressão e onze
+meta-testes — registro histórico.
 
 **A renomeação de `D72` é trabalho de implementação, distribuído e verificado.** Ela alcança o
 código existente em `src/radar/**`, o esquema em `db/schema.sql` e os utilitários em `scripts/**`,
-e não se resolve por convenção documental. Na etapa 1 ela entra como renomeação dos módulos de
-domínio e motores; na etapa 2, como **migração versionada** de tabelas, colunas, índices, restrições
-e enums, nunca por reescrita manual do esquema; na etapa 6, como nomes de recurso, campo e valor de
-domínio no contrato de programação (`R97.3`); na etapa 7, como interface integralmente em português
+e não se resolve por convenção documental. No passo 2 ela entra como renomeação dos módulos de
+domínio e motores; no passo 3, como **migração versionada** de tabelas, colunas, índices, restrições
+e enums, nunca por reescrita manual do esquema; no passo 7, como nomes de recurso, campo e valor de
+domínio no contrato de programação (`R97.3`); no passo 8, como interface integralmente em português
 (`R94`). `MT-11` é o que impede a reintrodução de identificador em inglês fora das exceções
-permitidas, e entra na barreira de integração junto com `ruff` e `mypy --strict`.
+permitidas, e entra na barreira de integração junto com `ruff` e `mypy --strict`. As
+correspondências obrigatórias de `D103` — `ProvedorDeModeloDeLinguagem`, `ProvedorDeEmbedding`,
+`EstrategiaDeCaptura`, `VersaoDoMotor`, `DataDeCorte`, `IdentificadorDeCorrelacao` e
+`OrcamentoDeExecucaoDeIA` — entram na mesma verificação: sinônimo novo para termo já nomeado é
+defeito, e `MT-11` o reprova.
 
 ### Nota sobre as contagens de prioridade
 
-Esta seção usa as contagens declaradas no Índice de Requisitos: **85 `P0`**, **11 `P1`** e **1
-`P2`**, total de **97**. A tabela de etapas nomeia individualmente os requisitos `P1` e `P2` que
-difere para as etapas 12 e 13. Essas contagens já refletem a correção registrada em `D89`: o
-resumo anterior do Índice de Requisitos divergia da tabulação linha a linha, a divergência foi
-apurada e **corrigida no requirements**, tendo a tabulação como fonte, e este design passou a
-reproduzir o resumo corrigido. `MT-06` é o meta-teste que mantém resumo e tabulação em acordo;
-qualquer divergência futura apurada por ele é correção do requirements, não ajuste desta ordem — e
-não altera a sequência de construção, porque a sequência é governada por `D88` e por dependência
-técnica, não pela contagem.
+Esta seção usa as contagens declaradas no Índice de Requisitos: **112 `P0`**, **13 `P1`** e **1
+`P2`**, total de **126** (`D102`). A tabela de prioridade nomeia individualmente os treze `P1` e o
+único `P2`. A versão anterior desta seção declarava 85 `P0`, 11 `P1` e 1 `P2`, total de 97 —
+**registro histórico**, superado pelo fechamento arquitetural: dos vinte e nove requisitos
+acrescentados, vinte e sete são `P0` e dois são `P1` (`R117` e `R121`), e **nenhuma prioridade de
+linha existente foi alterada**.
+
+Essas contagens refletem também a correção registrada em `D89`: o resumo do Índice de Requisitos
+divergia da tabulação linha a linha, a divergência foi apurada e **corrigida no requirements**, tendo
+a tabulação como fonte, e este design reproduz o resumo corrigido. `MT-06` é o meta-teste que mantém
+resumo e tabulação em acordo; qualquer divergência futura apurada por ele é correção do requirements,
+não ajuste desta ordem — e não altera a sequência de construção, porque a sequência é governada por
+`D91` e por dependência técnica, não pela contagem.
+
+### Congelamento e mudança arquitetural depois dele (`D104`, `R126`)
+
+O passo 20 termina no **portão de congelamento**. A sequência de validação anterior ao congelamento é
+a de `R126.42`, `MT-06`, `MT-12` e a suíte de regressão completa: nenhuma etapa dela depende de
+leitura de artefato externo. O congelamento é registrado com data, versão do documento e as
+contagens de requisitos, decisões, propriedades e testes de regressão (`R126.43`).
+
+Depois do congelamento, **mudança de arquitetura é mudança explícita de decisão**, com conflito,
+resolução e impacto documentados sobre requisitos, parâmetros, regras, propriedades e testes, e a
+versão resultante declarada (`R126.44`). Mudança de arquitetura sem decisão numerada registrada não
+é admitida (`R126.45`). É o que impede que uma escolha de implementação entre como detalhe e a fonte
+única deixe de descrever o produto construído — e é também o que mantém este design como o único
+artefato normativo de engenharia, derivado de uma única fonte normativa de negócio (`R126.46`).

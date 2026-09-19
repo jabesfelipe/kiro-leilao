@@ -22,15 +22,19 @@ auditada, consolidada e **absorvida**; as especificações canônicas internas a
 também. Nenhuma delas é fonte de trabalho: divergências entre esta spec e qualquer
 material anterior resolvem-se sempre a favor desta spec.
 
-A seção **Decisões de Consolidação** (`D1` a `D89`) é a memória de auditoria dessa
+A seção **Decisões de Consolidação** (`D1` a `D104`) é a memória de auditoria dessa
 absorção: registra cada conflito encontrado, os lados em disputa, a decisão adotada e o
 motivo. É o que permite entender, sem os documentos de origem, por que cada valor é o que é.
 As decisões `D56` a `D80` registram a revisão de produto que trouxe as duas portas de
 entrada, os documentos como entidade, o versionamento de análise e o Fast Radar; as decisões
 `D81` a `D88` registram como os conflitos entre essa revisão e o que já estava fechado foram
 resolvidos; a decisão `D89` registra a correção da contagem de prioridade do Índice de
-Requisitos, defeito herdado da versão anterior. A revisão de produto foi **absorvida** por este
-documento e não é fonte de trabalho.
+Requisitos, defeito herdado da versão anterior; as decisões `D90` a `D104` registram o
+**fechamento arquitetural** — infraestrutura de IA e provedores, aquisição resiliente e
+agendamento, plataforma (observabilidade, segurança, erros, configuração, multi-tenant),
+experiência do investidor (estados, responsividade, design system, acessibilidade) e o portão
+de congelamento das quarenta perguntas de fechamento. Cada revisão de produto foi
+**absorvida** por este documento e nenhuma delas é fonte de trabalho.
 
 ### Princípios de resolução de conflitos `[CANÔNICO]`
 
@@ -121,6 +125,30 @@ outro idioma é renomeado.
   alterar nenhuma regra.
 - O projeto técnico é reescrito com identificadores em português, e os títulos das
   propriedades de correção e dos artefatos derivados acompanham a convenção.
+- **Correspondências obrigatórias** `[CANÔNICO]` (`D103`). Os termos abaixo têm um único nome
+  nesta spec; sinônimo novo é defeito de redação, não variação de estilo.
+
+| Termo em inglês | Nome nesta spec |
+|-----------------|-----------------|
+| `score` | `EscoreDeOportunidade` (rótulo normativo `Opportunity Score`) |
+| `Investor Fit` | `EscoreDeAderencia` (rótulo normativo `Investor Fit Score`) |
+| `hard stop` | parada absoluta (`HS-01` a `HS-09`) |
+| `BLOCK` | `BLOQUEAR` na interface, `BLOQUEIO` como efeito; o rótulo normativo `BLOCK` permanece nos requisitos |
+| `UNKNOWN` | `Desconhecido` na interface, `DESCONHECIDO` como valor de enum; o rótulo normativo `UNKNOWN` permanece nos requisitos |
+| `PENDING` | `PENDENTE` |
+| `SourceConnector` | `ConectorDeFonte` (`Conector_de_Fonte` como nome de sistema, `R85`) |
+| `TCO` | custo econômico total |
+| `LLMProvider` | `ProvedorDeModeloDeLinguagem` |
+| `EmbeddingProvider` | `ProvedorDeEmbedding` |
+| `Capture Strategy` | `EstrategiaDeCaptura` |
+| `ENGINE_VERSION` | `VersaoDoMotor` |
+| `cut-off date` | `DataDeCorte` |
+| `correlation id` | `IdentificadorDeCorrelacao` |
+| `AI budget` | `OrcamentoDeExecucaoDeIA` |
+
+- **Exceções mantidas em inglês**, e apenas estas, porque são nomes de tecnologia externa:
+  LangChain, LangGraph, MCP, RAG, OCR, React, FastAPI, PostgreSQL, pgvector, S3, OpenAI,
+  Bedrock e cron.
 
 ### Escopo
 
@@ -130,6 +158,19 @@ economia, risco e due diligence, gate jurídico, liquidez e saída, estratégias
 portfólio, score, ranking e motor de decisão, monitoramento e alertas, governança e
 auditoria, experiência do investidor, interface de programação, parametrização, escopo e
 priorização do MVP, e os guarda-corpos da arquitetura de IA (agentes, RAG, MCP, memória).
+
+**Incluído pelo fechamento arquitetural** (`D90` a `D104`): infraestrutura de IA com provedor
+de modelo de linguagem e provedor de embedding abstraídos, controle de custo e orçamento de
+execução de IA, versionamento de prompt, de modelo e de embedding, pipeline de RAG com citação
+obrigatória, armazenamento vetorial reconstruível, orquestração de workflow de IA com retomada
+e intervenção humana, agentes limitados e ferramentas MCP com separação entre leitura e
+escrita; aquisição resiliente com validação de captura, captura incremental, idempotência e
+agendamento configurável; plataforma com observabilidade, identificador de correlação,
+segurança, configuração por ambiente, catálogo de erros, processamento assíncrono, eventos de
+domínio, preparo multi-tenant, separação núcleo/adaptadores/infraestrutura, versão do motor e
+data de corte; experiência do investidor com estados obrigatórios de tela, navegação,
+interface web responsiva, design system e acessibilidade; e o portão de congelamento
+arquitetural.
 
 **Modalidade do MVP** `[CANÔNICO]` (`D56`, `D82`): o MVP cobre **exclusivamente leilão
 extrajudicial** de imóveis com garantia de alienação fiduciária, regido pela Lei nº 9.514/97,
@@ -188,6 +229,27 @@ normativa em todos os critérios de aceitação deste documento.
 | **Base_de_Conhecimento** | Recupera conhecimento normativo (regras, definições, casos) para os agentes. |
 | **Interface_do_Investidor** | Apresenta o Radar, a ficha, a explicabilidade e as ações. |
 | **Motor_de_Backtest** | Reproduz decisões históricas e mede acerto das regras. |
+| **Provedor_de_Modelo_de_Linguagem** | Contrato único de acesso a modelo de linguagem, com provedor, modelo, versão, limites e custo declarados. |
+| **Provedor_de_Embedding** | Contrato único de geração de representação vetorial, com provedor, modelo, dimensões, versão e data declarados. |
+| **Gestor_de_Custo_de_IA** | Contabiliza tokens, custo e chamadas por execução e aplica o orçamento de execução de IA. |
+| **Motor_de_Recuperacao** | Executa o pipeline de RAG — segmentação, metadados, busca, reordenação e montagem de contexto — e entrega a citação de cada trecho. |
+| **Indice_Vetorial** | Armazena representações vetoriais reconstruíveis; não é fonte de verdade do domínio. |
+| **Orquestrador_de_Workflow_de_IA** | Executa o grafo de etapas de IA com estado explícito, ponto de retomada, limite de tempo e intervenção humana. |
+| **Agente_Limitado** | Componente de linguagem com escopo e ferramentas declarados, sem autoridade sobre parada absoluta. |
+| **Servidor_de_Ferramentas** | Expõe as ferramentas MCP de leitura e de escrita, com autorização, validação, auditoria e idempotência. |
+| **Avaliador_de_IA** | Executa a suíte de avaliação de IA sobre casos-ouro de documento. |
+| **Motor_do_Radar** | Executa o ciclo do Radar automático, registra a execução e coordena conectores e estratégias de captura. |
+| **Estrategia_de_Captura** | Componente de infraestrutura que obtém o dado da fonte por página, endpoint, arquivo ou varredura. |
+| **Agendador** | Dispara execuções do Radar conforme a configuração de agendamento, sem conhecer regra de negócio. |
+| **Validador_de_Captura** | Verifica a captura contra a estrutura esperada, a quantidade mínima plausível, os campos essenciais, o hash, a data e hora e a fonte. |
+| **Gestor_de_Observabilidade** | Registra identificador de correlação, log estruturado, métrica, duração, situação, erro, repetição, custo de IA e versão de cada execução. |
+| **Gestor_de_Seguranca** | Aplica autenticação, autorização, posse, validação de upload, sanitização e gestão de segredo. |
+| **Gestor_de_Configuracao** | Resolve a configuração por ambiente e os sinalizadores de recurso, sem credencial no código. |
+| **Gestor_de_Erros** | Traduz falha interna em erro catalogado com código, mensagem amigável, contexto e identificador de correlação. |
+| **Executor_Assincrono** | Executa fora da requisição os processamentos pesados e publica situação e progresso. |
+| **Gestor_de_Notificacoes** | Publica notificação local e entrega por canal externo quando o canal está habilitado. |
+| **Gestor_de_Acompanhamento** | Mantém o acompanhamento de oportunidade nos eixos configurados e dispara reavaliação na mudança relevante. |
+| **Design_System** | Catálogo único de cores semânticas, tipografia, espaçamento e componentes da Interface_do_Investidor. |
 
 ### Termos jurídicos do domínio de leilão
 
@@ -267,6 +329,27 @@ normativa em todos os critérios de aceitação deste documento.
 | **Triagem rápida (Fast Radar)** | Prefixo do pipeline que qualifica candidatos com os dados já disponíveis, sem valuation, sem TCO e sem decisão. |
 | **Gate de promoção** | Verificação objetiva que autoriza a execução da análise profunda sobre um candidato. |
 | **Comparação de versões** | Confronto entre duas versões de análise da mesma oportunidade, classificando as diferenças e o motivo da alteração. |
+| **Estratégia de captura (`EstrategiaDeCaptura`)** | Como o dado é obtido da fonte: página pública, endpoint, arquivo ou varredura. Rótulo de infraestrutura, registrado na execução do Radar e na captura, invisível às entidades, regras, parâmetros e motores do domínio (`D59`, `D94`). |
+| **Execução do Radar** | Registro auditável de um ciclo do Radar automático, com início, término, fonte, conector, estratégia, versão, quantidades e situação. |
+| **Captura incremental** | Comparação da captura atual com a última captura válida da mesma oferta, que classifica o resultado em `NOVA`, `ATUALIZADA`, `SEM_ALTERACAO`, `REMOVIDA_DA_FONTE`, `INVALIDA` ou `INCONCLUSIVA`. |
+| **Chave de idempotência** | Valor fornecido na requisição que identifica a intenção da operação e impede que a repetição produza efeito duplicado. |
+| **Disjuntor** | Mecanismo que interrompe temporariamente as chamadas a uma fonte após falhas sucessivas e as retoma após o intervalo configurado. |
+| **Limite de taxa** | Teto de requisições por intervalo aplicado a uma fonte. |
+| **Segmento (`chunk`)** | Trecho de documento com metadados, unidade de indexação e de citação do RAG. |
+| **Representação vetorial (`embedding`)** | Vetor derivado de um segmento, identificado por provedor, modelo, dimensões, versão e data. |
+| **Provedor de modelo de linguagem (`ProvedorDeModeloDeLinguagem`)** | Contrato de acesso a modelo de linguagem, independente do fornecedor. |
+| **Provedor de embedding (`ProvedorDeEmbedding`)** | Contrato de geração de representação vetorial, independente do fornecedor. |
+| **Orçamento de execução de IA (`OrcamentoDeExecucaoDeIA`)** | Teto de tokens, chamadas e custo admitido em uma execução. |
+| **Versão do motor (`VersaoDoMotor`)** | Identificador da versão do motor determinístico que produziu um resultado. |
+| **Data de corte (`DataDeCorte`)** | Data até a qual a evidência foi admitida em uma análise; evidência posterior não entra naquela versão. |
+| **Identificador de correlação (`IdentificadorDeCorrelacao`)** | Valor que liga todos os registros de uma mesma execução, da requisição ao log, à métrica e ao erro. |
+| **Fato do documento** | Conteúdo lido literalmente de um documento, com citação até documento, versão, página e trecho. |
+| **Interpretação da IA** | Leitura proposta por componente de linguagem sobre um fato do documento; nunca é apresentada como fato documental. |
+| **Resultado determinístico** | Valor produzido pelos motores determinísticos a partir de fatos e parâmetros versionados. |
+| **Estado de tela** | Situação apresentada na interface: carregando, esqueleto, vazio, erro, repetível, parcial, obsoleto, confirmação ou sucesso. |
+| **Sinalizador de recurso** | Chave de configuração que habilita ou desabilita um recurso por ambiente, sem alterar código. |
+| **Preparo multi-tenant** | Estrutura de dados e de autorização que admite mais de um titular sem migração das entidades de negócio. |
+| **Pergunta de fechamento** | Uma das quarenta verificações do portão de congelamento arquitetural de `R126`. |
 
 ---
 
@@ -281,6 +364,7 @@ normativa em todos os critérios de aceitação deste documento.
 | **Auditor** | Verifica rastreabilidade e integridade; não altera conteúdo. | Nada (somente leitura). |
 | **Especialista Jurídico** | Interpreta questões jurídicas que exigem parecer profissional. | Evidências e pareceres jurídicos. |
 | **Especialista Físico** | Avalia condição construtiva e orçamento de reforma. | Evidências físicas e orçamentos. |
+| **Operador de Plataforma** | Opera o ambiente: segredos, credenciais de provedor, agendamento, limites de taxa, orçamento de IA, sinalizadores de recurso e observabilidade. Não interpreta o negócio (`D96`). | Configuração por ambiente, agendamento, limites operacionais, sinalizadores de recurso. **Não pode** alterar regra, parâmetro de negócio, evidência, análise nem decisão. |
 | **Radar (sistema)** | Captura, calcula, aplica regras, pontua, ranqueia, explica, monitora e registra. | Fatos calculados, scores, rankings, alertas, snapshots. |
 
 Em operação individual, um mesmo indivíduo pode acumular papéis; a trilha de
@@ -963,6 +1047,67 @@ equilíbrio de `SCORE-008`.
 
 `MON-011` é o gatilho mais frequente da due diligence e estava ausente: sem ele, resolver
 uma pendência não recalculava a confiança nem devolvia a oportunidade ao ranking.
+
+### IA — Infraestrutura de IA, custo e avaliação `[CANÔNICO]` (extensão desta spec, `D97`)
+
+Parâmetros de infraestrutura. Nenhum deles participa de cálculo de negócio, de score, de
+decisão ou de precedência: alterá-los muda custo, desempenho e disponibilidade, nunca o
+resultado determinístico (`R98.9`).
+
+| ID | Parâmetro | Valor default | Unidade | Status |
+|----|-----------|---------------|---------|--------|
+| IA-001 | `provedor_de_modelo_de_linguagem_padrao` | OpenAI | — | `[DEFAULT]` |
+| IA-002 | `provedor_de_embedding_padrao` | OpenAI | — | `[DEFAULT]` |
+| IA-003 | `orcamento_de_execucao_de_ia_em_tokens` | 250.000 | tokens por execução | `[DEFAULT]` |
+| IA-004 | `orcamento_de_execucao_de_ia_em_moeda` | 5,00 | BRL por execução | `[DEFAULT]` |
+| IA-005 | `limite_de_tokens_por_chamada` | 32.000 | tokens | `[DEFAULT]` |
+| IA-006 | `limite_de_tempo_por_chamada_de_modelo` | 120 | segundos | `[DEFAULT]` |
+| IA-007 | `tentativas_por_no_do_workflow` | 3 | contagem | `[DEFAULT]` |
+| IA-008 | `tamanho_do_segmento` | 1.200 | caracteres | `[DEFAULT]` |
+| IA-009 | `sobreposicao_do_segmento` | 200 | caracteres | `[DEFAULT]` |
+| IA-010 | `quantidade_de_trechos_recuperados` | 8 | contagem | `[DEFAULT]` |
+| IA-011 | `validade_do_cache_de_resposta` | 30 | dias | `[DEFAULT]` |
+| IA-012 | `validade_do_cache_de_embedding` | sem expiração enquanto o modelo e o segmento não mudam | — | `[CANÔNICO]` |
+| IA-013 | `confianca_minima_da_extracao_para_dispensar_revisao_humana` | 0,85 | fração | `[PENDENTE-CALIBRAÇÃO]` |
+| IA-014 | `politica_de_envio_de_documento_sensivel` | exigir política explícita registrada | — | `[CANÔNICO]` (`R112.10`) |
+| IA-015 | `modelo_por_tarefa` | classificação: modelo econômico; extração e análise: modelo de maior capacidade | — | `[DEFAULT]` |
+
+### AQ — Aquisição, agendamento e resiliência `[CANÔNICO]` (extensão desta spec, `D94`)
+
+| ID | Parâmetro | Valor default | Unidade | Status |
+|----|-----------|---------------|---------|--------|
+| AQ-001 | `frequencia_de_agendamento` | diária | — | `[DEFAULT]` |
+| AQ-002 | `janela_de_captura` | 02:00 às 05:00 | horário local | `[DEFAULT]` |
+| AQ-003 | `limite_de_taxa_por_fonte` | 30 | requisições por minuto | `[DEFAULT]` |
+| AQ-004 | `limite_de_tempo_da_requisicao_de_captura` | 30 | segundos | `[DEFAULT]` |
+| AQ-005 | `politica_de_retry` | 5 tentativas com espera exponencial de 1 s, 2 s, 4 s, 8 s e 16 s, com dispersão aleatória | — | `[DEFAULT]` |
+| AQ-006 | `limite_de_paginas_por_execucao` | 200 | contagem | `[DEFAULT]` |
+| AQ-007 | `limite_de_itens_por_execucao` | 5.000 | contagem | `[DEFAULT]` |
+| AQ-008 | `falhas_consecutivas_para_abrir_o_disjuntor` | 5 | contagem | `[DEFAULT]` |
+| AQ-009 | `intervalo_de_reabertura_do_disjuntor` | 30 | minutos | `[DEFAULT]` |
+| AQ-010 | `quantidade_minima_plausivel_de_itens` | 0,50 da mediana das últimas cinco execuções válidas da mesma fonte | fração | `[DEFAULT-DERIVADO]` |
+| AQ-011 | `variacao_maxima_de_estrutura_tolerada` | 0 campos essenciais ausentes | contagem | `[CANÔNICO]` |
+| AQ-012 | `intervalo_do_checkpoint_de_captura` | 1 página | — | `[DEFAULT]` |
+| AQ-013 | `execucoes_sem_a_oferta_para_classificar_como_removida_da_fonte` | 2 | contagem | `[DEFAULT]` |
+
+### PLT — Plataforma, segurança e configuração `[CANÔNICO]` (extensão desta spec, `D96`)
+
+| ID | Parâmetro | Valor default | Unidade | Status |
+|----|-----------|---------------|---------|--------|
+| PLT-001 | `tamanho_maximo_de_upload` | 50 | MB por arquivo | `[DEFAULT]` |
+| PLT-002 | `tipos_mime_aceitos` | `application/pdf`, `image/jpeg`, `image/png`, `image/tiff`, `text/plain`, `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet` | — | `[DEFAULT]` |
+| PLT-003 | `versao_do_motor` | 1.0.0 | versão semântica | `[CANÔNICO]` (`R120.1`) |
+| PLT-004 | `ambientes` | desenvolvimento, teste, produção | — | `[CANÔNICO]` |
+| PLT-005 | `tamanho_maximo_de_pagina_da_interface_de_programacao` | 100 | itens | `[DEFAULT]` |
+| PLT-006 | `tamanho_padrao_de_pagina_da_interface_de_programacao` | 25 | itens | `[DEFAULT]` |
+| PLT-007 | `validade_da_chave_de_idempotencia` | 24 | horas | `[DEFAULT]` |
+| PLT-008 | `retencao_de_log_estruturado` | 90 | dias | `[DEFAULT]` |
+| PLT-009 | `limite_de_tempo_da_requisicao_sincrona` | 5 | segundos | `[DEFAULT]` |
+| PLT-010 | `contraste_minimo_de_texto` | 4,5 para texto normal e 3,0 para texto grande | razão | `[CANÔNICO]` |
+| PLT-011 | `largura_de_referencia_do_ponto_de_quebra_movel` | 768 | pixels | `[DEFAULT]` |
+| PLT-012 | `sinalizadores_de_recurso` | `radar_automatico`, `ia_documental`, `recuperacao_rag`, `agentes`, `ferramentas_mcp`, `notificacao_externa`, `modelo_local` | — | `[DEFAULT]` |
+| PLT-013 | `canais_de_notificacao_habilitados` | local | — | `[DEFAULT]` |
+| PLT-014 | `politica_de_senha_e_sessao` | autenticação obrigatória e sessão com expiração declarada por ambiente | — | `[CANÔNICO]` |
 
 ---
 
@@ -2309,7 +2454,9 @@ mais restritivo.
 5. THE Radar SHALL manter testes que verifiquem que toda decisão está vinculada a evidências e regras registradas.
 6. THE Radar SHALL manter testes que verifiquem que o histórico não é convertido em fato atual.
 7. THE Radar SHALL manter testes que verifiquem os cálculos determinísticos contra os valores publicados nos Golden Cases do Anexo F, incluindo a verificação inversa do preço máximo de `F.1.5`.
-8. THE Radar SHALL manter os testes de regressão `REG-001` a `REG-035` do Anexo E.
+8. THE Radar SHALL manter os testes de regressão `REG-001` a `REG-060` do Anexo E, um teste por linha da tabela (`D101`).
+9. THE Radar SHALL manter a suíte de avaliação de IA de `R105.8` separada desta suíte, e SHALL manter as duas executáveis de forma independente.
+10. THE Radar SHALL manter os meta-testes `MT-01` a `MT-16`, incluindo `MT-12` de `R126.41`, `MT-13` de `R118.10`, `MT-14` de `R114.9`, `MT-15` de `R111.10` e `MT-16` de `R122.10`.
 
 ---
 
@@ -2339,10 +2486,10 @@ mais restritivo.
 
 #### Acceptance Criteria
 
-1. THE Radar SHALL tratar como capacidades `P0`, obrigatórias na primeira versão operacional, exatamente **23** capacidades: `P0-01` fonte e captura; `P0-02` normalização; `P0-03` identificação do imóvel; `P0-04` deduplicação básica; `P0-05` perfil consolidado; `P0-06` comparáveis; `P0-07` valuation; `P0-08` custo econômico total; `P0-09` desconto e margem; `P0-10` risco básico; `P0-11` liquidez básica; `P0-12` estratégia; `P0-13` regras; `P0-14` Opportunity Score; `P0-15` Investor Fit; `P0-16` ranking; `P0-17` explicabilidade; `P0-18` análise profunda; `P0-19` pendências e evidências; `P0-20` decisão; `P0-21` histórico; `P0-22` monitoramento básico; e `P0-23` validade jurídica do procedimento.
-2. THE Radar SHALL tratar como capacidades `P1`, posteriores à primeira versão, exatamente **nove** capacidades: novas fontes e instituições; mais automações de enriquecimento; alertas avançados; monitoramento mais sofisticado; mais estratégias; backtest ampliado; modelos de liquidez mais sofisticados; comparação avançada de portfólio; e relatórios avançados.
+1. THE Radar SHALL tratar como capacidades `P0`, obrigatórias na primeira versão operacional, exatamente **31** capacidades: `P0-01` fonte e captura; `P0-02` normalização; `P0-03` identificação do imóvel; `P0-04` deduplicação básica; `P0-05` perfil consolidado; `P0-06` comparáveis; `P0-07` valuation; `P0-08` custo econômico total; `P0-09` desconto e margem; `P0-10` risco básico; `P0-11` liquidez básica; `P0-12` estratégia; `P0-13` regras; `P0-14` Opportunity Score; `P0-15` Investor Fit; `P0-16` ranking; `P0-17` explicabilidade; `P0-18` análise profunda; `P0-19` pendências e evidências; `P0-20` decisão; `P0-21` histórico; `P0-22` monitoramento básico; `P0-23` validade jurídica do procedimento; `P0-24` infraestrutura de IA com provedores abstraídos; `P0-25` recuperação com citação e proveniência; `P0-26` orquestração de workflow de IA com retomada; `P0-27` aquisição resiliente e agendamento; `P0-28` observabilidade, erros e desempenho; `P0-29` segurança, configuração por ambiente e preparo multi-tenant; `P0-30` experiência do investidor com estados, responsividade, design system e acessibilidade; e `P0-31` fechamento arquitetural e congelamento (`D99`).
+2. THE Radar SHALL tratar como capacidades `P1`, posteriores à primeira versão, exatamente **doze** capacidades: novas fontes e instituições; mais automações de enriquecimento; alertas avançados; monitoramento mais sofisticado; mais estratégias; backtest ampliado; modelos de liquidez mais sofisticados; comparação avançada de portfólio; relatórios avançados; canais externos de notificação; modelo de linguagem local; e infraestrutura de nuvem provisionada (`D99`).
 3. THE Radar SHALL tratar como capacidades `P2`, de evolução, exatamente **oito** capacidades: aprendizado estatístico avançado; predições mais sofisticadas; expansão ampla de mercados; modelos específicos por submercado; automação da due diligence; inteligência avançada de documentos; novos canais de comunicação; e recursos colaborativos.
-4. THE Radar SHALL tratar como **fora da primeira versão** exatamente **nove** itens: cobertura de todas as instituições; cobertura de todos os portais; aplicativo completo; automação jurídica completa; aprendizado de máquina avançado; execução automática de compra; gestão patrimonial completa; marketplace; e definição da arquitetura técnica definitiva.
+4. THE Radar SHALL tratar como **fora da primeira versão** exatamente **dez** itens: cobertura de todas as instituições; cobertura de todos os portais; aplicativo móvel nativo; automação jurídica completa; aprendizado de máquina avançado; execução automática de compra; gestão patrimonial completa; marketplace; provisionamento da infraestrutura de produção em nuvem; e cobrança, planos e limites comerciais (`D92`, `D93`, `D96`).
 5. THE Radar SHALL atribuir a cada requisito deste documento exatamente uma classificação de prioridade entre `P0`, `P1`, `P2` e `fora do MVP`, registrada no Índice de Requisitos.
 6. WHEN uma nova necessidade é proposta, THE Gestor_de_Governanca SHALL classificá-la em exatamente uma das seis categorias de controle de escopo: `P0 obrigatório` entra na primeira versão; `P1 importante` entra no backlog posterior; `P2 evolução` entra no roteiro; `experimento` é testado separadamente; `fora da tese` não entra; `mudança estrutural` exige revisão de impacto antes de alterar a base.
 7. IF uma necessidade é classificada como `mudança estrutural`, THEN THE Gestor_de_Governanca SHALL exigir registro de impacto sobre requisitos, parâmetros e regras vigentes antes de qualquer alteração.
@@ -2699,6 +2846,593 @@ sobre o mesmo pipeline e o mesmo motor determinístico dos domínios A a N.
 5. IF uma requisição referencia imóvel, oportunidade, documento, análise ou checklist inexistente, THEN THE Radar SHALL rejeitá-la informando o recurso e a causa.
 6. THE Radar SHALL registrar cada operação exposta na trilha de auditoria conforme `R64.2`.
 7. THE Radar SHALL abster-se de expor operação que altere captura registrada, evidência registrada ou versão de análise já persistida.
+
+---
+
+### Domínio P — Infraestrutura de IA, Provedores, Custo e Avaliação
+
+Este domínio integra o fechamento arquitetural (`D90` a `D104`) na parte de IA. Ele não cria
+motor de decisão, catálogo de regras nem hierarquia normativa paralelos: descreve **como a
+interpretação é produzida, versionada, custeada, citada e avaliada**, sempre subordinada ao
+domínio determinístico dos domínios A a N e aos guarda-corpos de `R71` e `R83`. O princípio que
+governa o domínio é o mesmo dos demais: a IA interpreta, a evidência sustenta, o domínio
+calcula, o motor decide e a interface explica.
+
+### Requirement 98: Provedor de modelo de linguagem e provedor de embedding abstraídos
+
+**User Story:** Como responsável técnico, quero que o acesso a modelo de linguagem e a embedding seja um contrato, para que trocar de fornecedor não alcance o domínio.
+
+#### Acceptance Criteria
+
+1. THE Radar SHALL definir o contrato único Provedor_de_Modelo_de_Linguagem com as operações de completar texto, produzir saída estruturada conforme esquema declarado e informar as capacidades do modelo.
+2. THE Radar SHALL definir o contrato único Provedor_de_Embedding com as operações de gerar representação vetorial de um segmento e informar provedor, modelo, dimensões e versão.
+3. THE Radar SHALL adotar OpenAI como **primeira** implementação dos dois contratos, conforme `IA-001` e `IA-002`.
+4. WHEN um novo provedor é incorporado, THE Radar SHALL exigir apenas a implementação do contrato e o registro da configuração do ambiente, AND SHALL abster-se de exigir alteração de entidade de negócio, de regra, de parâmetro de negócio, de motor determinístico ou de esquema de dados de negócio.
+5. THE Radar SHALL restringir a chamada a provedor aos adaptadores de infraestrutura de `R119.2`, AND SHALL abster-se de invocar cliente de provedor a partir do domínio determinístico e dos motores.
+6. THE Radar SHALL permitir a escolha do provedor e do modelo por tarefa conforme `IA-015`, e SHALL registrar a tarefa, o provedor, o modelo e a versão aplicados.
+7. THE Radar SHALL tratar LangChain e LangGraph como infraestrutura de integração e de orquestração, AND SHALL abster-se de expor objeto de biblioteca externa nas assinaturas do domínio quando um contrato declarado neste documento for suficiente.
+8. WHERE uma tarefa é executada por modelo local, THE Radar SHALL aplicar o mesmo contrato e SHALL registrar o provedor como local.
+9. THE Radar SHALL produzir o mesmo resultado determinístico para as mesmas evidências, os mesmos parâmetros resolvidos e as mesmas versões de regra, independentemente do provedor e do modelo aplicados.
+10. IF o provedor está indisponível ou excede `IA-006`, THEN THE Radar SHALL registrar erro catalogado conforme `R114.2`, SHALL manter a execução retomável conforme `R103.6` AND SHALL abster-se de emitir interpretação sem resposta do provedor.
+11. THE Radar SHALL registrar, em cada chamada a provedor, o identificador de correlação, a tarefa, o provedor, o modelo, a versão, os tokens de entrada, os tokens de saída, a duração e o custo estimado.
+
+### Requirement 99: Controle de custo, orçamento e métricas de IA
+
+**User Story:** Como investidor, quero que o custo de IA seja medido e limitado, para que a análise não fique caprichosa em consumo sem que eu saiba.
+
+#### Acceptance Criteria
+
+1. THE Gestor_de_Custo_de_IA SHALL contabilizar tokens de entrada, tokens de saída, quantidade de chamadas e custo estimado por execução, por análise e por período.
+2. THE Gestor_de_Custo_de_IA SHALL aplicar o orçamento de execução de IA de `IA-003` e `IA-004` a cada execução.
+3. IF o orçamento de execução de IA é atingido, THEN THE Orquestrador_de_Workflow_de_IA SHALL interromper as chamadas a provedor, SHALL registrar a interrupção com o orçamento, o consumo apurado e o identificador de correlação, SHALL marcar a execução como parcial e SHALL registrar pendência.
+4. THE Gestor_de_Custo_de_IA SHALL apresentar toda interrupção por orçamento na interface e na trilha de auditoria, de modo que nenhuma interrupção por custo permaneça implícita.
+5. THE Radar SHALL manter cache de resposta de modelo indexado por tarefa, versão de prompt, versão de modelo e hash da entrada, com validade `IA-011`.
+6. THE Radar SHALL manter cache de representação vetorial indexado por hash do segmento, provedor, modelo e versão, com validade `IA-012`.
+7. WHEN um documento com hash já registrado é submetido, THE Radar SHALL reaproveitar a extração, os segmentos e as representações vetoriais existentes conforme `R86.9`.
+8. THE Radar SHALL segmentar cada documento conforme `IA-008` e `IA-009` e SHALL registrar o tamanho e a sobreposição aplicados em cada segmento.
+9. THE Radar SHALL limitar cada chamada a `IA-005` tokens e SHALL registrar o truncamento quando ocorrer.
+10. THE Executor_Assincrono SHALL executar extração, segmentação, geração de representação vetorial, recuperação e análise profunda fora da requisição, conforme `R115.1`.
+11. WHEN a execução de IA conclui, THE Radar SHALL registrar tokens, custo estimado e quantidade de chamadas na trilha de auditoria da análise.
+12. THE Radar SHALL reprocessar documento, segmento ou representação vetorial somente quando o conteúdo, o modelo, a versão do prompt ou a configuração de segmentação mudarem.
+
+### Requirement 100: Versionamento de prompt, de modelo e de representação vetorial
+
+**User Story:** Como auditor, quero saber qual versão de prompt e de modelo produziu cada interpretação, para que uma mudança de IA não reescreva o passado em silêncio.
+
+#### Acceptance Criteria
+
+1. THE Radar SHALL manter cada prompt como configuração versionada, com identificador, versão, conteúdo, tarefa, autor e data.
+2. THE Radar SHALL registrar, em cada interpretação produzida por componente de linguagem, o identificador e a versão do prompt, o provedor, o modelo, a versão do modelo e a data e hora.
+3. THE Radar SHALL registrar, em cada segmento e em cada representação vetorial, o provedor, o modelo, as dimensões, a versão e a data da geração.
+4. WHEN um prompt é alterado, THE Gestor_de_Governanca SHALL criar nova versão, SHALL registrar autor, data, motivo e diferença em relação à versão anterior, e SHALL preservar as versões anteriores conforme `R62.1`.
+5. WHEN o modelo ou a versão do modelo muda, THE Radar SHALL registrar a mudança e SHALL manter cada interpretação anterior associada à versão que a produziu.
+6. THE Radar SHALL permitir identificar, para qualquer interpretação registrada, qual versão de prompt e qual versão de modelo a produziram.
+7. WHERE componente de linguagem participou da análise, THE Motor_de_Explicabilidade SHALL apresentar a versão do prompt e a versão do modelo utilizados, conforme `R56`.
+8. THE Radar SHALL registrar em cada análise a versão do prompt, a versão do modelo, a versão do embedding, a versão da segmentação, a versão do motor e a data de corte, conforme `R120.6`.
+9. IF a versão de prompt registrada em uma interpretação não é mais a vigente, THEN THE Radar SHALL apresentar a interpretação com a versão registrada AND SHALL abster-se de reescrevê-la com a versão vigente.
+10. THE Radar SHALL abster-se de alterar interpretação já registrada em versão de análise persistida, conforme `R61.2`.
+
+### Requirement 101: Pipeline de recuperação com metadados e citação obrigatória
+
+**User Story:** Como analista, quero que toda resposta apoiada em documento aponte o trecho exato, para conferir a origem sem procurar no arquivo.
+
+#### Acceptance Criteria
+
+1. THE Motor_de_Recuperacao SHALL executar o pipeline explícito na ordem: extração; limpeza; segmentação; atribuição de metadados; geração de representação vetorial; indexação; busca; reordenação quando configurada; montagem de contexto; e entrega ao componente de linguagem.
+2. THE Motor_de_Recuperacao SHALL registrar, para cada segmento, no mínimo: documento; versão do documento; imóvel; oportunidade; página; trecho; tipo; data; origem; hash; provedor e modelo do embedding; versão do embedding; e versão da segmentação.
+3. THE Motor_de_Recuperacao SHALL entregar, para cada trecho recuperado, a citação resolvível até documento, versão, página e trecho.
+4. IF um trecho recuperado não possui citação resolvível, THEN THE Motor_de_Recuperacao SHALL descartá-lo do contexto, SHALL registrar a ocorrência AND SHALL abster-se de usá-lo como apoio de interpretação.
+5. THE Radar SHALL distinguir, em todo registro e em toda apresentação, três naturezas: fato do documento; interpretação da IA; e resultado determinístico.
+6. THE Radar SHALL abster-se de apresentar interpretação da IA com a mesma marcação de fato do documento.
+7. THE Interface_do_Investidor SHALL permitir abrir o documento original na versão, na página e no trecho citados, conforme `R86.7`.
+8. IF a extração ou o OCR de um documento falha total ou parcialmente, THEN THE Gestor_de_Documentos SHALL registrar a falha de forma explícita com a causa, SHALL manter o arquivo original íntegro conforme `R86.2`, SHALL marcar o conteúdo extraído como parcial e SHALL registrar pendência.
+9. THE Motor_de_Recuperacao SHALL recuperar no máximo `IA-010` trechos por consulta e SHALL registrar a consulta, os trechos e a pontuação de cada trecho.
+10. THE Motor_de_Recuperacao SHALL manter o conhecimento normativo, os dados do imóvel e o histórico em coleções distintas, cada uma com política de atualização e validade própria conforme `R72.7` e a tabela `FRESH`.
+11. THE Radar SHALL tratar o resultado da recuperação como apoio à interpretação, AND SHALL abster-se de usá-lo como evidência, como valor de cálculo e como verdade transacional (`D74`).
+12. THE Radar SHALL registrar cada consulta de recuperação com identificador de correlação, consulta, coleção, trechos retornados e versão do embedding.
+
+### Requirement 102: Índice vetorial reconstruível e migração de representação vetorial
+
+**User Story:** Como responsável técnico, quero poder reindexar e trocar de modelo de embedding, para que o produto não fique preso a uma dimensão de vetor.
+
+#### Acceptance Criteria
+
+1. THE Radar SHALL tratar o Indice_Vetorial como artefato derivado e reconstruível, AND SHALL abster-se de tratá-lo como fonte de verdade do domínio.
+2. THE Radar SHALL manter o arquivo original, a extração e os segmentos em persistência transacional independente do Indice_Vetorial.
+3. THE Radar SHALL permitir reindexar qualquer documento a partir do arquivo original preservado, sem perda do arquivo original.
+4. THE Radar SHALL permitir trocar o provedor de embedding, trocar o modelo, alterar a configuração de segmentação e invalidar representações vetoriais existentes.
+5. WHEN uma migração de representação vetorial é executada, THE Radar SHALL seguir a ordem: gerar a nova representação; validar a nova coleção; publicar a nova coleção; e manter ou remover a coleção anterior conforme a configuração registrada.
+6. THE Radar SHALL registrar as dimensões por representação vetorial conforme `R100.3`, AND SHALL abster-se de vincular o documento à dimensão fixa de um único modelo.
+7. WHEN o Indice_Vetorial é reconstruído, THE Radar SHALL preservar inalterados os resultados determinísticos, as decisões, as versões de análise e as evidências registradas.
+8. IF o Indice_Vetorial está indisponível, THEN THE Radar SHALL executar a análise sem a etapa de recuperação, SHALL marcar a etapa como não executada, SHALL registrar pendência quando a etapa era exigida pelo checklist aplicável AND SHALL abster-se de alterar por isso o resultado determinístico.
+9. THE Radar SHALL registrar, para cada coleção do Indice_Vetorial, o provedor, o modelo, as dimensões, a versão, a configuração de segmentação e a data de construção.
+10. THE Radar SHALL manter a verdade transacional do domínio em persistência relacional, conforme `R74` e `R86`.
+
+### Requirement 103: Workflow de IA com estado explícito, retomada e intervenção humana
+
+**User Story:** Como analista, quero que uma falha no meio da análise documental não jogue tudo fora, para retomar do ponto em que parou.
+
+#### Acceptance Criteria
+
+1. THE Orquestrador_de_Workflow_de_IA SHALL executar o workflow documental na ordem: carregar documentos; extrair texto; classificar documentos; extrair evidências candidatas; validar evidências candidatas; recuperar contexto; analisar pendências; produzir proposta de interpretação; validar a proposta contra o domínio; executar o motor determinístico; e produzir a explicação.
+2. THE Orquestrador_de_Workflow_de_IA SHALL manter o estado explícito com: identificador de correlação; identificador da análise; identificador da execução; versões de prompt, de modelo, de embedding, de segmentação, de checklist, de regras, de parâmetros e do motor; documentos; evidências candidatas; mensagens; erros; pontos de retomada; resultados intermediários; e situação.
+3. THE Orquestrador_de_Workflow_de_IA SHALL aplicar limite de tempo por etapa conforme `IA-006` e até `IA-007` tentativas por etapa.
+4. WHEN cada etapa conclui, THE Orquestrador_de_Workflow_de_IA SHALL registrar o ponto de retomada correspondente.
+5. WHEN uma execução interrompida é retomada, THE Orquestrador_de_Workflow_de_IA SHALL continuar do último ponto de retomada registrado e SHALL produzir o mesmo resultado que a execução contínua produziria com as mesmas entradas e as mesmas versões.
+6. IF uma etapa falha após as tentativas configuradas, THEN THE Orquestrador_de_Workflow_de_IA SHALL marcar a execução como parcial, SHALL registrar a etapa, a causa e o identificador de correlação, SHALL preservar as etapas concluídas e SHALL manter a execução retomável.
+7. IF a etapa de recuperação falha, THEN THE Orquestrador_de_Workflow_de_IA SHALL prosseguir com as etapas que não dependem dela e SHALL registrar a ausência do contexto recuperado como limitação declarada da execução.
+8. IF a etapa de execução do motor determinístico não conclui, THEN THE Radar SHALL abster-se de emitir decisão e SHALL registrar a análise como incompleta.
+9. THE Orquestrador_de_Workflow_de_IA SHALL exigir intervenção humana registrada quando: a qualidade do documento é insuficiente; a evidência candidata é ambígua; existe conflito entre fontes; o processo judicial exige interpretação; a confiança da extração é inferior a `IA-013`; o componente de linguagem não produz saída estruturada válida; ou a regra aplicável exige confirmação.
+10. WHEN a intervenção humana é solicitada, THE Radar SHALL permitir aceitar, corrigir, rejeitar, acrescentar evidência, registrar pendência e solicitar reanálise, e SHALL registrar cada ato na trilha de auditoria conforme `R64.2`.
+11. THE Orquestrador_de_Workflow_de_IA SHALL preservar os pontos mínimos de intervenção humana de `R83.5`, AND SHALL abster-se de removê-los por configuração.
+12. WHEN a mesma execução é disparada mais de uma vez com a mesma chave de idempotência, THE Orquestrador_de_Workflow_de_IA SHALL manter exatamente uma execução persistida conforme `R109.3`.
+13. THE Orquestrador_de_Workflow_de_IA SHALL registrar a versão do grafo de workflow em cada execução, conforme `R70.9`.
+14. THE Orquestrador_de_Workflow_de_IA SHALL abster-se de alterar a ordem obrigatória do pipeline de `R70.1` e a precedência de decisão de `R53`.
+
+### Requirement 104: Agentes limitados e ferramentas de contexto
+
+**User Story:** Como gestor, quero que cada agente tenha escopo e ferramentas declarados, para que nenhum deles possa contornar uma parada absoluta.
+
+#### Acceptance Criteria
+
+1. THE Radar SHALL declarar, para cada Agente_Limitado, o escopo, as ferramentas autorizadas, as entradas admitidas e as saídas admitidas.
+2. THE Radar SHALL manter **cinco** agentes: documental, que localiza e extrai evidência candidata; jurídico, que organiza informação jurídica e aponta lacuna; de mercado, que localiza e organiza comparáveis candidatos; de diligência, que identifica pendências; e de análise, que coordena os demais.
+3. THE Radar SHALL abster-se de conceder a qualquer Agente_Limitado autoridade sobre parada absoluta, sobre o Gate_Juridico, sobre a precedência de decisão de `R53` e sobre os princípios invioláveis.
+4. THE Agente_Limitado SHALL propor evidência candidata, AND SHALL abster-se de registrar evidência, conforme `R71.5`.
+5. THE Agente_Limitado SHALL abster-se de declarar regularidade jurídica sem evidência documental suficiente, conforme `SAFE-003` e `R71.6`.
+6. THE Servidor_de_Ferramentas SHALL manter as ferramentas de leitura e as ferramentas de escrita em catálogos distintos e explicitamente rotulados.
+7. THE Servidor_de_Ferramentas SHALL disponibilizar como leitura: consultar documento; buscar trecho de documento; consultar imóvel; consultar oportunidade; consultar processo judicial; consultar comparáveis; e consultar parâmetros resolvidos.
+8. THE Servidor_de_Ferramentas SHALL disponibilizar como escrita: registrar evidência candidata; atualizar rascunho de análise; registrar revisão; registrar pendência; e solicitar reanálise.
+9. WHEN uma ferramenta de escrita é invocada, THE Servidor_de_Ferramentas SHALL exigir autorização do ator, SHALL validar a entrada contra o esquema declarado, SHALL aplicar chave de idempotência e SHALL registrar a operação na trilha de auditoria com ator, papel, data, entradas e saídas.
+10. IF uma ferramenta de escrita é invocada sem autorização, com entrada inválida ou sem chave de idempotência, THEN THE Servidor_de_Ferramentas SHALL rejeitar a invocação informando a causa AND SHALL abster-se de produzir efeito.
+11. WHEN a mesma ferramenta de escrita é invocada mais de uma vez com a mesma chave de idempotência, THE Servidor_de_Ferramentas SHALL produzir exatamente um efeito persistido e SHALL retornar o resultado da primeira execução.
+12. THE Servidor_de_Ferramentas SHALL abster-se de expor ferramenta que altere captura registrada, evidência registrada, versão de análise persistida, versão de regra ou versão de parâmetro, conforme `R97.7`.
+13. THE Radar SHALL registrar cada ferramenta invocada conforme `R71.10`.
+
+### Requirement 105: Regras anti-alucinação e avaliação de IA
+
+**User Story:** Como investidor, quero que a IA diga "não sei" quando não sabe, para que nenhuma afirmação sem documento entre na minha decisão.
+
+#### Acceptance Criteria
+
+1. THE Radar SHALL exigir que toda afirmação produzida por componente de linguagem sobre o imóvel, a oportunidade ou o procedimento aponte trecho de documento citado conforme `R101.3`.
+2. IF não existe trecho de documento que sustente a afirmação, THEN THE Radar SHALL registrar o campo como `UNKNOWN` ou a questão como `PENDENTE` AND SHALL abster-se de registrar afirmação.
+3. THE Radar SHALL rejeitar, na saída de componente de linguagem: evidência sem documento; valor monetário sem trecho de origem; número de processo judicial sem documento; cláusula sem página; e data sem trecho de origem.
+4. WHEN o componente de linguagem encontra conteúdo contraditório, THE Radar SHALL registrar as duas leituras e SHALL marcar o fato como conflitante conforme `R20.5`.
+5. THE Radar SHALL preservar `UNKNOWN` como `UNKNOWN` na saída de todo componente de linguagem, conforme `SAFE-003` e `SAFE-004`.
+6. THE Radar SHALL exigir saída estruturada conforme esquema declarado em toda extração, AND SHALL rejeitar saída que não satisfaça o esquema.
+7. IF a saída estruturada é rejeitada após `IA-007` tentativas, THEN THE Orquestrador_de_Workflow_de_IA SHALL encaminhar a etapa para intervenção humana conforme `R103.9`.
+8. THE Avaliador_de_IA SHALL manter suíte de avaliação própria com casos-ouro de documento, cobrindo **nove** verificações: correção da extração; correção da citação; ausência de alucinação; preservação de `UNKNOWN`; consistência da saída estruturada; qualidade da recuperação; correção da classificação; regressão de prompt; e regressão de modelo.
+9. THE Avaliador_de_IA SHALL registrar, para cada caso-ouro, o documento, o resultado esperado, o resultado obtido, a versão do prompt e a versão do modelo.
+10. WHEN a versão de prompt ou a versão de modelo muda, THE Avaliador_de_IA SHALL executar a suíte e SHALL registrar a comparação com a execução anterior.
+11. IF a suíte de avaliação de IA regride em qualquer caso-ouro, THEN THE Radar SHALL reportar a regressão com o caso, a versão anterior e a versão nova AND SHALL abster-se de promover a nova versão sem registro explícito de aceitação.
+12. THE Avaliador_de_IA SHALL manter a suíte de avaliação de IA separada da suíte de propriedades do domínio determinístico, e SHALL abster-se de substituir uma pela outra.
+13. THE Avaliador_de_IA SHALL usar documentos reais ou sintéticos representativos, com resultado esperado declarado por caso.
+
+---
+
+### Domínio Q — Aquisição Resiliente, Execução do Radar e Agendamento
+
+Este domínio torna a aquisição operável em execução recorrente. Ele **estende** `R1`, `R2` e
+`R85` e permanece subordinado a eles: a captura continua sendo snapshot bruto imutável, o
+conector continua sendo o contrato da fonte, e a estratégia de captura continua invisível ao
+domínio e aos motores (`R85.3`, `D59`, `D94`). A descoberta continua sendo apenas descoberta:
+nada neste domínio emite decisão.
+
+### Requirement 106: Execução do Radar como entidade auditável
+
+**User Story:** Como investidor, quero saber exatamente o que cada varredura trouxe, para confiar no que o Radar diz que existe.
+
+#### Acceptance Criteria
+
+1. THE Radar SHALL manter **Execução do Radar** como entidade de infraestrutura própria com **quinze** campos: identificador; início; término; fonte; conector; estratégia de captura; versão; quantidade capturada; quantidade nova; quantidade atualizada; quantidade descartada; quantidade candidata; erros; alertas; e situação.
+2. THE Motor_do_Radar SHALL executar o ciclo na ordem: carregar conectores ativos; capturar a fonte; preservar a captura bruta; validar a captura; normalizar; identificar; deduplicar; enriquecer quando necessário; aplicar filtros; aplicar o checklist de triagem; gerar candidatos; e priorizar o enriquecimento e a análise.
+3. THE Motor_do_Radar SHALL registrar exatamente uma Execução do Radar por ciclo disparado, com identificador de correlação conforme `R111.1`.
+4. THE Motor_do_Radar SHALL registrar a situação de cada execução em exatamente um valor entre `EM_EXECUCAO`, `CONCLUIDA`, `CONCLUIDA_COM_ERRO`, `PARCIAL`, `INTERROMPIDA` e `FALHA`.
+5. WHEN a execução conclui, THE Motor_do_Radar SHALL registrar as quantidades apuradas e SHALL manter a soma das quantidades classificadas conforme `R108.2` igual à quantidade capturada.
+6. THE Motor_do_Radar SHALL abster-se de emitir qualquer valor de `DecisionState`, conforme `R84.7` e `R93.4`.
+7. WHEN o mesmo ciclo é disparado mais de uma vez para a mesma fonte, a mesma janela e o mesmo agendamento, THE Motor_do_Radar SHALL manter exatamente uma execução persistida conforme `R109.2`.
+8. THE Motor_do_Radar SHALL registrar a estratégia de captura apenas na Execução do Radar e na captura, AND SHALL abster-se de expô-la às entidades, regras, parâmetros e motores do domínio, conforme `R85.3`.
+9. THE Interface_do_Investidor SHALL apresentar o histórico de execuções do Radar com data, fonte, conector, quantidades, erros, alertas e situação.
+10. IF a execução é interrompida, THEN THE Motor_do_Radar SHALL preservar as capturas já registradas, SHALL registrar o ponto de retomada e SHALL manter a execução retomável conforme `R107.5`.
+11. THE Motor_do_Radar SHALL registrar cada erro e cada alerta da execução com fonte, conector, estratégia, página, identificador de correlação e causa.
+
+### Requirement 107: Validação de captura e resiliência da aquisição
+
+**User Story:** Como responsável técnico, quero que uma mudança na fonte produza erro visível, para que ela nunca corrompa o domínio em silêncio.
+
+#### Acceptance Criteria
+
+1. THE Validador_de_Captura SHALL validar cada captura contra **seis** verificações: estrutura esperada da fonte; quantidade mínima plausível conforme `AQ-010`; presença dos campos essenciais; hash do conteúdo; data e hora da obtenção; e identificação da fonte.
+2. IF a captura não satisfaz qualquer verificação do critério 1, THEN THE Validador_de_Captura SHALL registrar erro observável com a verificação não satisfeita, SHALL registrar a captura com estado `Rejected` conforme `R85.8`, SHALL preservar o payload bruto AND SHALL abster-se de propagar o conteúdo ao domínio.
+3. IF a estrutura da fonte difere da estrutura da última captura válida além de `AQ-011`, THEN THE Radar SHALL registrar o erro catalogado `FONTE_ALTERADA` conforme `R114.2`, SHALL notificar conforme `R121.1` AND SHALL abster-se de registrar a mudança como ausência de oferta.
+4. THE Estrategia_de_Captura SHALL aplicar limite de tempo `AQ-004`, política de retry `AQ-005`, limite de taxa `AQ-003`, paginação com limite `AQ-006` e limite de itens `AQ-007`.
+5. THE Estrategia_de_Captura SHALL registrar ponto de retomada a cada `AQ-012` e SHALL retomar do último ponto registrado quando a execução é retomada.
+6. WHEN parte das páginas é obtida e parte falha, THE Motor_do_Radar SHALL registrar a execução como `PARCIAL`, SHALL preservar as capturas obtidas e SHALL registrar as páginas não obtidas.
+7. IF a fonte acumula `AQ-008` falhas consecutivas, THEN THE Estrategia_de_Captura SHALL abrir o disjuntor, SHALL interromper as chamadas àquela fonte, SHALL registrar a abertura com data, hora e causa e SHALL retomar após `AQ-009`.
+8. IF a resposta da fonte é vazia, THEN THE Validador_de_Captura SHALL registrar o resultado como inválido por quantidade implausível AND SHALL abster-se de classificar as ofertas conhecidas como removidas da fonte.
+9. IF a resposta da fonte é inválida ou não interpretável, THEN THE Validador_de_Captura SHALL preservar o payload bruto, SHALL registrar erro catalogado e SHALL manter a última captura válida como vigente conforme `R85.9`.
+10. WHEN a captura contém conteúdo idêntico a captura já registrada, THE Capturador SHALL manter um único registro conforme `R2.3` e THE Motor_do_Radar SHALL classificar o resultado como `SEM_ALTERACAO`.
+11. THE Estrategia_de_Captura SHALL validar cada campo essencial obtido contra a estrutura declarada da fonte, AND SHALL abster-se de depender de seletor de página sem validação.
+12. WHEN a mesma oferta é obtida mais de uma vez na mesma execução, THE Motor_do_Radar SHALL manter um único registro de captura e SHALL registrar a duplicidade observada.
+
+### Requirement 108: Captura incremental e estados da oferta na fonte
+
+**User Story:** Como investidor, quero que o Radar reprocesse só o que mudou, para que a varredura diária seja viável e o histórico permaneça intacto.
+
+#### Acceptance Criteria
+
+1. THE Motor_do_Radar SHALL comparar cada oferta capturada com a última captura válida da mesma oferta usando: hash do payload; hash de documento; identificador externo; endereço canônico; matrícula; chave composta de oportunidade; e data de atualização informada pela fonte.
+2. THE Motor_do_Radar SHALL classificar cada oferta capturada em exatamente um de **seis** estados: `NOVA`; `ATUALIZADA`; `SEM_ALTERACAO`; `REMOVIDA_DA_FONTE`; `INVALIDA`; e `INCONCLUSIVA`.
+3. WHEN o estado é `SEM_ALTERACAO`, THE Motor_do_Radar SHALL registrar a verificação com data e hora AND SHALL abster-se de reprocessar normalização, enriquecimento, valuation e análise.
+4. WHEN o estado é `ATUALIZADA`, THE Capturador SHALL registrar nova captura conforme `R2.1` e THE Monitor SHALL avaliar a materialidade conforme `R57.2`.
+5. WHEN o estado é `REMOVIDA_DA_FONTE`, THE Radar SHALL registrar a ausência com data e hora, SHALL preservar integralmente o imóvel, a oportunidade, as capturas, os documentos, as evidências e as análises, AND SHALL abster-se de apagar ou de sobrescrever qualquer registro histórico.
+6. THE Motor_do_Radar SHALL exigir `AQ-013` execuções válidas consecutivas sem a oferta para classificar o estado como `REMOVIDA_DA_FONTE`.
+7. IF a comparação não é conclusiva, THEN THE Motor_do_Radar SHALL classificar o estado como `INCONCLUSIVA`, SHALL registrar pendência de captura AND SHALL abster-se de tratar a oferta como nova.
+8. THE Motor_do_Radar SHALL registrar, para cada classificação, o critério que a determinou e os valores comparados.
+9. WHEN uma oferta classificada como `REMOVIDA_DA_FONTE` volta a ser capturada, THE Deduplicador SHALL vinculá-la ao imóvel e à oportunidade existentes conforme `R9` e THE Radar SHALL registrar o retorno com data e hora.
+10. THE Interface_do_Investidor SHALL apresentar, para cada oportunidade, o estado da última captura, a data da última verificação e o histórico de estados.
+11. THE Radar SHALL abster-se de derivar decisão, score ou valuation do estado da captura, tratando-o exclusivamente como proveniência e gatilho de reavaliação.
+
+### Requirement 109: Idempotência das operações críticas
+
+**User Story:** Como responsável técnico, quero que repetir uma operação não duplique nada, para que retry seja seguro em qualquer ponto.
+
+#### Acceptance Criteria
+
+1. THE Radar SHALL tratar como operações críticas idempotentes **nove** operações: registro de captura; importação de documento; criação de oportunidade a partir de fonte; indexação vetorial; execução de análise; processamento de evento; geração de candidato; execução do Radar; e escrita por ferramenta de contexto.
+2. THE Radar SHALL garantir a idempotência de cada operação crítica por restrição de unicidade no armazenamento, por hash de conteúdo ou por chave natural declarada.
+3. WHEN uma operação crítica é repetida com a mesma chave de idempotência dentro de `PLT-007`, THE Radar SHALL produzir exatamente um efeito persistido e SHALL retornar o resultado da primeira execução.
+4. WHEN uma operação crítica é repetida após falha parcial, THE Radar SHALL completar o efeito faltante AND SHALL abster-se de duplicar o efeito já persistido.
+5. THE Radar SHALL declarar, para cada operação crítica, a chave de idempotência aplicada.
+6. IF uma operação crítica é recebida sem chave de idempotência e sem chave natural derivável, THEN THE Radar SHALL rejeitá-la informando a causa.
+7. THE Radar SHALL registrar cada repetição detectada na trilha de auditoria, com a chave, a data e o resultado retornado.
+8. THE Radar SHALL manter idempotente a aplicação do esquema de dados e da carga inicial de parâmetros, conforme `REG-028`.
+9. THE Radar SHALL abster-se de criar nova versão de análise quando a reexecução encontra as mesmas entradas, conforme `R88.10`.
+
+### Requirement 110: Agendamento configurável e capacidades declaradas por fonte
+
+**User Story:** Como investidor, quero configurar quando e com que limites o Radar roda, sem que o domínio saiba quem o dispara.
+
+#### Acceptance Criteria
+
+1. THE Agendador SHALL disparar a execução do Radar conforme a configuração de agendamento, com frequência `AQ-001`, janela `AQ-002` e horário declarado.
+2. THE Radar SHALL manter a configuração de agendamento por fonte com **dez** atributos: frequência; janela; horário; situação ativa ou inativa; estratégia de captura; checklist de triagem; filtros; limite de páginas; limite de itens; e política de retry.
+3. THE Radar SHALL expor o disparo da execução como operação do Motor_do_Radar, AND SHALL abster-se de acoplar o domínio ao mecanismo de agendamento.
+4. WHERE o mecanismo de agendamento é cron local, agendador de nuvem ou processo assíncrono, THE Radar SHALL manter a mesma configuração e o mesmo registro de Execução do Radar.
+5. IF uma execução agendada coincide com execução em curso da mesma fonte, THEN THE Agendador SHALL abster-se de iniciar a segunda execução e SHALL registrar a coincidência.
+6. THE Radar SHALL registrar, para cada fonte, as capacidades declaradas: listagem de ofertas; detalhe da oferta; documentos disponíveis; imagens; identificador externo estável; data de atualização; matrícula; rodada do leilão; valor de avaliação; e endereço completo.
+7. THE Radar SHALL resolver a cobertura de dados de cada análise a partir das capacidades declaradas da fonte, AND SHALL abster-se de presumir que todas as fontes entregam os mesmos dados.
+8. IF uma capacidade exigida por item do checklist aplicável não é declarada pela fonte, THEN THE Gestor_de_Due_Diligence SHALL registrar pendência com o item correspondente AND SHALL abster-se de tratar a ausência como conformidade.
+9. THE Radar SHALL restringir a alteração da configuração de agendamento e dos limites operacionais ao papel Operador de Plataforma, AND SHALL abster-se de admitir por esse papel alteração de regra, de parâmetro de negócio, de evidência, de análise e de decisão.
+10. THE Radar SHALL registrar cada alteração de configuração de agendamento na trilha de auditoria conforme `R64.2`.
+11. THE Conector_de_Fonte SHALL informar as capacidades da fonte conforme `R85.1`, e THE Radar SHALL registrar a data da última declaração de capacidades.
+
+---
+
+### Domínio R — Plataforma: Observabilidade, Segurança, Configuração, Erros e Desempenho
+
+Este domínio é o preparo estrutural da plataforma. É `P0` por um motivo aritmético, não por
+zelo: retroajustar identificador de correlação, identificador de titular, versão do motor, data
+de corte, catálogo de erros e provedor abstraído depois de as 61 entidades de negócio estarem
+gravadas é **migração**, não ajuste (`D96`). O domínio **estende** `R64`, `R79`, `R97`, `R59` e
+`R57`, e não cria catálogo paralelo de auditoria, de erro, de alerta nem de monitoramento.
+
+### Requirement 111: Observabilidade e identificador de correlação
+
+**User Story:** Como responsável técnico, quero seguir uma execução inteira por um único identificador, para diagnosticar sem adivinhar.
+
+#### Acceptance Criteria
+
+1. THE Gestor_de_Observabilidade SHALL atribuir um identificador de correlação a cada execução relevante e SHALL propagá-lo a todos os registros daquela execução.
+2. THE Gestor_de_Observabilidade SHALL registrar, em cada execução relevante, **treze** atributos: identificador de correlação; identificador de rastro; identificador da execução; log estruturado; métricas; duração; situação; erro quando houver; quantidade de repetições; custo de IA; tokens; fonte; e versões aplicadas.
+3. THE Radar SHALL tratar como execução relevante, no mínimo: captura; varredura; processamento de documento; extração e OCR; geração de representação vetorial; recuperação; workflow de IA; invocação de agente; invocação de ferramenta de contexto; execução de análise; reanálise; execução do Radar; e envio de notificação.
+4. THE Gestor_de_Observabilidade SHALL emitir log estruturado consultável por campo.
+5. THE Gestor_de_Observabilidade SHALL abster-se de registrar segredo, credencial e token de acesso em log, em métrica e em mensagem de erro.
+6. WHEN um erro ocorre, THE Gestor_de_Observabilidade SHALL registrar o identificador de correlação, o código do erro conforme `R114.1`, a causa técnica e o contexto.
+7. THE Radar SHALL apresentar ao usuário o identificador de correlação de toda falha, conforme `R114.3`.
+8. THE Gestor_de_Observabilidade SHALL reter o log estruturado por `PLT-008`.
+9. THE Gestor_de_Observabilidade SHALL distinguir evento automático de alteração manual, conforme `R64.2`.
+10. THE Radar SHALL manter o meta-teste `MT-15`, que verifica que toda execução relevante do critério 3 registra identificador de correlação e os atributos do critério 2, e que falha nomeando a execução sem identificador.
+
+### Requirement 112: Segurança, segredos, validação de upload e envio de documento a modelo de linguagem
+
+**User Story:** Como investidor, quero que meus documentos estejam protegidos e que nada sensível vá para um modelo sem política, para não trocar análise por vazamento.
+
+#### Acceptance Criteria
+
+1. THE Gestor_de_Seguranca SHALL exigir autenticação em toda operação exposta, conforme `R79.8` e `R97.4`.
+2. THE Gestor_de_Seguranca SHALL autorizar cada operação pela posse do recurso, pelo titular do ator e pelo papel exercido.
+3. THE Gestor_de_Seguranca SHALL manter segredo e credencial fora do código e fora do controle de versão, resolvidos por ambiente conforme `R113.2`.
+4. THE Gestor_de_Seguranca SHALL validar cada upload contra **quatro** verificações: tamanho máximo `PLT-001`; tipo MIME em `PLT-002`; coerência entre extensão, tipo MIME declarado e conteúdo; e nome de arquivo sanitizado.
+5. IF o nome do arquivo enviado contém sequência de travessia de caminho ou caminho absoluto, THEN THE Gestor_de_Seguranca SHALL rejeitar o upload informando a causa, SHALL registrar a tentativa com identificador de correlação AND SHALL abster-se de gravar o arquivo.
+6. THE Gestor_de_Seguranca SHALL gravar o arquivo original com nome derivado do hash e do identificador do documento, AND SHALL abster-se de usar o nome informado pelo remetente como caminho de gravação.
+7. IF o tipo MIME está fora de `PLT-002` ou o tamanho excede `PLT-001`, THEN THE Gestor_de_Seguranca SHALL rejeitar o upload com o erro catalogado `DOCUMENTO_INVALIDO` conforme `R114.2`.
+8. THE Gestor_de_Seguranca SHALL controlar o acesso a documento e a download pela posse, pelo titular e pelo papel, conforme `R86.7`.
+9. THE Gestor_de_Seguranca SHALL registrar cada ato de autenticação, de autorização negada, de upload e de download na trilha de auditoria conforme `R64.2`.
+10. THE Radar SHALL exigir política explícita e registrada de processamento antes de enviar documento a provedor de modelo de linguagem, declarando o provedor, a finalidade, a retenção e o tratamento de dado pessoal, conforme `IA-014`.
+11. IF a política de processamento não está registrada para a classe do documento, THEN THE Radar SHALL abster-se de enviar o documento ao provedor, SHALL registrar a recusa com o identificador de correlação e SHALL registrar pendência.
+12. THE Gestor_de_Seguranca SHALL aplicar cifragem em trânsito em toda comunicação externa, e cifragem em repouso onde o armazenamento a oferecer.
+
+### Requirement 113: Configuração por ambiente e sinalizadores de recurso
+
+**User Story:** Como Operador de Plataforma, quero configurar cada ambiente sem tocar no código, para que credencial e endereço nunca sejam versionados.
+
+#### Acceptance Criteria
+
+1. THE Gestor_de_Configuracao SHALL manter exatamente os **três** ambientes de `PLT-004`: desenvolvimento; teste; e produção.
+2. THE Gestor_de_Configuracao SHALL resolver por ambiente **dez** grupos de configuração: banco de dados; armazenamento de arquivo; provedor de modelo de linguagem; provedor de embedding; índice vetorial; aquisição; agendamento; notificações; limites operacionais; e sinalizadores de recurso.
+3. THE Gestor_de_Configuracao SHALL abster-se de manter credencial, segredo e endereço sensível no código e no controle de versão.
+4. THE Radar SHALL tratar assinatura de produto de conversação como distinta de crédito de interface de programação, e SHALL exigir credencial de interface de programação própria por ambiente (`D98`).
+5. IF uma configuração obrigatória do ambiente está ausente, THEN THE Gestor_de_Configuracao SHALL impedir a inicialização do componente dependente, SHALL registrar a configuração ausente AND SHALL abster-se de aplicar valor implícito.
+6. THE Gestor_de_Configuracao SHALL manter os sinalizadores de recurso de `PLT-012` e SHALL registrar o estado vigente de cada um por ambiente.
+7. WHEN um sinalizador de recurso está desabilitado, THE Radar SHALL preservar o comportamento determinístico do domínio e SHALL registrar a capacidade como não executada.
+8. THE Gestor_de_Configuracao SHALL abster-se de admitir, por sinalizador de recurso, alteração da precedência de decisão de `R53`, dos princípios invioláveis e das paradas absolutas.
+9. THE Gestor_de_Configuracao SHALL registrar cada alteração de configuração de ambiente na trilha de auditoria conforme `R64.2`.
+
+### Requirement 114: Catálogo de erros apresentáveis
+
+**User Story:** Como investidor, quero mensagens de erro que eu entenda e um número para citar no suporte, sem detalhe técnico na minha tela.
+
+#### Acceptance Criteria
+
+1. THE Gestor_de_Erros SHALL manter um catálogo de erros com, para cada erro, **cinco** atributos: código; mensagem amigável em português; contexto; identificador de correlação; e detalhe seguro.
+2. THE Gestor_de_Erros SHALL classificar cada erro em exatamente uma de **quinze** categorias: `ERRO_DE_VALIDACAO`; `NAO_ENCONTRADO`; `CONFLITO`; `NAO_AUTENTICADO`; `NAO_AUTORIZADO`; `DOCUMENTO_INVALIDO`; `ERRO_DE_PROCESSAMENTO_DE_DOCUMENTO`; `FONTE_INDISPONIVEL`; `FONTE_ALTERADA`; `ERRO_DE_EXECUCAO_DO_RADAR`; `ERRO_DE_PROVEDOR_DE_IA`; `TEMPO_EXCEDIDO_DE_IA`; `ERRO_DE_RECUPERACAO`; `ERRO_DE_ANALISE`; e `ERRO_DE_REGRA_DE_NEGOCIO`.
+3. THE Gestor_de_Erros SHALL apresentar ao usuário a mensagem amigável, a ação possível e o identificador de correlação, AND SHALL abster-se de apresentar rastro de execução, consulta ao banco de dados, caminho de arquivo interno e mensagem de biblioteca.
+4. THE Gestor_de_Erros SHALL manter o detalhe técnico no log estruturado, associado ao mesmo identificador de correlação.
+5. THE Gestor_de_Erros SHALL estender a taxonomia já exigida por `R79.9` e `R97.5`, AND SHALL abster-se de criar catálogo de erro paralelo (`D100`).
+6. WHEN uma requisição contém valor fora de domínio, THE Gestor_de_Erros SHALL classificá-la como `ERRO_DE_VALIDACAO` informando o campo e a causa, conforme `R79.9`.
+7. IF um erro não catalogado ocorre, THEN THE Gestor_de_Erros SHALL apresentá-lo como falha interna com identificador de correlação, SHALL registrar o detalhe técnico e SHALL registrar pendência de catalogação.
+8. THE Gestor_de_Erros SHALL registrar cada erro apresentado com categoria, código, identificador de correlação e data.
+9. THE Radar SHALL manter o meta-teste `MT-14`, que verifica que cada categoria do critério 2 possui código, mensagem amigável e mapeamento declarados, e que nenhuma mensagem apresentada ao usuário contém detalhe técnico; a falha nomeia a categoria ou a mensagem em falta.
+
+### Requirement 115: Desempenho e processamento assíncrono
+
+**User Story:** Como investidor, quero que o processamento pesado aconteça em segundo plano com progresso visível, para não ficar diante de uma tela travada.
+
+#### Acceptance Criteria
+
+1. THE Executor_Assincrono SHALL executar fora da requisição **oito** processamentos: extração e OCR; geração de representação vetorial; recuperação; análise profunda; varredura; download de documento extenso; reanálise; e indexação.
+2. WHEN um processamento assíncrono é disparado, THE Radar SHALL responder com o identificador do trabalho e a situação inicial.
+3. THE Radar SHALL manter, para cada trabalho assíncrono: identificador; tipo; situação; progresso; início; término; identificador de correlação; erro quando houver; e resultado.
+4. THE Radar SHALL registrar a situação de cada trabalho em exatamente um valor entre `ENFILEIRADO`, `EM_EXECUCAO`, `CONCLUIDO`, `CONCLUIDO_COM_ERRO`, `INTERROMPIDO` e `FALHA`.
+5. THE Interface_do_Investidor SHALL apresentar situação e progresso de cada trabalho em curso, conforme `R122.7`.
+6. THE Radar SHALL manter a resposta de operação síncrona dentro de `PLT-009`.
+7. IF uma operação síncrona excede `PLT-009`, THEN THE Radar SHALL convertê-la em trabalho assíncrono, SHALL retornar o identificador do trabalho e SHALL registrar a conversão.
+8. THE Executor_Assincrono SHALL aplicar chave de idempotência a cada trabalho, conforme `R109.3`.
+9. IF um trabalho falha, THEN THE Executor_Assincrono SHALL preservar o efeito já persistido, SHALL registrar o erro catalogado e SHALL manter o trabalho retomável quando a operação for retomável.
+
+### Requirement 116: Contrato de programação versionável, paginação e chave de idempotência
+
+**User Story:** Como responsável técnico, quero contratos versionados com paginação e idempotência declaradas, para que a interface não dependa de comportamento acidental.
+
+#### Acceptance Criteria
+
+1. THE Radar SHALL versionar a interface de programação e SHALL declarar a versão em cada recurso exposto.
+2. THE Radar SHALL declarar, para cada operação exposta, **oito** elementos: a requisição; a resposta; os erros possíveis do catálogo de `R114.2`; a paginação quando a resposta é coleção; os filtros; a ordenação; a autorização exigida; e a chave de idempotência quando a operação altera estado.
+3. THE Radar SHALL paginar toda resposta de coleção com tamanho padrão `PLT-006` e tamanho máximo `PLT-005`, retornando o total, a página corrente e o indicador de continuação.
+4. IF o tamanho de página solicitado excede `PLT-005`, THEN THE Radar SHALL rejeitar a requisição informando o limite.
+5. THE Radar SHALL exigir chave de idempotência na criação de oportunidade a partir de fonte, na importação de documento, na execução de análise, na reanálise, no disparo de execução do Radar e na escrita por ferramenta de contexto.
+6. THE Radar SHALL expor as famílias de recursos de `R97.1` e as operações de `R97.2` sob a versão declarada, AND SHALL abster-se de criar contrato paralelo.
+7. WHEN a interface de programação muda de forma incompatível, THE Radar SHALL publicar nova versão e SHALL manter a versão anterior declarada até a data de encerramento registrada.
+8. THE Radar SHALL nomear recursos, campos e valores de domínio em português, conforme `R97.3`.
+9. THE Radar SHALL registrar cada operação exposta na trilha de auditoria conforme `R64.2`.
+
+### Requirement 117: Eventos de domínio
+
+**User Story:** Como responsável técnico, quero eventos onde eles reduzem acoplamento, sem transformar o pipeline em cadeia implícita.
+
+#### Acceptance Criteria
+
+1. THE Radar SHALL publicar eventos de domínio para **onze** fatos: imóvel criado; oportunidade capturada; documento adicionado; documento processado; evidência registrada; análise executada; análise reanalisada; risco alterado; decisão alterada; execução do Radar concluída; e candidato criado.
+2. THE Radar SHALL registrar, em cada evento, identificador, tipo, data e hora, identificador de correlação, identificador do titular, ator ou processo, entidade afetada e versão.
+3. THE Radar SHALL tratar o processamento de cada evento como idempotente, conforme `R109.1`.
+4. THE Radar SHALL abster-se de emitir decisão, de alterar resultado determinístico e de alterar precedência a partir do processamento de evento.
+5. WHERE um consumidor de evento não existe, THE Radar SHALL registrar o evento sem exigir consumidor.
+6. THE Radar SHALL manter a chamada direta onde a ordem de execução é exigida pelo pipeline de `R70.1`, AND SHALL abster-se de substituí-la por evento.
+7. IF o processamento de um evento falha, THEN THE Radar SHALL registrar a falha com erro catalogado e SHALL manter o evento reprocessável.
+
+### Requirement 118: Preparo multi-tenant e abstrações de comercialização futura
+
+**User Story:** Como gestor, quero que o modelo de dados já admita mais de um titular, para que abrir o produto a outros investidores não exija migrar tudo.
+
+#### Acceptance Criteria
+
+1. THE Radar SHALL declarar, em cada entidade de negócio do dicionário, o identificador do titular e o identificador do usuário responsável.
+2. THE Radar SHALL isolar logicamente os dados por titular em toda consulta, em toda listagem e em toda operação exposta.
+3. THE Radar SHALL autorizar cada operação pela posse do recurso e pelo titular do ator, conforme `R112.2`.
+4. THE Radar SHALL manter a configuração de parâmetro, de checklist, de perfil e de sinalizador de recurso resolvível por titular, conforme a hierarquia de escopo do Catálogo Normativo de Parâmetros.
+5. IF uma consulta a entidade de negócio é executada sem o identificador do titular, THEN THE Radar SHALL rejeitá-la informando a causa AND SHALL abster-se de retornar dados.
+6. THE Radar SHALL registrar o identificador do titular em cada evento de auditoria, conforme `R64.2`.
+7. WHERE a operação é de titular único, THE Radar SHALL registrar o titular padrão do ambiente e SHALL manter ativas a coluna e a verificação de isolamento.
+8. THE Radar SHALL manter declaradas as abstrações de titular, usuário, consumo de IA, armazenamento e auditoria, AND SHALL tratar plano comercial, limite comercial, medição para cobrança e cobrança como fora do escopo desta versão (`D96`).
+9. THE Radar SHALL abster-se de exigir migração das entidades de negócio para habilitar mais de um titular.
+10. THE Radar SHALL manter o meta-teste `MT-13`, que verifica que toda entidade de negócio do dicionário declara o identificador do titular e o identificador do usuário responsável, e que falha nomeando a entidade sem os campos.
+
+### Requirement 119: Separação entre núcleo, adaptadores e infraestrutura
+
+**User Story:** Como responsável técnico, quero trocar armazenamento, banco, agendador e modelo sem tocar no domínio, para que a nuvem seja uma escolha futura e não uma reescrita.
+
+#### Acceptance Criteria
+
+1. THE Radar SHALL organizar a implementação em **três** camadas declaradas: núcleo, com domínio determinístico, regras, motores e contratos; adaptadores, com as implementações dos contratos; e infraestrutura, com os recursos externos.
+2. THE Radar SHALL declarar como adaptadores, no mínimo: armazenamento de arquivo local ou S3; banco de dados local ou gerenciado; agendamento local ou de nuvem; provedor de modelo de linguagem por interface de programação ou local; provedor de embedding; índice vetorial; estratégia de captura; e canal de notificação.
+3. THE Radar SHALL abster-se de importar, no núcleo, cliente de provedor de modelo de linguagem, biblioteca de orquestração de IA, cliente de armazenamento externo e cliente de agendamento.
+4. THE Radar SHALL permitir a troca de qualquer adaptador declarado sem alteração do núcleo.
+5. THE Radar SHALL manter a primeira execução completa possível em ambiente local, com armazenamento local, banco de dados local e agendamento local.
+6. THE Radar SHALL produzir o mesmo resultado determinístico em qualquer combinação de adaptadores declarados, para as mesmas evidências, os mesmos parâmetros e as mesmas versões.
+7. THE Radar SHALL registrar, em cada execução, os adaptadores aplicados.
+8. THE Radar SHALL tratar o provisionamento de infraestrutura de nuvem como fora do escopo desta versão (`D93`), AND SHALL manter os adaptadores e a configuração por ambiente que o admitem.
+
+### Requirement 120: Versão do motor, data de corte e reprodutibilidade
+
+**User Story:** Como auditor, quero saber qual motor produziu cada decisão e até que data a evidência foi admitida, para que o histórico permaneça interpretável.
+
+#### Acceptance Criteria
+
+1. THE Radar SHALL registrar a versão do motor determinístico de `PLT-003` em cada análise, em cada decisão e em cada resultado calculado.
+2. WHEN uma regra é alterada de modo que a decisão de alguma entrada mude, THE Gestor_de_Governanca SHALL publicar nova versão do motor e SHALL registrar a mudança conforme `R62.1`.
+3. THE Radar SHALL apresentar cada análise com a versão do motor que a produziu, mantendo interpretável o histórico produzido por versões anteriores.
+4. THE Radar SHALL registrar, em cada análise, a data de corte das informações utilizadas.
+5. THE Radar SHALL abster-se de admitir, em uma versão de análise, evidência com data de observação posterior à data de corte registrada.
+6. THE Radar SHALL registrar, para cada análise, o conjunto reprodutível de **onze** elementos: documentos e versões; evidências; parâmetros resolvidos e versões; checklist e versão; versão das regras; versão do motor; versão do prompt; versão do modelo; versão do embedding; versão da segmentação; e data de corte.
+7. WHEN uma análise histórica é reproduzida, THE Radar SHALL usar exclusivamente as versões registradas naquela análise e SHALL produzir a mesma decisão, conforme `R62.8`.
+8. THE Radar SHALL registrar a data de observação de cada evidência e SHALL marcá-la como expirada conforme a tabela `FRESH`, AND SHALL abster-se de apresentar evidência expirada como atual.
+9. THE Motor_de_Backtest SHALL registrar, em cada execução, a data de corte, a versão do motor, a versão das regras, as fontes disponíveis e os dados utilizados, conforme `R60.4` e `SAFE-015`.
+10. IF a reprodução de uma análise histórica depende de estado mutável atual, THEN THE Radar SHALL reportar a reprodução como não verificável AND SHALL abster-se de apresentá-la como reprodução fiel.
+
+### Requirement 121: Notificações e acompanhamento de oportunidade
+
+**User Story:** Como investidor, quero acompanhar uma oportunidade nos eixos que me interessam e ser avisado quando algo relevante muda.
+
+#### Acceptance Criteria
+
+1. THE Gestor_de_Notificacoes SHALL publicar notificação local para **dez** eventos: nova oportunidade; oportunidade atualizada; preço alterado; documento novo; pendência resolvida; risco alterado; decisão alterada; oportunidade removida da fonte; execução do Radar concluída; e erro de captura.
+2. THE Gestor_de_Notificacoes SHALL declarar um contrato único de canal, com destinatário, assunto, conteúdo, prioridade, data e situação de entrega.
+3. WHERE um canal externo está habilitado em `PLT-013`, THE Gestor_de_Notificacoes SHALL entregar a notificação por aquele canal usando o mesmo contrato.
+4. THE Radar SHALL tratar a entrega por canal externo como capacidade `P1`, mantendo a notificação local como comportamento da primeira versão.
+5. THE Gestor_de_Notificacoes SHALL aplicar a prioridade e o controle de fadiga de alerta de `R59`, AND SHALL abster-se de criar catálogo de alerta paralelo.
+6. THE Gestor_de_Acompanhamento SHALL permitir marcar uma oportunidade para acompanhamento em **sete** eixos: preço; rodada do leilão; disponibilidade; documentos; riscos; processos judiciais; e mudança de decisão.
+7. WHEN uma mudança relevante ocorre em eixo acompanhado, THE Gestor_de_Acompanhamento SHALL publicar o evento correspondente conforme `R117.1`, THE Monitor SHALL avaliar a materialidade conforme `R57.2` e THE Radar SHALL permitir a reanálise conforme `R88.2`.
+8. THE Gestor_de_Acompanhamento SHALL registrar, para cada acompanhamento, o ator, a data de início, os eixos, a condição de encerramento e a situação, conforme `R57` e `R58`.
+9. THE Radar SHALL registrar cada notificação emitida com evento, canal, destinatário, data e situação de entrega.
+
+---
+
+### Domínio S — Experiência do Investidor: Estados, Navegação, Responsividade e Acessibilidade
+
+Este domínio **estende** `R66`, `R67`, `R68` e `R94`, e não cria segunda interface nem segunda
+ficha de análise. Ele fixa o que faltava para a interface ser verificável: os estados de tela, a
+ordem de leitura da análise, o comportamento em tela estreita, o catálogo visual único e a
+acessibilidade. A distinção entre aplicativo nativo e interface web responsiva está resolvida em
+`D92`: o nativo está fora do escopo, a interface web responsiva é obrigatória.
+
+### Requirement 122: Estados obrigatórios de tela
+
+**User Story:** Como investidor, quero que a tela sempre me diga em que estado está, para nunca olhar um vazio sem explicação.
+
+#### Acceptance Criteria
+
+1. THE Interface_do_Investidor SHALL declarar, para cada tela e cada componente que dependa de dado remoto, exatamente **nove** estados: carregando; esqueleto; vazio; erro; repetição; parcial; dado obsoleto; confirmação; e sucesso.
+2. WHILE o dado remoto está em obtenção, THE Interface_do_Investidor SHALL apresentar o estado carregando ou o esqueleto correspondente.
+3. WHEN a consulta retorna conjunto vazio, THE Interface_do_Investidor SHALL apresentar o estado vazio com o motivo e a ação possível.
+4. WHEN uma operação falha, THE Interface_do_Investidor SHALL apresentar o estado de erro com a mensagem amigável de `R114.3`, o identificador de correlação e a ação de repetição.
+5. WHEN o resultado é parcial, THE Interface_do_Investidor SHALL apresentar o estado parcial identificando o que foi obtido e o que permanece pendente.
+6. WHERE o dado apresentado está expirado conforme a tabela `FRESH`, THE Interface_do_Investidor SHALL apresentar o indicador de dado obsoleto com a data da observação.
+7. WHILE um trabalho assíncrono de `R115.3` está em curso, THE Interface_do_Investidor SHALL apresentar a situação e o progresso do trabalho.
+8. WHEN uma ação altera estado de forma relevante, THE Interface_do_Investidor SHALL exigir confirmação e SHALL apresentar o retorno de sucesso após a conclusão.
+9. THE Interface_do_Investidor SHALL abster-se de apresentar tela sem conteúdo e sem explicação do estado.
+10. THE Radar SHALL manter o meta-teste `MT-16`, que verifica que cada tela declarada possui os nove estados do critério 1, e que falha nomeando a tela e o estado ausente.
+
+### Requirement 123: Navegação e ordem de leitura da análise
+
+**User Story:** Como investidor, quero chegar rápido da oportunidade à análise e ler primeiro o que decide, para não garimpar a conclusão no fim da página.
+
+#### Acceptance Criteria
+
+1. THE Interface_do_Investidor SHALL organizar a navegação em **nove** destinos: painel; Radar; imóveis; oportunidades; análises; pendências; documentos; monitoramento; e configurações.
+2. THE Interface_do_Investidor SHALL permitir chegar de uma oportunidade listada até a sua análise em no máximo **dois** passos de navegação.
+3. THE Interface_do_Investidor SHALL apresentar a tela de análise na ordem: decisão; justificativa; bloqueios; pendências; indicadores financeiros; riscos; evidências; e detalhes técnicos.
+4. THE Interface_do_Investidor SHALL identificar cada informação apresentada em exatamente uma de **quatro** naturezas: fato do documento; interpretação da IA; resultado determinístico; e pendente.
+5. THE Interface_do_Investidor SHALL apresentar, para cada fato do documento, a citação até documento, versão, página e trecho, conforme `R101.3`.
+6. THE Interface_do_Investidor SHALL apresentar a camada determinante da decisão, conforme `R53` e `R56`.
+7. THE Interface_do_Investidor SHALL preservar as capacidades mínimas de `R94.3` e a composição da ficha de `R94.4`, AND SHALL abster-se de criar segunda ficha de análise.
+8. THE Interface_do_Investidor SHALL apresentar cada pendência com impacto, responsável, prazo e condição de encerramento, conforme `R37`.
+9. THE Interface_do_Investidor SHALL identificar cada valor apresentado com o estado de informação correspondente, conforme `R66.11`.
+
+### Requirement 124: Interface web responsiva
+
+**User Story:** Como investidor, quero usar o Radar no celular durante uma visita, inclusive enviando documentos, sem precisar de aplicativo nativo.
+
+#### Acceptance Criteria
+
+1. THE Interface_do_Investidor SHALL apresentar todas as telas de forma utilizável em largura igual ou inferior a `PLT-011` e em larguras superiores.
+2. WHERE a largura é igual ou inferior a `PLT-011`, THE Interface_do_Investidor SHALL apresentar listas como cartões, agrupar detalhes em acordeões, fixar o resumo da decisão, apresentar filtros em gaveta, apresentar documentos em lista e simplificar a navegação de evidências.
+3. WHERE a largura é igual ou inferior a `PLT-011`, THE Interface_do_Investidor SHALL apresentar toda tabela complexa em representação responsiva alternativa.
+4. WHERE a largura é igual ou inferior a `PLT-011`, THE Interface_do_Investidor SHALL manter as ações principais da tela de análise alcançáveis em uso com uma das mãos.
+5. THE Interface_do_Investidor SHALL permitir o envio de documento em qualquer largura, inclusive a partir da câmera e da galeria do dispositivo, conforme `R112.4`.
+6. THE Radar SHALL tratar aplicativo móvel nativo como fora do escopo desta versão, e SHALL tratar a interface web responsiva como obrigatória desde a primeira versão (`D92`).
+7. THE Interface_do_Investidor SHALL preservar, em qualquer largura, a decisão, os bloqueios, as pendências e a explicação apresentados conforme `R123.3`.
+
+### Requirement 125: Design system e acessibilidade
+
+**User Story:** Como investidor, quero uma interface coerente e operável por teclado, com estados que não dependam só de cor, para usar o produto em qualquer condição.
+
+#### Acceptance Criteria
+
+1. THE Design_System SHALL declarar o catálogo único de cores semânticas, tipografia e espaçamento, e **nove** famílias de componentes: cartão; etiqueta; indicador de situação; tabela; formulário; caixa de diálogo; alerta; gráfico; e esqueleto.
+2. THE Design_System SHALL declarar uma cor semântica para cada estado de `DecisionState` e para cada nível de severidade de risco.
+3. THE Interface_do_Investidor SHALL usar exclusivamente os componentes e os valores do Design_System, AND SHALL abster-se de introduzir cor, tipografia e espaçamento fora do catálogo.
+4. THE Interface_do_Investidor SHALL permitir operar toda função por teclado, com ordem de foco declarada e foco visível.
+5. THE Interface_do_Investidor SHALL associar rótulo a cada campo de formulário e cada mensagem de erro ao campo correspondente.
+6. THE Interface_do_Investidor SHALL manter contraste igual ou superior a `PLT-010` em texto e em elemento essencial de interface.
+7. THE Interface_do_Investidor SHALL prover texto alternativo para cada imagem, gráfico e ícone que comunique informação.
+8. WHERE o componente não possui semântica nativa equivalente, THE Interface_do_Investidor SHALL declarar os atributos ARIA correspondentes.
+9. THE Interface_do_Investidor SHALL comunicar cada estado e cada decisão por texto ou por forma, além da cor.
+10. THE Interface_do_Investidor SHALL apresentar todo rótulo, mensagem e estado em português, conforme `R94.2`.
+
+---
+
+### Domínio T — Fechamento Arquitetural e Congelamento
+
+Este domínio é o portão. Os quarenta critérios de `R126.1` a `R126.40` são as **perguntas de
+fechamento**: cada uma é escrita como exigência verificável e nomeia o requisito que a satisfaz.
+Se alguma pergunta não tem requisito que a sustente, a especificação não está fechada. Os
+critérios seguintes fixam o congelamento e a regra que veda mudança arquitetural silenciosa
+(`D104`).
+
+### Requirement 126: Portão de congelamento arquitetural
+
+**User Story:** Como gestor, quero um portão único com as perguntas de fechamento respondidas por requisito numerado, para congelar a especificação sabendo que nada essencial ficou implícito.
+
+#### Acceptance Criteria
+
+1. THE Radar SHALL executar o domínio determinístico sem componente de modelo de linguagem, conforme `R71.1`, `R71.2` e `R119.3`.
+2. THE Radar SHALL executar o domínio determinístico sem a etapa de recuperação, conforme `R102.8` e `R101.11`.
+3. THE Motor_de_Decisao SHALL emitir a decisão final de forma determinística, conforme `R53.1`, `R71.2` e `R98.9`.
+4. THE Radar SHALL preservar `UNKNOWN` como `UNKNOWN` até existir nova evidência, conforme `SAFE-003`, `SAFE-004` e `R105.5`.
+5. THE Radar SHALL abster-se de superar `BLOCK` jurídico por score, desconto, margem, yield, liquidez ou aderência, conforme `SAFE-002`, `R12.3` e `R53.4`.
+6. THE Camada_de_Evidencia SHALL exigir origem identificada em toda evidência, conforme `R20.3` e `R89.1`.
+7. THE Gestor_de_Documentos SHALL preservar o arquivo original de forma permanente e imutável, conforme `R86.2`.
+8. THE Gestor_de_Documentos SHALL versionar cada documento de forma estritamente crescente e sem lacuna, conforme `R87.1`.
+9. THE Radar SHALL preservar cada análise como snapshot imutável, conforme `R61.1` e `R88.1`.
+10. WHEN evidência material nova é registrada, THE Radar SHALL criar nova versão de análise, conforme `R88.2`.
+11. THE Radar SHALL tratar o Radar automático exclusivamente como camada de descoberta, conforme `R84.7` e `R106.6`.
+12. THE Orquestrador SHALL aplicar o mesmo domínio, o mesmo catálogo de regras e o mesmo Motor_de_Decisao às duas portas de entrada, conforme `R84.8`, `R84.9` e `R93.8`.
+13. THE Radar SHALL manter o registro de captura idempotente, conforme `R2.3`, `R109.1` e `R109.2`.
+14. THE Motor_do_Radar SHALL classificar cada oferta capturada por comparação incremental, conforme `R108.1` e `R108.2`.
+15. THE Capturador SHALL preservar o payload bruto de forma imutável, conforme `R2.1` e `R85.6`.
+16. THE Radar SHALL definir um contrato único de conector de fonte, conforme `R85.1`.
+17. THE Radar SHALL manter o conector separado da estratégia de captura, conforme `R85.3`, `R106.8` e `D94`.
+18. WHEN uma nova instituição vendedora é incorporada, THE Radar SHALL exigir apenas a implementação do contrato e o cadastro da fonte, conforme `R85.5`.
+19. THE Estrategia_de_Captura SHALL suportar retry com espera exponencial e falha parcial, conforme `R107.4` e `R107.6`.
+20. THE Orquestrador_de_Workflow_de_IA SHALL registrar ponto de retomada e retomar do último ponto registrado, conforme `R103.4`, `R103.5` e `R107.5`.
+21. THE Orquestrador_de_Workflow_de_IA SHALL manter o estado do workflow explícito e registrado, conforme `R103.2`.
+22. THE Radar SHALL declarar escopo e ferramentas autorizadas de cada Agente_Limitado, conforme `R104.1` e `R104.3`.
+23. THE Servidor_de_Ferramentas SHALL manter catálogos distintos de ferramentas de leitura e de escrita, conforme `R104.6`.
+24. WHEN uma ferramenta de escrita é invocada, THE Servidor_de_Ferramentas SHALL exigir autorização, validação, idempotência e auditoria, conforme `R104.9`.
+25. THE Motor_de_Recuperacao SHALL registrar metadados suficientes para citação até documento, versão, página e trecho, conforme `R101.2` e `R101.3`.
+26. THE Radar SHALL reconstruir o Indice_Vetorial a partir do arquivo original preservado, conforme `R102.1` e `R102.3`.
+27. THE Radar SHALL registrar provedor, modelo, dimensões, versão e data em cada representação vetorial, conforme `R100.3` e `R102.9`.
+28. THE Gestor_de_Custo_de_IA SHALL contabilizar tokens e custo e aplicar o orçamento de execução de IA, conforme `R99.1` e `R99.2`.
+29. THE Radar SHALL acessar modelo de linguagem exclusivamente pelo contrato Provedor_de_Modelo_de_Linguagem, conforme `R98.1` e `R98.5`.
+30. THE Radar SHALL versionar a interface de programação e declarar a versão em cada recurso exposto, conforme `R116.1`.
+31. THE Gestor_de_Erros SHALL manter o catálogo de erros com código, mensagem amigável, contexto, identificador de correlação e detalhe seguro, conforme `R114.1` e `R114.2`.
+32. THE Interface_do_Investidor SHALL declarar os nove estados obrigatórios de tela, conforme `R122.1`.
+33. THE Interface_do_Investidor SHALL apresentar todas as telas de forma utilizável em tela estreita, inclusive o envio de documento, conforme `R124.1`, `R124.2` e `R124.5`.
+34. THE Interface_do_Investidor SHALL apresentar, em cada análise, a evidência utilizada e a explicação da decisão, conforme `R56.1`, `R123.3` e `R123.5`.
+35. THE Gestor_de_Governanca SHALL manter a trilha de auditoria de toda alteração relevante, conforme `R64.1`, `R64.2` e `R112.9`.
+36. THE Radar SHALL registrar a versão do motor determinístico em cada resultado e publicar nova versão quando a regra alterar decisão, conforme `R120.1` e `R120.2`.
+37. THE Radar SHALL registrar a data de corte de cada análise e recusar evidência posterior a ela, conforme `R120.4` e `R120.5`.
+38. THE Motor_de_Backtest SHALL rejeitar dado posterior à data da decisão simulada, conforme `R60.4`, `R120.9` e `SAFE-015`.
+39. THE Gestor_de_Observabilidade SHALL registrar identificador de correlação, log estruturado, métricas, duração, situação, erro, repetições, custo de IA, tokens, fonte e versões em cada execução relevante, conforme `R111.1` e `R111.2`.
+40. THE Radar SHALL admitir a evolução para operação com múltiplos titulares sem migração das entidades de negócio, conforme `R118.1`, `R118.9` e `R119.4`.
+41. THE Radar SHALL manter o meta-teste `MT-12`, que verifica que cada uma das **quarenta** perguntas de fechamento dos critérios 1 a 40 possui requisito numerado que a satisfaça, e que falha nomeando a pergunta órfã.
+42. IF qualquer pergunta de fechamento dos critérios 1 a 40 não possui requisito numerado que a satisfaça, THEN THE Radar SHALL reportar a especificação como não fechada e SHALL identificar a pergunta e a lacuna.
+43. THE Gestor_de_Governanca SHALL registrar o congelamento da especificação com data, versão do documento, contagem de requisitos, contagem de decisões, contagem de propriedades e contagem de testes de regressão.
+44. WHEN uma mudança de arquitetura é proposta após o congelamento, THE Gestor_de_Governanca SHALL exigir nova decisão numerada com o conflito, a resolução, o impacto sobre requisitos, parâmetros, regras, propriedades e testes, e a versão resultante, conforme `R75.7` e `R62.1`.
+45. THE Gestor_de_Governanca SHALL abster-se de admitir mudança de arquitetura sem decisão numerada registrada.
+46. THE Radar SHALL manter este documento como única fonte normativa, AND SHALL abster-se de admitir segunda fonte de verdade em qualquer artefato derivado, conforme `D51`, `D86` e `D87`.
 
 ---
 
@@ -3324,6 +4058,22 @@ não deve continuar competindo pelo capital e pela atenção (`D3`).
 | REG-042 | Débito de condomínio informado manualmente, com responsabilidade do adquirente declarada no edital | Débito integra `CUS-005` e aparece no custo econômico total decomposto, com documento e data da consulta (`R91.3`, `R96.1`) |
 | REG-043 | Candidato reprovado no gate de promoção `G1-P` | Análise profunda não executada; critério não satisfeito registrado; oportunidade mantida disponível para reavaliação; nenhum `DecisionState` emitido pela triagem (`R93.4`, `R93.6`) |
 | REG-044 | Nova versão de documento registrada contradizendo evidência vigente | Ambas as evidências preservadas, fato marcado como conflitante e versões de documento numeradas sem lacuna (`R87.1`, `R87.5`) |
+| REG-045 | A página da fonte muda de estrutura e os seletores deixam de encontrar campos essenciais | Captura rejeitada com a verificação não satisfeita nomeada, erro `FONTE_ALTERADA` registrado, payload bruto preservado, notificação emitida e nenhum dado propagado ao domínio (`R107.2`, `R107.3`, `R114.2`) |
+| REG-046 | A fonte responde com lista vazia em uma execução | Resultado classificado como inválido por quantidade implausível; nenhuma oferta conhecida classificada como removida da fonte; última captura válida permanece vigente (`R107.8`, `AQ-010`) |
+| REG-047 | A fonte responde com conteúdo inválido ou não interpretável | Payload bruto preservado, erro catalogado registrado, última captura válida mantida como vigente e nenhuma normalização executada (`R107.9`, `R85.9`) |
+| REG-048 | A oferta desaparece da fonte por duas execuções válidas consecutivas | Estado `REMOVIDA_DA_FONTE` registrado com data e hora; imóvel, oportunidade, capturas, documentos, evidências e análises preservados integralmente (`R108.5`, `R108.6`) |
+| REG-049 | A mesma captura, a mesma importação de documento e a mesma execução de análise são repetidas com a mesma chave de idempotência | Exatamente um efeito persistido em cada caso, resultado da primeira execução retornado e repetição registrada na auditoria (`R109.3`, `R109.7`) |
+| REG-050 | O índice vetorial é reconstruído com o mesmo modelo e a mesma segmentação | Decisão, camada determinante, resultados determinísticos, versões de análise e evidências permanecem inalterados (`R102.7`) |
+| REG-051 | Nova versão de prompt altera a interpretação de um documento | Interpretação anterior preservada com a versão que a produziu, interpretação nova registrada com a nova versão, e a análise identifica qual versão produziu cada interpretação (`R100.2`, `R100.5`, `R100.9`) |
+| REG-052 | Documento sensível submetido a provedor de modelo de linguagem sem política de processamento registrada | Envio recusado, recusa registrada com identificador de correlação, pendência registrada e nenhum conteúdo transmitido ao provedor (`R112.10`, `R112.11`, `IA-014`) |
+| REG-053 | Upload com nome de arquivo contendo travessia de caminho, e upload com caminho absoluto | Upload recusado nos dois casos com a causa informada, tentativa registrada e nenhum arquivo gravado (`R112.5`, `R112.6`) |
+| REG-054 | Tela que depende de dado remoto declarada sem estado vazio | Tela reprovada por `MT-16`, com a tela e o estado ausente nomeados (`R122.1`, `R122.10`) |
+| REG-055 | Execução de IA que atinge o orçamento de tokens no meio do workflow | Chamadas interrompidas, interrupção registrada com orçamento, consumo e identificador de correlação, execução marcada como parcial, pendência registrada e interrupção visível na interface (`R99.3`, `R99.4`) |
+| REG-056 | Workflow de IA interrompido após a etapa de extração e retomado em seguida | Retomada a partir do último ponto registrado, etapas concluídas preservadas e resultado igual ao da execução contínua com as mesmas entradas (`R103.4`, `R103.5`) |
+| REG-057 | Escrita por ferramenta de contexto invocada sem autorização, e a mesma escrita repetida com a mesma chave de idempotência | Primeira invocação recusada sem efeito e com a causa informada; repetição autorizada produz exatamente um efeito persistido, com auditoria em ambos os casos (`R104.9`, `R104.10`, `R104.11`) |
+| REG-058 | Evidência com data de observação posterior à data de corte apresentada a uma versão de análise | Evidência recusada naquela versão, recusa registrada e data de corte preservada; a evidência permanece disponível para nova versão de análise (`R120.4`, `R120.5`) |
+| REG-059 | Consulta a entidade de negócio executada sem o identificador do titular | Consulta rejeitada com a causa informada e nenhum dado retornado (`R118.5`, `R118.2`) |
+| REG-060 | A fonte acumula cinco falhas consecutivas de captura | Disjuntor aberto, chamadas àquela fonte interrompidas, abertura registrada com data, hora e causa, e retomada apenas após o intervalo configurado (`R107.7`, `AQ-008`, `AQ-009`) |
 
 ---
 
@@ -3809,7 +4559,7 @@ exemplos representativos e por dublês nos testes de propriedade.
 | ID | Propriedade | Gerador | Requisitos |
 |----|-------------|---------|-----------|
 | P16.1 | Cobertura de catálogo: todo item `MC-001` a `MC-136`, `B-01` a `B-27` e `C-01` a `C-71` possui exatamente um resultado registrado por análise, ou é explicitamente `nao_aplicavel`, **para qualquer versão de checklist configurada** | análises geradas com combinações de dados disponíveis e versões de checklist derivadas da versão 1 | 36.5, 92.7, `D17`, `D83` |
-| P16.2 | Cobertura de prioridade: todo requisito de 1 a **97** possui exatamente uma classificação entre `P0`, `P1`, `P2` e `fora do MVP` | conjunto de requisitos | 75.5 |
+| P16.2 | Cobertura de prioridade: todo requisito de 1 a **126** possui exatamente uma classificação entre `P0`, `P1`, `P2` e `fora do MVP`, e o resumo declarado no Índice de Requisitos coincide com a tabulação linha a linha | conjunto de requisitos | 75.5, `D89`, `D102` |
 | P16.3 | Parâmetro `[PENDENTE-DECISÃO]` nunca é aplicado: o requisito dependente é reportado como NÃO AVALIADO, nunca como satisfeito | parâmetros pendentes e análises arbitrárias | `D54`, 74.11 |
 | P16.4 | Toda regra aplicada depende apenas de entidades e campos declarados no dicionário; regra que dependa de estrutura ausente é rejeitada | conjuntos de regras e dicionários parciais | 74.11 |
 | P16.5 | Os pontos mínimos de intervenção humana não são removíveis: para qualquer configuração, os sete pontos de `R83.5` permanecem exigidos | configurações arbitrárias | 83.5, 83.6 |
@@ -3850,6 +4600,130 @@ exemplos representativos e por dublês nos testes de propriedade.
 | P17.20 | Desacoplamento do conector: para qualquer estratégia de aquisição declarada, a oferta normalizada e o resultado da análise são idênticos quando o payload é o mesmo | payloads iguais obtidos por estratégias de aquisição distintas | 85.3, 85.5 |
 | P17.21 | Reexecução sem mudança não versiona: reexecutar a análise com as mesmas entradas não cria nova versão e registra a reexecução na auditoria | estados arbitrários com e sem alteração de entrada | 88.10, 61.1, 64.1 |
 | P17.22 | Cobertura dos dezoito passos: para o ciclo de prova do MVP, cada um dos dezoito passos possui requisito associado e resultado verificável, e nenhum passo é reportado como satisfeito sem execução registrada | execuções completas e parciais do ciclo | 95.1, 95.2, 95.6 |
+
+### P18 — Mercado, comparáveis e valuation
+
+Esta família fecha a lacuna registrada em `D97`: antes dela, nenhuma das propriedades cobria
+`R21` a `R25`, e mercado, comparáveis e valuation eram verificados apenas por exemplo dirigido.
+
+| ID | Propriedade | Gerador | Requisitos |
+|----|-------------|---------|-----------|
+| P18.1 | Determinismo da seleção: o mesmo conjunto de candidatos com os mesmos parâmetros produz sempre o mesmo conjunto selecionado | conjuntos de candidatos arbitrários | 21.1 |
+| P18.2 | Confluência da seleção: permutar a ordem dos candidatos não altera o conjunto selecionado nem as faixas de valor | permutações do mesmo conjunto | 21.1, 22.1 |
+| P18.3 | Monotonicidade do raio e da janela: ampliar o raio de `VAL-003` ou a janela de `VAL-004` nunca reduz o conjunto de comparáveis elegíveis | raios e janelas crescentes | 21.2 |
+| P18.4 | Monotonicidade da confiança: acrescentar comparável qualificado nunca reduz a confiança do valuation | conjuntos com incremento de comparáveis | 22.1, 22.2 |
+| P18.5 | Cobertura total das faixas de confiança do valuation: para qualquer quantidade e qualidade de comparáveis, retorna exatamente uma faixa, sem lacuna e sem sobreposição | quantidades de 0 a 50 combinadas com qualidades `A` a `E` | 22.2 |
+| P18.6 | Quantidade insuficiente nunca produz precisão: com menos de `VAL-001` comparáveis qualificados, o valuation nunca é apresentado como preciso | conjuntos com zero a quatro comparáveis | 22.3 |
+| P18.7 | Ordenação das referências de valor: venda rápida ≤ conservador ≤ provável ≤ otimista, para qualquer conjunto coerente de premissas | premissas coerentes arbitrárias | 23.1 |
+| P18.8 | Contenção: o valor de mercado provável está sempre entre a referência conservadora e a otimista | conjuntos arbitrários de premissas | 23.1, 23.2 |
+| P18.9 | Independência da avaliação da fonte: alterar apenas a avaliação da fonte não altera nenhuma faixa de valor nem a confiança do valuation | ofertas com avaliação da fonte variada | 21.8, 3.10 |
+| P18.10 | Totalidade do método por tipo de ativo: cada tipo declarado resolve exatamente um método de valuation aplicável | tipos de ativo declarados | 24.1 |
+| P18.11 | Idempotência do valuation: recalcular com os mesmos comparáveis e parâmetros produz o mesmo resultado | conjuntos arbitrários | 22.1 |
+| P18.12 | Candidato reprovado não influencia: remover candidato reprovado pelos critérios de qualificação não altera nenhuma faixa de valor | conjuntos com candidatos reprovados | 21.3 |
+| P18.13 | Limiar de revaluation: mudança igual ou superior ao limiar dispara revaluation e mudança inferior não dispara | magnitudes em torno de cada limiar, incluindo o valor exato | 25.1, 25.2 |
+| P18.14 | Comparável fora da janela nunca é atual: comparável com data fora da janela de `VAL-004` não entra no conjunto de referência do valor corrente | comparáveis com datas variadas | 21.2 |
+| P18.15 | Ausência de comparável qualificado resulta em valuation `UNKNOWN`, nunca em valor derivado da avaliação da fonte | conjuntos vazios e conjuntos integralmente reprovados | 22.4 |
+
+### P19 — Infraestrutura de IA, provedores, custo e avaliação
+
+| ID | Propriedade | Gerador | Requisitos |
+|----|-------------|---------|-----------|
+| P19.1 | Invariância de provedor: para as mesmas evidências, parâmetros e versões de regra, o resultado determinístico é idêntico em qualquer provedor ou modelo declarado (teste baseado em modelo, com dublês de provedor) | pares de execuções com provedores distintos | 98.9, 98.5 |
+| P19.2 | Isolamento do núcleo: o fechamento transitivo de importações do núcleo não contém cliente de modelo de linguagem, de embedding, de armazenamento externo nem de agendamento | grafo de importações do núcleo | 98.5, 119.3 |
+| P19.3 | Registro completo de chamada: toda chamada a provedor persiste identificador de correlação, tarefa, provedor, modelo, versão, tokens de entrada, tokens de saída, duração e custo | sequências de chamadas com dublês | 98.11 |
+| P19.4 | Orçamento nunca é excedido em silêncio: para qualquer sequência de chamadas, ou o consumo acumulado permanece dentro do orçamento, ou existe registro de interrupção com orçamento, consumo e identificador de correlação | sequências de chamadas com custos e tokens variados | 99.2, 99.3, 99.4 |
+| P19.5 | Idempotência do cache: consultar o cache com a mesma tarefa, versão de prompt, versão de modelo e hash de entrada retorna o mesmo valor e não gera nova chamada a provedor | consultas repetidas arbitrárias | 99.5 |
+| P19.6 | Reprocessamento mínimo: sem mudança de conteúdo, de modelo, de versão de prompt e de configuração de segmentação, nenhuma nova geração de representação vetorial é executada | sequências de submissões do mesmo documento | 99.7, 99.12 |
+| P19.7 | Rastreabilidade de versão: toda interpretação registrada resolve exatamente uma versão de prompt e uma versão de modelo | interpretações arbitrárias | 100.2, 100.6 |
+| P19.8 | Imutabilidade da interpretação registrada: para qualquer sequência de mudanças de prompt e de modelo, as interpretações já persistidas permanecem inalteradas | sequências de mudanças de versão | 100.5, 100.9, 100.10 |
+| P19.9 | Citação sempre resolvível: todo trecho entregue no contexto resolve documento, versão, página e trecho existentes | conjuntos de segmentos arbitrários, incluindo documentos com página única e com páginas ausentes | 101.3, 101.4 |
+| P19.10 | Metadados mínimos do segmento: todo segmento indexado tem os treze metadados obrigatórios preenchidos | documentos arbitrários | 101.2 |
+| P19.11 | Separação de naturezas: nenhum item apresentado acumula mais de uma natureza, e interpretação da IA nunca recebe a marcação de fato do documento | saídas de análise arbitrárias | 101.5, 101.6 |
+| P19.12 | Reconstrução não altera resultado: reconstruir o índice vetorial com o mesmo modelo e a mesma segmentação preserva decisão, camada determinante e resultados determinísticos | estados arbitrários submetidos a reconstrução | 102.7 |
+| P19.13 | Reindexação preserva o original: para qualquer sequência de reindexações, trocas de provedor e mudanças de segmentação, o conteúdo e o hash de cada arquivo original permanecem inalterados | sequências arbitrárias de migração | 102.3, 102.6, 86.2 |
+| P19.14 | Degradação sem contaminação: com o índice vetorial indisponível, o resultado determinístico é igual ao obtido com o índice disponível, e a etapa de recuperação é registrada como não executada | estados com e sem índice disponível | 102.8 |
+| P19.15 | Retomada equivalente: retomar uma execução interrompida em qualquer ponto de retomada produz o mesmo resultado da execução contínua com as mesmas entradas e versões (teste baseado em modelo) | pontos de interrupção arbitrários no grafo de etapas | 103.5, 103.6 |
+| P19.16 | Idempotência da execução do workflow: disparar a mesma execução `n` vezes com a mesma chave de idempotência persiste exatamente uma execução | chave e `n` em 1 a 10 | 103.12, 109.3 |
+| P19.17 | Escrita por ferramenta é idempotente e auditada: invocar a mesma ferramenta de escrita `n` vezes com a mesma chave produz exatamente um efeito persistido e `n` registros de auditoria | ferramenta, chave e `n` em 1 a 10 | 104.9, 104.11 |
+| P19.18 | Autorização é necessária: invocação de ferramenta de escrita sem autorização, com entrada inválida ou sem chave de idempotência nunca persiste efeito | invocações com atributos ausentes e inválidos | 104.10 |
+| P19.19 | Preservação de `UNKNOWN` na extração por IA: para qualquer documento em que o campo não está presente, a extração retorna `UNKNOWN`, nunca valor inferido | documentos com subconjuntos aleatórios de campos omitidos | 105.2, 105.5 |
+| P19.20 | Ausência de evidência nunca vira afirmação: para qualquer saída de componente de linguagem sem trecho de origem, o resultado registrado é `UNKNOWN` ou `PENDENTE` | saídas geradas com e sem citação | 105.1, 105.2, 105.3 |
+| P19.21 | Totalidade do esquema de saída estruturada: toda saída aceita satisfaz o esquema declarado, e toda saída que não o satisfaz é rejeitada | saídas arbitrárias, incluindo malformadas, truncadas e com campos extras | 105.6, 105.7 |
+| P19.22 | Nenhum agente supera parada absoluta: para qualquer saída de qualquer Agente_Limitado, existindo `BLOCK` jurídico ou parada absoluta acionada, a decisão permanece `BLOCK` e o lance permanece não liberado | saídas de agente arbitrárias combinadas com estados de bloqueio | 104.3, 53.4 |
+
+### P20 — Aquisição resiliente, captura incremental e agendamento
+
+| ID | Propriedade | Gerador | Requisitos |
+|----|-------------|---------|-----------|
+| P20.1 | Conservação das quantidades: a soma das ofertas classificadas nos seis estados é igual à quantidade capturada registrada na execução | execuções arbitrárias | 106.5, 108.2 |
+| P20.2 | Uma execução por ciclo: disparar o mesmo ciclo `n` vezes para a mesma fonte, janela e agendamento persiste exatamente uma execução | ciclo e `n` em 1 a 10 | 106.7, 109.2 |
+| P20.3 | A execução do Radar nunca decide: nenhum valor de `DecisionState`, Opportunity Score, Investor Fit Score, valuation ou custo econômico total é produzido pela execução do Radar | execuções arbitrárias | 106.6, 93.2 |
+| P20.4 | Estratégia de captura invisível ao domínio: para o mesmo payload obtido por estratégias de captura distintas, a oferta normalizada, o resultado determinístico e a decisão são idênticos, e a estratégia aparece apenas na execução e na captura | payloads iguais obtidos por estratégias distintas | 106.8, 85.3 |
+| P20.5 | Totalidade da validação de captura: toda captura recebe resultado nas seis verificações, e qualquer verificação não satisfeita impede a propagação ao domínio | capturas arbitrárias, incluindo truncadas, vazias e sem hash | 107.1, 107.2 |
+| P20.6 | Mudança de estrutura é observável: para qualquer captura cuja estrutura difira da última válida além do tolerado, existe erro registrado e nenhum dado propagado ao domínio | capturas com campos removidos, renomeados, reordenados e com tipos alterados | 107.3 |
+| P20.7 | Resposta vazia nunca remove oferta: para qualquer execução com resposta vazia, nenhuma oferta conhecida é classificada como removida da fonte | respostas vazias combinadas com conjuntos conhecidos arbitrários | 107.8 |
+| P20.8 | Retomada da captura: retomar a partir de qualquer ponto de retomada registrado produz o mesmo conjunto de capturas da execução contínua | pontos de interrupção arbitrários entre páginas | 107.5, 107.6 |
+| P20.9 | Disjuntor monotônico nas falhas: atingido o limiar de falhas consecutivas, nenhuma nova chamada à fonte ocorre antes do intervalo de reabertura | sequências de falhas e sucessos | 107.7 |
+| P20.10 | Limite de taxa respeitado: em qualquer execução, a quantidade de requisições por minuto a uma fonte nunca excede o limite configurado | execuções com volumes e concorrência variados | 107.4 |
+| P20.11 | Totalidade da classificação incremental: toda oferta capturada recebe exatamente um dos seis estados | pares de capturas arbitrárias da mesma oferta | 108.2 |
+| P20.12 | Idempotência da captura incremental: capturar `n` vezes a mesma oferta sem alteração produz uma única captura registrada e `n` verificações com estado `SEM_ALTERACAO` | oferta e `n` em 1 a 10 | 108.3, 2.3 |
+| P20.13 | Remoção na fonte não apaga histórico: para qualquer sequência que inclua remoção e retorno da oferta, as quantidades de capturas, documentos, evidências e versões de análise nunca diminuem | sequências com remoção, ausência prolongada e retorno | 108.5, 108.9 |
+| P20.14 | Comparação inconclusiva nunca cria oferta nova: evidência insuficiente resulta em `INCONCLUSIVA` com pendência, nunca em `NOVA` | pares com evidência fraca de identidade | 108.7 |
+| P20.15 | Idempotência das operações críticas: para cada uma das nove operações críticas, executar `n` vezes com a mesma chave de idempotência produz exatamente um efeito persistido | operação, chave e `n` em 1 a 10 | 109.1, 109.3 |
+| P20.16 | Retry completa sem duplicar: repetir uma operação após falha parcial completa o efeito faltante e não duplica o efeito já persistido | falhas parciais injetadas em pontos arbitrários | 109.4 |
+| P20.17 | Exclusão mútua de execuções: nunca existem duas execuções em curso para a mesma fonte | disparos concorrentes arbitrários | 110.5 |
+| P20.18 | Capacidade ausente gera pendência: para qualquer item de checklist que dependa de capacidade não declarada pela fonte, existe pendência registrada e nenhuma conformidade presumida | combinações de capacidades declaradas e de itens aplicáveis | 110.7, 110.8 |
+
+### P21 — Plataforma: observabilidade, segurança, erros, versões e titular
+
+| ID | Propriedade | Gerador | Requisitos |
+|----|-------------|---------|-----------|
+| P21.1 | Identificador de correlação total: toda execução relevante registra identificador de correlação, e todos os registros daquela execução compartilham o mesmo valor | execuções relevantes arbitrárias, incluindo aninhadas | 111.1, 111.3 |
+| P21.2 | Log sem segredo: para qualquer entrada que contenha credencial, segredo ou token, nenhum log, métrica ou mensagem de erro contém o valor | entradas com segredos sintéticos em campos, cabeçalhos e corpos | 111.5 |
+| P21.3 | Erro sempre correlacionável: toda falha apresentada ao usuário traz identificador de correlação que resolve o registro técnico correspondente | falhas arbitrárias, catalogadas e não catalogadas | 111.6, 111.7, 114.3 |
+| P21.4 | Upload sem travessia de caminho: para qualquer nome de arquivo, o caminho de gravação é derivado do hash e do identificador, e nenhum caminho gravado escapa do diretório de armazenamento | nomes arbitrários, incluindo travessia relativa, caminho absoluto, separadores mistos, unicode e nome vazio | 112.5, 112.6 |
+| P21.5 | Validação de upload é total: todo upload recebe resultado nas quatro verificações, e qualquer verificação não satisfeita impede a gravação | arquivos com tamanho, tipo MIME, extensão e nome variados | 112.4, 112.7 |
+| P21.6 | Política obrigatória antes do envio: para qualquer documento sem política de processamento registrada para a sua classe, nenhuma chamada a provedor transmite o conteúdo | documentos com e sem política registrada | 112.10, 112.11 |
+| P21.7 | Autorização é necessária: nenhuma operação exposta produz efeito nem retorna dado sem autenticação e autorização satisfeitas | requisições com credenciais, papéis e posses variados | 112.1, 112.2 |
+| P21.8 | Configuração ausente impede inicialização: para qualquer configuração obrigatória ausente, o componente dependente não inicializa e nenhum valor implícito é aplicado | conjuntos de configuração com omissões | 113.5 |
+| P21.9 | Sinalizador não altera decisão: para qualquer combinação de sinalizadores de recurso, a decisão, a camada determinante e os resultados determinísticos permanecem os mesmos para as mesmas evidências e parâmetros | combinações dos sinalizadores de `PLT-012` | 113.7, 113.8 |
+| P21.10 | Totalidade do catálogo de erros: toda falha resulta em exatamente uma das quinze categorias, e nenhuma mensagem apresentada contém rastro de execução, consulta ao banco, caminho interno ou mensagem de biblioteca | falhas arbitrárias, incluindo não catalogadas | 114.2, 114.3, 114.7 |
+| P21.11 | Conversão para assíncrono: nenhuma resposta síncrona excede o limite; excedido o limite, existe trabalho assíncrono registrado com identificador retornado | operações com durações variadas em torno de `PLT-009` | 115.6, 115.7 |
+| P21.12 | Totalidade e monotonicidade da situação do trabalho: todo trabalho tem exatamente uma das seis situações, e a situação nunca regride de concluída para em execução | sequências de transições arbitrárias | 115.4 |
+| P21.13 | Paginação sem perda e sem repetição: para qualquer coleção e qualquer tamanho de página válido, a concatenação das páginas é exatamente a coleção ordenada | coleções de 0 a 1.000 itens e tamanhos de página de 1 a `PLT-005` | 116.3 |
+| P21.14 | Limite de página respeitado: tamanho de página fora da faixa válida é rejeitado informando o limite | tamanhos arbitrários, incluindo zero, negativos e acima do máximo | 116.4 |
+| P21.15 | Idempotência do processamento de evento: processar o mesmo evento `n` vezes produz exatamente um efeito persistido | evento e `n` em 1 a 10 | 117.3, 109.1 |
+| P21.16 | Evento não decide: para qualquer sequência de eventos processados, nenhuma decisão, nenhum resultado determinístico e nenhuma precedência é alterada | sequências de eventos arbitrárias | 117.4 |
+| P21.17 | Isolamento por titular: para qualquer consulta a entidade de negócio, o conjunto retornado contém exclusivamente registros do titular do ator, e consulta sem titular é rejeitada | bases com múltiplos titulares e consultas arbitrárias | 118.2, 118.5 |
+| P21.18 | Presença do titular: toda entidade de negócio persistida tem identificador de titular e identificador de usuário responsável preenchidos | sequências de escrita sobre todas as entidades de negócio | 118.1, 118.7 |
+| P21.19 | Invariância de adaptador: para qualquer combinação de adaptadores declarados, o resultado determinístico é idêntico para as mesmas evidências, parâmetros e versões (teste baseado em modelo) | pares de execuções com adaptadores distintos | 119.4, 119.6 |
+| P21.20 | Versão do motor sempre registrada: toda análise, toda decisão e todo resultado calculado persistem a versão do motor | execuções arbitrárias | 120.1 |
+| P21.21 | Data de corte nunca admite evidência posterior: para qualquer versão de análise, nenhuma evidência utilizada tem data de observação posterior à data de corte registrada | conjuntos de evidências com datas em torno da data de corte, incluindo o valor exato | 120.4, 120.5 |
+| P21.22 | Reprodução usa apenas versões registradas: reproduzir uma análise histórica produz a mesma decisão e não consulta estado mutável atual | análises históricas arbitrárias com estado atual alterado | 120.7, 120.10 |
+| P21.23 | Notificação por evento: todo evento do catálogo de notificação gera exatamente uma notificação local registrada, com situação de entrega | sequências de eventos arbitrárias | 121.1, 121.9 |
+| P21.24 | Acompanhamento dispara reavaliação: mudança relevante em eixo acompanhado gera evento e permite reanálise, e mudança em eixo não acompanhado não gera notificação | mudanças distribuídas pelos sete eixos | 121.6, 121.7 |
+
+### P22 — Experiência do investidor e fechamento arquitetural
+
+As propriedades `P22.1` a `P22.11` são verificadas sobre a **declaração** de telas, componentes
+e árvore de interação, e sobre a renderização em ambiente de teste de componentes. As
+verificações que exigem tecnologia assistiva real permanecem fora do teste automatizado e são
+declaradas como verificação manual em `R125`.
+
+| ID | Propriedade | Gerador | Requisitos |
+|----|-------------|---------|-----------|
+| P22.1 | Totalidade dos estados de tela: toda tela e todo componente que dependa de dado remoto declara os nove estados, e nenhum caminho de renderização produz tela sem conteúdo e sem explicação | telas declaradas combinadas com respostas vazias, com erro, parciais e obsoletas | 122.1, 122.9 |
+| P22.2 | Estado corresponde à resposta: para cada classe de resposta, o estado apresentado é exatamente o correspondente declarado | respostas arbitrárias por classe | 122.2, 122.3, 122.4, 122.5, 122.6 |
+| P22.3 | Ordem de leitura da análise: a sequência de blocos apresentados é sempre a ordem canônica de oito blocos | análises arbitrárias, incluindo com bloqueio e com pendência | 123.3 |
+| P22.4 | Distância de navegação: de qualquer oportunidade listada, a análise é alcançável em no máximo dois passos | grafo de navegação declarado | 123.2 |
+| P22.5 | Natureza única: cada informação apresentada recebe exatamente uma das quatro naturezas | análises arbitrárias | 123.4 |
+| P22.6 | Preservação em tela estreita: para qualquer largura declarada, decisão, bloqueios, pendências e explicação permanecem apresentados | larguras de 320 a 2.560 pixels | 124.1, 124.7 |
+| P22.7 | Tabela sempre tem alternativa responsiva: toda tabela declarada possui representação alternativa em largura igual ou inferior ao ponto de quebra | tabelas declaradas | 124.3 |
+| P22.8 | Catálogo visual fechado: toda cor, tipografia e espaçamento aplicados pertencem ao catálogo do Design_System | árvore de componentes declarada | 125.1, 125.3 |
+| P22.9 | Estado nunca depende só de cor: todo estado e toda decisão apresentados têm representação textual ou de forma além da cor | estados e decisões arbitrários | 125.9 |
+| P22.10 | Acessibilidade de formulário: todo campo tem rótulo associado e toda mensagem de erro está associada ao campo correspondente | formulários declarados com combinações de erros | 125.5 |
+| P22.11 | Operação por teclado: toda função alcançável por ponteiro é alcançável por teclado, com foco visível e ordem de foco declarada | árvore de interação declarada | 125.4 |
+| P22.12 | Fechamento total: cada uma das quarenta perguntas de fechamento resolve ao menos um requisito numerado existente deste documento, e nenhum identificador citado é inexistente | conjunto das quarenta perguntas confrontado com o Índice de Requisitos | 126.41, 126.42 |
 
 ---
 
@@ -5763,6 +6637,329 @@ resumo declarado e a tabulação linha a linha**. É esse meta-teste que impede 
 resumo em prosa que ninguém confere contra a tabela é o mecanismo exato pelo qual este defeito
 sobreviveu a uma integração inteira.
 
+### D90 — A coleta automatizada está no escopo, e a tabela de fora de escopo estava desatualizada
+
+**Conflito.** Contradição viva no próprio documento. A tabela `Fora de Escopo Declarado` afirmava
+que "Coleta automatizada de fontes (varredura de portais, download de editais)" estava fora do
+escopo e que "o coletor será especificado separadamente", enquanto `R85` — contrato de conector
+de fonte — é `P0-01` e `R93` — Radar automático e triagem — é `P0-13`. A linha é resíduo da
+versão anterior à integração do Domínio O: quando as duas portas de entrada entraram como
+requisito numerado, a tabela não foi revisada.
+
+**Princípio aplicado.** `P-A` e `D87`. Conflito aparente entre seções é defeito de redação a
+corrigir, não regra de precedência a aplicar.
+
+**Decisão.** A linha foi **removida**. A coleta automatizada de fontes está **dentro** do escopo
+desta spec, especificada em `R85`, `R93`, `R106`, `R107`, `R108` e `R110`, e não existe coletor a
+especificar separadamente. A tabela inteira foi revisada linha por linha contra os 126
+requisitos. As demais correções da revisão: "Aplicativo móvel completo" passou a "Aplicativo
+móvel nativo", com a interface web responsiva declarada dentro do escopo e obrigatória (`D92`);
+"Definição da arquitetura de produção em nuvem" passou a "Provisionamento da infraestrutura de
+produção em nuvem", porque adaptadores e configuração por ambiente entram agora (`D93`);
+"Consulta automatizada a cartórios, tribunais, prefeituras e concessionárias" **permanece** fora
+de escopo, e não colide com `R85`, porque conector de fonte de oferta e consulta a registro
+público são coisas distintas; "Integração automática com bases de processos judiciais"
+**permanece** fora de escopo e continua coerente com `R90.3`. Acrescentadas as exclusões de
+cobrança, de canais externos de notificação na primeira versão e de modelo de linguagem local na
+primeira versão.
+
+**Consequência.** Nenhum requisito foi alterado. `R75.4` passou de nove para dez itens fora da
+primeira versão, com a substituição de "aplicativo completo" e de "definição da arquitetura
+técnica definitiva" pelos itens corretos.
+
+### D91 — Ordem única de construção, em vinte passos, substituindo `D88`
+
+**Conflito.** `D88` fixa onze passos de construção e o plano de implementação deriva treze
+etapas. A revisão de fechamento fixa vinte passos. Não são incompatíveis: os vinte passos são
+**refinamento** que insere IA documental, recuperação, orquestração de workflow de IA, agentes e
+ferramentas de contexto, framework de conector, observabilidade e endurecimento entre os marcos
+que `D88` já tinha.
+
+**Princípio aplicado.** `P-C` e `D36`.
+
+**Decisão.** `D88` é **substituída** por esta decisão. A ordem de construção passa a ter **vinte**
+passos: 1 fundação do projeto; 2 domínio determinístico; 3 persistência; 4 documentos e
+evidências; 5 análise manual ponta a ponta; 6 versionamento e reanálise; 7 interface de
+programação; 8 interface do investidor; 9 IA documental; 10 recuperação; 11 orquestração de
+workflow de IA; 12 agentes e ferramentas de contexto; 13 framework de conector; 14 conector
+CAIXA; 15 Radar automático; 16 checklists parametrizáveis por escopo; 17 monitoramento e
+notificações; 18 observabilidade; 19 endurecimento de segurança e desempenho; e 20 Golden Cases,
+regressão e validação final. As **duas invariantes de `D88` são preservadas**: o primeiro marco
+funcional continua sendo a análise manual real de um imóvel da CAIXA, do envio dos documentos
+até a decisão apresentada na interface, incluindo complementação de evidência e reanálise; e **a
+construção não começa pelo coletor**.
+
+**Consequência.** Ordem de construção e prioridade de requisito continuam sendo dimensões
+distintas: um requisito `P0` construído no passo 18 continua `P0`. O preparo estrutural dos
+passos 1 a 3 — identificador de correlação, identificador de titular, versão do motor, data de
+corte, catálogo de erros, contratos de provedor e separação núcleo/adaptadores — é executado
+desde o início, porque retroajustá-lo depois é migração (`D96`). A prova do MVP permanece `R95`.
+
+### D92 — Aplicativo nativo fora, interface web responsiva dentro e obrigatória
+
+**Conflito.** A tabela de fora de escopo dizia "Aplicativo móvel completo — não necessário para
+provar o valor do produto". A revisão de fechamento exige responsividade desde o início, com
+cartões, acordeões, resumo de decisão fixo, filtros em gaveta e envio de documento funcionando em
+tela estreita.
+
+**Princípio aplicado.** `P-C`. O conflito é de vocabulário: "aplicativo móvel" e "interface
+responsiva" foram tratados como a mesma coisa.
+
+**Decisão.** São coisas distintas e a resolução separa as duas. **Aplicativo móvel nativo**,
+distribuído por loja de aplicativos, está **fora** do escopo desta versão. **Interface web
+responsiva** está **dentro** e é **obrigatória** desde a primeira versão, especificada em `R124`,
+com o ponto de quebra de referência em `PLT-011`.
+
+**Consequência.** A linha da tabela foi ajustada. `R124.5` exige envio de documento em qualquer
+largura, inclusive a partir da câmera e da galeria do dispositivo, e `R124.6` registra
+explicitamente a distinção.
+
+### D93 — Adaptadores e configuração por ambiente entram; provisionar nuvem continua fora
+
+**Conflito.** A tabela dizia que a definição da arquitetura de produção em nuvem estava fora do
+escopo, com local-first no MVP. A revisão de fechamento exige separação entre núcleo, adaptadores
+e infraestrutura, e configuração por ambiente, **agora**, exatamente para permitir a nuvem depois.
+
+**Princípio aplicado.** `P-C`.
+
+**Decisão.** Os **adaptadores** e a **configuração por ambiente** entram no escopo desta versão,
+especificados em `R119` e `R113`: armazenamento local ou S3; banco de dados local ou gerenciado;
+agendamento local ou de nuvem; provedor de modelo de linguagem por interface de programação ou
+local. O **provisionamento** de infraestrutura de nuvem continua **fora** do escopo, e a primeira
+execução completa permanece possível em ambiente local (`R119.5`).
+
+**Consequência.** A linha da tabela foi ajustada de "definição da arquitetura de produção em
+nuvem" para "provisionamento da infraestrutura de produção em nuvem". `R75.2` passa a incluir
+infraestrutura de nuvem provisionada como capacidade `P1`.
+
+### D94 — Estratégia de captura é entidade de infraestrutura e continua invisível ao domínio
+
+**Conflito.** `D59` e `R85.3` declaram que a estratégia de aquisição é rótulo interno de
+infraestrutura e **não** é exposta a entidade, regra, parâmetro ou motor do domínio. A revisão de
+fechamento eleva `Capture Strategy` a nível de arquitetura, com os valores `WEB`, `API`, `FILE` e
+`CRAWLER`, ao lado do conector de fonte.
+
+**Princípio aplicado.** `P-C` e `D59`.
+
+**Decisão.** As duas leituras coexistem sem contradição, e a resolução declara como. A estratégia
+de captura é **entidade de infraestrutura** nomeada `EstrategiaDeCaptura`, com os quatro valores
+página pública, endpoint, arquivo e varredura, registrada na Execução do Radar (`R106.1`) e na
+captura (`R106.8`). Ela **continua invisível** ao domínio: nenhuma entidade de negócio, regra,
+parâmetro de negócio ou motor a conhece, e `R85.3` permanece exatamente como está. A proibição de
+ramificação por instituição no domínio — `if caixa`, `if banco_do_brasil` — que a revisão repete é
+a **mesma** regra já vigente em `D59` e `R85.5`, e não foi duplicada.
+
+**Consequência.** A família de parâmetros `AQ` é de infraestrutura e não participa de cálculo de
+negócio, de score, de decisão nem de precedência. `P20.4` verifica a invisibilidade por
+propriedade.
+
+### D95 — A cadeia de precedência da revisão é projeção das onze camadas
+
+**Conflito.** A revisão de fechamento escreve a precedência como `BLOCK jurídico > score >
+desconto > yield > margem > preferência do investidor`. A spec tem **onze camadas ordenadas**,
+numeradas 0 a 10, em `R53` e `D1`.
+
+**Princípio aplicado.** `P-C`.
+
+**Decisão.** A cadeia da revisão é **projeção** das onze camadas sobre as dimensões que o leitor
+de negócio reconhece, e é **consistente** com elas: `BLOCK` jurídico pertence às camadas 0 e 1;
+score, desconto, yield e margem pertencem às camadas econômicas e de pontuação; preferência do
+investidor pertence às camadas de estratégia e aderência. As **onze camadas continuam sendo a
+definição normativa**, e nenhuma camada foi renumerada, removida ou reordenada. `R126.5` registra
+a exigência que a cadeia expressa — nenhum indicador financeiro supera bloqueio jurídico —
+apontando `SAFE-002`, `R12.3` e `R53.4`.
+
+**Consequência.** Nenhuma alteração em `R53`, `D1` e `P11`. A cadeia da revisão não foi
+transcrita como regra, para não criar uma segunda precedência com aparência normativa.
+
+### D96 — Preparo multi-tenant é `P0`; cobrança é fora de escopo
+
+**Conflito.** A revisão de fechamento pede `tenant_id`, identificador de usuário, posse,
+permissões e isolamento lógico nas entidades sensíveis, sem cobrança. Isso alcança todas as
+entidades de negócio do dicionário e a integridade do banco de dados. A spec não tinha nenhuma
+menção a multi-tenant.
+
+**Princípio aplicado.** `P-A` e `P-C`.
+
+**Decisão.** O **preparo estrutural** é obrigatório e `P0`, especificado em `R118`: identificador
+de titular e identificador de usuário responsável em cada entidade de negócio, isolamento lógico
+em toda consulta, autorização por posse e por titular, e configuração resolvível por titular. O
+motivo da prioridade é aritmético: retroajustar as entidades de negócio depois de gravadas é
+**migração**, não ajuste. **Cobrança, planos, limites comerciais e medição para cobrança
+permanecem fora do escopo** desta versão, com as abstrações declaradas para que sejam
+acrescentáveis sem migração (`R118.8`).
+
+**Consequência.** Foi acrescentado o papel **Operador de Plataforma**, que opera ambiente,
+segredos, agendamento, limites e observabilidade, e que não altera regra, parâmetro de negócio,
+evidência, análise nem decisão. As entidades acrescentadas pelos Domínios P a T — Execução do
+Radar, trabalho assíncrono, prompt versionado, coleção do índice vetorial, configuração de
+agendamento, sinalizador de recurso, erro catalogado, notificação, acompanhamento — são
+**entidades de infraestrutura e de plataforma**, e não integram o conjunto de entidades de
+negócio do dicionário de `R74`: a contagem de entidades de negócio permanece inalterada. O
+meta-teste `MT-13` verifica a presença dos dois identificadores em cada entidade de negócio.
+
+### D97 — Família nova de propriedades de IA e fechamento da lacuna de `R21` a `R25`
+
+**Conflito.** A revisão de fechamento pede teste baseado em propriedade no domínio "quando
+aplicável" e avaliação específica de IA com nove verificações. A spec tinha dezessete famílias de
+propriedades e **nenhuma** cobria `R21` a `R25` — mercado, comparáveis e valuation —, lacuna que
+já era conhecida e não estava registrada como decisão.
+
+**Princípio aplicado.** `P-A`.
+
+**Decisão.** Foram acrescentadas **cinco** famílias de propriedades: `P18` mercado, comparáveis e
+valuation, que fecha a lacuna de `R21` a `R25`; `P19` infraestrutura de IA, provedores, custo e
+avaliação; `P20` aquisição resiliente, captura incremental e agendamento; `P21` plataforma,
+observabilidade, segurança, erros, versões e titular; e `P22` experiência do investidor e
+fechamento arquitetural. A avaliação de IA é **suíte própria** (`R105.8`), separada da suíte de
+propriedades do domínio determinístico (`R105.12`), porque mede qualidade de interpretação contra
+casos-ouro de documento e não invariante de função.
+
+**Consequência.** A spec passa a ter **262 propriedades** em **vinte e duas famílias**. As
+propriedades que dependem de provedor externo, de rede e de tecnologia assistiva usam dublês ou
+são declaradas como verificação manual, conforme a nota de abertura da seção de propriedades e a
+nota de `P22`.
+
+### D98 — Assinatura de produto de conversação não é crédito de interface de programação
+
+**Conflito.** Confusão recorrente entre a assinatura de um produto de conversação e o
+faturamento da interface de programação do mesmo fornecedor. Sem registro, a implementação
+assume crédito que não existe e falha em produção por erro de autorização.
+
+**Princípio aplicado.** `P-A`.
+
+**Decisão.** São faturamentos distintos. O backend usa **credencial de interface de programação
+própria, configurada por ambiente** (`R113.4`), resolvida pelo Gestor_de_Configuracao, e nenhum
+segredo é versionado (`R112.3`, `R113.3`). A escolha do provedor é configuração, não decisão de
+domínio (`R98.1` a `R98.6`).
+
+**Consequência.** Configuração ausente impede a inicialização do componente dependente em lugar
+de degradar silenciosamente (`R113.5`).
+
+### D99 — Extensão do catálogo de capacidades do MVP
+
+**Conflito.** `R75.1` fixava **exatamente 23** capacidades `P0` e `R75.2` **exatamente nove**
+capacidades `P1`. Os requisitos `R98` a `R126` não são mapeáveis a nenhuma das 23 sem forçar a
+semântica: infraestrutura de IA, aquisição resiliente, observabilidade, segurança, experiência e
+fechamento não são subconjuntos de "regras" nem de "explicabilidade".
+
+**Princípio aplicado.** `P-D`. Nenhuma capacidade existente foi renumerada nem redefinida.
+
+**Decisão.** `R75.1` passa a declarar **31** capacidades `P0`, com o acréscimo de `P0-24`
+infraestrutura de IA com provedores abstraídos; `P0-25` recuperação com citação e proveniência;
+`P0-26` orquestração de workflow de IA com retomada; `P0-27` aquisição resiliente e agendamento;
+`P0-28` observabilidade, erros e desempenho; `P0-29` segurança, configuração por ambiente e
+preparo multi-tenant; `P0-30` experiência do investidor com estados, responsividade, design
+system e acessibilidade; e `P0-31` fechamento arquitetural e congelamento. `R75.2` passa a
+declarar **doze** capacidades `P1`, com o acréscimo de canais externos de notificação, modelo de
+linguagem local e infraestrutura de nuvem provisionada.
+
+**Consequência.** As capacidades `P0-01` a `P0-23` permanecem com o mesmo identificador e o mesmo
+significado, e o mapeamento dos requisitos `R1` a `R97` no Índice de Requisitos permanece
+inalterado.
+
+### D100 — O catálogo de erros estende a taxonomia existente e não cria catálogo paralelo
+
+**Conflito.** `R79.9` já exige rejeição informando campo e causa, e `R97.5` já exige rejeição
+informando recurso e causa. A revisão de fechamento pede um catálogo de quinze categorias com
+código, mensagem amigável, contexto, identificador de correlação e detalhe seguro.
+
+**Princípio aplicado.** `P-C` e `D87`.
+
+**Decisão.** `R114` **estende** `R79.9` e `R97.5` e é o **único** catálogo de erro do produto
+(`R114.5`). As quinze categorias são nomeadas em português conforme `D72` e `D103`. As exigências
+anteriores permanecem válidas e passam a ser casos do catálogo: valor fora de domínio é
+`ERRO_DE_VALIDACAO` (`R114.6`), e recurso inexistente é `NAO_ENCONTRADO`.
+
+**Consequência.** Nenhum requisito anterior foi reescrito. O meta-teste `MT-14` verifica que
+nenhuma mensagem apresentada ao usuário contém detalhe técnico.
+
+### D101 — Faixa de testes de regressão de `R73.8` estava desatualizada
+
+**Conflito.** `R73.8` exigia os testes `REG-001` a `REG-035`, enquanto o Anexo E já tabulava 44
+linhas, de `REG-001` a `REG-044`, desde a integração do Domínio O. O requisito contradizia o
+anexo e deixava nove testes sem requisito que os exigisse.
+
+**Princípio aplicado.** `P-D`. A tabulação do anexo é a fonte, como em `D89`.
+
+**Decisão.** `R73.8` passa a exigir `REG-001` a `REG-060`, **um teste por linha** do Anexo E.
+Acrescentados `REG-045` a `REG-060`, um por linha, cobrindo mudança de estrutura da fonte,
+resposta vazia, resposta inválida, remoção da oferta na fonte, repetição que não duplica,
+reconstrução do índice que não muda decisão, versão nova de prompt rastreável, documento sensível
+barrado sem política, upload com travessia de caminho recusado, tela sem estado vazio reprovada,
+orçamento de IA atingido, retomada de workflow, escrita por ferramenta sem autorização e
+repetida, evidência posterior à data de corte, consulta sem titular e abertura do disjuntor.
+Acrescentados também `R73.9` e `R73.10`, que exigem a suíte de avaliação de IA separada e os
+meta-testes `MT-01` a `MT-16`.
+
+**Consequência.** A spec passa a ter **60 testes de regressão** e **16 meta-testes**. A regra
+"um teste por linha do Anexo E" fica declarada no próprio requisito, que é o que impede a
+reincidência da divergência.
+
+### D102 — Contagem de prioridade após o fechamento arquitetural
+
+**Conflito.** Nenhum: esta decisão registra a recontagem exigida por `D89` depois do acréscimo de
+vinte e nove requisitos, para que o resumo do Índice de Requisitos não volte a divergir da
+tabulação.
+
+**Princípio aplicado.** `P-D` e `D89`. A **tabulação linha a linha** do Índice de Requisitos é a
+fonte da contagem.
+
+**Decisão.** Total de **126** requisitos, com **112 `P0`**, **13 `P1`** e **1 `P2`**. Dos vinte e
+nove requisitos acrescentados, **vinte e sete são `P0`** e **dois são `P1`**: `R117` eventos de
+domínio, porque é mecanismo de desacoplamento interno cuja ausência não altera decisão e cuja
+introdução posterior é local, e `R121` notificações e acompanhamento, alinhado a `R59` alertas
+acionáveis, que já é `P1`. Os treze `P1` passam a ser `R5`, `R31`, `R42`, `R43`, `R48`, `R59`,
+`R60`, `R65`, `R69`, `R80`, `R81`, `R117` e `R121`; o único `P2` continua sendo `R72`. Nenhuma
+prioridade de linha existente foi alterada.
+
+**Consequência.** `R75.5` e `P16.2` permanecem como estão em substância, e o intervalo verificado
+passa a ser de 1 a **126**. O confronto entre o resumo declarado e a tabulação linha a linha
+continua sendo meta-teste, não leitura.
+
+### D103 — Idioma: correspondências obrigatórias de tradução
+
+**Conflito.** A revisão de fechamento está escrita com termos em inglês — `score`, `Investor
+Fit`, `hard stop`, `BLOCK`, `UNKNOWN`, `PENDING`, `SourceConnector`, `TCO`, `LLMProvider`,
+`EmbeddingProvider`, `Capture Strategy`, `ENGINE_VERSION`, `correlation id` — e `D72` exige
+português em tudo. Traduzir livremente criaria sinônimos para identificadores que a spec já usa.
+
+**Princípio aplicado.** `P-D` e `D72`.
+
+**Decisão.** A tabela de **correspondências obrigatórias** foi acrescentada à Convenção de idioma
+e nomenclatura. Cada termo em inglês da revisão tem **um** nome nesta spec, e o nome é o que a
+spec já usava quando ele existia. Os termos novos foram nomeados em português:
+`ProvedorDeModeloDeLinguagem`, `ProvedorDeEmbedding`, `EstrategiaDeCaptura`, `VersaoDoMotor`,
+`DataDeCorte`, `IdentificadorDeCorrelacao` e `OrcamentoDeExecucaoDeIA`. As exceções mantidas em
+inglês são apenas nomes de tecnologia externa: LangChain, LangGraph, MCP, RAG, OCR, React,
+FastAPI, PostgreSQL, pgvector, S3, OpenAI, Bedrock e cron.
+
+**Consequência.** Sinônimo novo para termo já nomeado é defeito de redação, não variação de
+estilo. Os rótulos normativos de domínio escritos em inglês — `UNKNOWN`, `BLOCK`, `PENDING`,
+`PipelinePhase`, `DecisionState` — permanecem escritos como estão nos requisitos, por `D72`,
+porque são citados em anexos, propriedades e testes, e a implementação os nomeia em português com
+a correspondência declarada.
+
+### D104 — Congelamento e mudança arquitetural explícita
+
+**Conflito.** Sem portão declarado, "a spec está fechada" é opinião. E sem regra de congelamento,
+uma mudança de arquitetura entra como detalhe de implementação e a fonte única deixa de descrever
+o produto construído.
+
+**Princípio aplicado.** `P-A` e `D51`.
+
+**Decisão.** `R126` é o **portão de congelamento**: as quarenta perguntas de fechamento são
+critérios de aceitação, cada um nomeando o requisito que o satisfaz, e `MT-12` verifica a
+cobertura falhando com o nome da pergunta órfã. O congelamento é registrado com data, versão do
+documento e as contagens de requisitos, decisões, propriedades e testes de regressão (`R126.43`).
+Depois do congelamento, **mudança de arquitetura é mudança explícita de decisão**, com conflito,
+resolução e impacto documentados sobre requisitos, parâmetros, regras, propriedades e testes
+(`R126.44`, `R126.45`).
+
+**Consequência.** A sequência de validação antes do congelamento é a de `R126.42`, `MT-06`,
+`MT-12` e a suíte de regressão: nenhuma etapa depende de leitura de artefato externo. Este
+documento permanece a única fonte normativa (`R126.46`).
+
 ---
 
 ### Decisões anteriores preservadas
@@ -5834,11 +7031,13 @@ aplicado e o requisito dependente é reportado como **NÃO AVALIADO**, nunca com
 
 ## Índice de Requisitos e Prioridade
 
-Índice completo dos **97** requisitos com a capacidade do MVP a que cada um serve e a
+Índice completo dos **126** requisitos com a capacidade do MVP a que cada um serve e a
 prioridade atribuída conforme `R75.5`, `D36` e `D82`. Esta é a tabela que torna a ordem de
 implementação derivável do documento. Os requisitos `R84` a `R97` integram a revisão de
 produto (`D56` a `D80`) e foram mapeados às capacidades já declaradas em `R75.1`, sem criar
-capacidade nova.
+capacidade nova. Os requisitos `R98` a `R126` integram o fechamento arquitetural (`D90` a
+`D104`) e são mapeados às capacidades `P0-24` a `P0-31` acrescentadas por `D99`, exceto onde
+servem capacidade já existente.
 
 | Req. | Título | Capacidade | Prioridade |
 |------|--------|-----------|------------|
@@ -5939,19 +7138,66 @@ capacidade nova.
 | 95 | Prova de fogo e ciclo de produto do MVP | `P0-21` | P0 |
 | 96 | Visão financeira oficial e decomposição rastreável | `P0-09` | P0 |
 | 97 | Contrato de programação das capacidades de produto | `P0-16` | P0 |
+| 98 | Provedor de modelo de linguagem e provedor de embedding abstraídos | `P0-24` | P0 |
+| 99 | Controle de custo, orçamento e métricas de IA | `P0-24` | P0 |
+| 100 | Versionamento de prompt, de modelo e de representação vetorial | `P0-24` | P0 |
+| 101 | Pipeline de recuperação com metadados e citação obrigatória | `P0-25` | P0 |
+| 102 | Índice vetorial reconstruível e migração de representação vetorial | `P0-25` | P0 |
+| 103 | Workflow de IA com estado explícito, retomada e intervenção humana | `P0-26` | P0 |
+| 104 | Agentes limitados e ferramentas de contexto | `P0-26` | P0 |
+| 105 | Regras anti-alucinação e avaliação de IA | `P0-24` | P0 |
+| 106 | Execução do Radar como entidade auditável | `P0-27` | P0 |
+| 107 | Validação de captura e resiliência da aquisição | `P0-27` | P0 |
+| 108 | Captura incremental e estados da oferta na fonte | `P0-27` | P0 |
+| 109 | Idempotência das operações críticas | `P0-27` | P0 |
+| 110 | Agendamento configurável e capacidades declaradas por fonte | `P0-27` | P0 |
+| 111 | Observabilidade e identificador de correlação | `P0-28` | P0 |
+| 112 | Segurança, segredos, validação de upload e envio de documento a modelo de linguagem | `P0-29` | P0 |
+| 113 | Configuração por ambiente e sinalizadores de recurso | `P0-29` | P0 |
+| 114 | Catálogo de erros apresentáveis | `P0-28` | P0 |
+| 115 | Desempenho e processamento assíncrono | `P0-28` | P0 |
+| 116 | Contrato de programação versionável, paginação e chave de idempotência | `P0-16` | P0 |
+| 117 | Eventos de domínio | `P1` — monitoramento mais sofisticado | P1 |
+| 118 | Preparo multi-tenant e abstrações de comercialização futura | `P0-29` | P0 |
+| 119 | Separação entre núcleo, adaptadores e infraestrutura | `P0-29` | P0 |
+| 120 | Versão do motor, data de corte e reprodutibilidade | `P0-21` | P0 |
+| 121 | Notificações e acompanhamento de oportunidade | `P1` — alertas avançados | P1 |
+| 122 | Estados obrigatórios de tela | `P0-30` | P0 |
+| 123 | Navegação e ordem de leitura da análise | `P0-30` | P0 |
+| 124 | Interface web responsiva | `P0-30` | P0 |
+| 125 | Design system e acessibilidade | `P0-30` | P0 |
+| 126 | Portão de congelamento arquitetural | `P0-31` | P0 |
 
-Contagem: **85 requisitos `P0`**, **11 requisitos `P1`**, **1 requisito `P2`**, total de **97
-requisitos**, nenhum fora do MVP. Os onze requisitos `P1` são exatamente `R5`, `R31`, `R42`,
-`R43`, `R48`, `R59`, `R60`, `R65`, `R69`, `R80` e `R81`; o único `P2` é `R72`. Nenhum requisito
-desta spec é fora de escopo, porque os itens fora do MVP estão listados em `R75.4` como
-exclusões e não como requisitos, e porque a restrição de modalidade de `D56` não retirou nenhum
-requisito existente do MVP (`D82`). A tabela acima é a fonte da contagem: onde o texto de resumo
-divergir da tabulação linha a linha, prevalece a tabulação (`D89`).
+Contagem: **112 requisitos `P0`**, **13 requisitos `P1`**, **1 requisito `P2`**, total de **126
+requisitos**, nenhum fora do MVP. Os treze requisitos `P1` são exatamente `R5`, `R31`, `R42`,
+`R43`, `R48`, `R59`, `R60`, `R65`, `R69`, `R80`, `R81`, `R117` e `R121`; o único `P2` é `R72`.
+Nenhum requisito desta spec é fora de escopo, porque os itens fora do MVP estão listados em
+`R75.4` como exclusões e não como requisitos, e porque a restrição de modalidade de `D56` não
+retirou nenhum requisito existente do MVP (`D82`). A tabela acima é a fonte da contagem: onde o
+texto de resumo divergir da tabulação linha a linha, prevalece a tabulação (`D89`).
 
 Contagem anterior à integração da revisão de produto: 83 requisitos, com 71 `P0`, 11 `P1` e
-1 `P2`. Os catorze requisitos acrescentados (`R84` a `R97`) são todos `P0` porque todos são
-exigidos pelo primeiro marco funcional declarado em `D88` ou pela descoberta que o alimenta; a
+1 `P2`. Os catorze requisitos acrescentados por essa revisão (`R84` a `R97`) são todos `P0`
+porque todos são exigidos pelo primeiro marco funcional ou pela descoberta que o alimenta; a
 justificativa item a item está em `D82`.
+
+Contagem anterior ao fechamento arquitetural: 97 requisitos, com 85 `P0`, 11 `P1` e 1 `P2`
+(`D89`). Dos vinte e nove requisitos acrescentados pelo fechamento (`R98` a `R126`), **vinte e
+sete são `P0`** e **dois são `P1`** (`D102`). A justificativa da prioridade, por bloco:
+
+| Bloco | Requisitos | Prioridade | Justificativa |
+|-------|-----------|------------|---------------|
+| Provedores abstraídos, custo e versionamento de IA | `R98`, `R99`, `R100`, `R105` | P0 | Espalhar chamada direta a provedor e não versionar prompt e modelo é o que torna impossível, depois, saber qual versão produziu qual interpretação. Retroajustar exige reprocessar o histórico. |
+| Recuperação com citação e índice reconstruível | `R101`, `R102` | P0 | Citação é o que separa fato do documento de interpretação; sem metadado desde a primeira indexação, os segmentos existentes não se tornam citáveis por migração. |
+| Workflow com retomada, agentes e ferramentas | `R103`, `R104` | P0 | Estado explícito e ponto de retomada são estrutura de execução, não otimização; introduzi-los depois reescreve a orquestração. |
+| Aquisição resiliente, incremental e idempotente | `R106` a `R110` | P0 | A varredura recorrente é `P0-01` e `P0-13` por `D90`; sem validação, incremental e idempotência, a primeira execução recorrente corrompe ou duplica dado. |
+| Observabilidade, erros e desempenho | `R111`, `R114`, `R115` | P0 | Identificador de correlação e catálogo de erro atravessam todas as execuções; acrescentá-los depois exige alterar cada ponto de log, de erro e de resposta. |
+| Segurança, configuração, titular e adaptadores | `R112`, `R113`, `R118`, `R119` | P0 | Preparo estrutural: identificador de titular em cada entidade de negócio e separação núcleo/adaptadores são migração se deixados para depois (`D96`, `D93`). |
+| Contrato versionável, versão do motor e data de corte | `R116`, `R120` | P0 | Versão do motor e data de corte precisam existir na primeira análise persistida, senão o histórico anterior é irreprodutível. |
+| Experiência: estados, navegação, responsividade, acessibilidade | `R122` a `R125` | P0 | Estado de tela, catálogo visual e acessibilidade são estrutura da interface; retrofit de acessibilidade e de responsividade é reescrita de componente. |
+| Fechamento arquitetural | `R126` | P0 | É o portão que autoriza o congelamento. |
+| Eventos de domínio | `R117` | P1 | Mecanismo de desacoplamento interno. A decisão não depende dele, o pipeline de `R70.1` exige chamada direta onde a ordem importa, e introduzi-lo depois é alteração local. |
+| Notificações e acompanhamento | `R121` | P1 | Alinhado a `R59`, que já é `P1`. A notificação local e o contrato de canal entram com o monitoramento; a entrega por canal externo é `P1` por `R121.4`. |
 
 ---
 
@@ -5974,6 +7220,11 @@ justificativa item a item está em `D82`.
 | M — Orquestração e Arquitetura de IA | 70 a 73 | P0 (3 de 4) | RULE-DEC-001, RULE-GOV-001 | Anexo E | P12, P15 |
 | N — Dicionário, Escopo e Priorização | 74 a 83 | P0 (8 de 10) | RULE-GOV-001, RULE-ED-002, RULE-RSK-009 | `B-13`, `B-14`, Anexo C.2 a C.7 | P14, P16 |
 | O — Portas de Entrada, Documentos e Ciclo de Produto | 84 a 97 | P0 (14 de 14) | RULE-ID-001, RULE-ID-002, RULE-GOV-001, RULE-FIN-001 a RULE-FIN-006, RULE-JUR-007 a RULE-JUR-011 | versão 1 do checklist padrão — `MC-001` a `MC-136`, `B-01` a `B-27`, `C-01` a `C-71` | P17, P16.1, P16.2 |
+| P — Infraestrutura de IA, Provedores, Custo e Avaliação | 98 a 105 | P0 (8 de 8) | RULE-GOV-001, RULE-DEC-001 | `MC-008` a `MC-043`, `MC-070` a `MC-076` como origem documental das extrações | P19, P15, P16.6 |
+| Q — Aquisição Resiliente, Execução do Radar e Agendamento | 106 a 110 | P0 (5 de 5) | RULE-ID-001, RULE-ID-002 | `MC-001` a `MC-007` | P20, P1, P17.20 |
+| R — Plataforma: Observabilidade, Segurança, Configuração, Erros, Desempenho | 111 a 121 | P0 (9 de 11) | RULE-GOV-001, RULE-MON-001 | `MC-136` | P21, P13 |
+| S — Experiência do Investidor: Estados, Navegação, Responsividade, Acessibilidade | 122 a 125 | P0 (4 de 4) | RULE-DEC-002 | `MC-115`, `MC-126` a `MC-135` | P22.1 a P22.11 |
+| T — Fechamento Arquitetural e Congelamento | 126 | P0 (1 de 1) | RULE-GOV-001 | Anexo E | P22.12 |
 
 **Disciplina de lance — rastreabilidade dos anexos `C.2` a `C.7`** (`D50`). Antes da
 consolidação, nenhuma linha da matriz cobria esses anexos.
@@ -6003,10 +7254,13 @@ no histórico definido; e prioridade de release atribuída.
 Para evitar ambiguidade na implementação, os itens abaixo estão explicitamente fora do
 escopo deste documento.
 
+A tabela foi revisada linha por linha contra os 126 requisitos em `D90`. A linha que declarava a
+coleta automatizada de fontes fora do escopo foi **removida**: a coleta está dentro do escopo,
+especificada em `R85`, `R93`, `R106`, `R107`, `R108` e `R110`.
+
 | Item | Observação |
 |------|------------|
-| Coleta automatizada de fontes (varredura de portais, download de editais) | O payload bruto é entrada. O coletor será especificado separadamente. |
-| Consulta automatizada a cartórios, tribunais, prefeituras e concessionárias | Os resultados dessas verificações são entradas do Gate_Juridico, vindas de documento ou de registro manual. |
+| Consulta automatizada a cartórios, tribunais, prefeituras e concessionárias | Os resultados dessas verificações são entradas do Gate_Juridico, vindas de documento ou de registro manual. Distinta do conector de fonte de oferta de `R85`, que está no escopo. |
 | Execução automática de lance ou de arremate | Risco excessivo. O Radar apoia a disciplina de lance, sem executá-la. |
 | Parecer jurídico, laudo de engenharia e contabilidade do imóvel | O Radar não substitui profissionais habilitados. |
 | Garantia de valorização, liquidez ou rentabilidade | O Radar estima e explica; não garante resultado. |
@@ -6014,10 +7268,14 @@ escopo deste documento.
 | Aprendizado estatístico avançado e predição por modelos treinados | Depende de histórico real. Entra como evolução após o backtest. |
 | Gestão patrimonial completa e contabilidade | Fora da tese central. |
 | Marketplace e recursos colaborativos | Fora da tese central. |
-| Aplicativo móvel completo | Não necessário para provar o valor do produto. |
-| Operação em múltiplas instituições no MVP | A primeira fonte é a CAIXA; o modelo já nasce multi-fonte. |
-| Definição da arquitetura de produção em nuvem | Local-first no MVP; produção apenas quando houver necessidade demonstrada. |
+| Aplicativo móvel nativo distribuído por loja de aplicativos | A **interface web responsiva** está no escopo e é obrigatória desde a primeira versão (`R124`, `D92`). O nativo não é necessário para provar o valor do produto. |
+| Operação em múltiplas instituições no MVP | A primeira fonte é a CAIXA; o modelo já nasce multi-fonte (`R85`, `R110.6`). |
+| Provisionamento da infraestrutura de produção em nuvem | Execução local na primeira versão. Os **adaptadores** e a **configuração por ambiente** que admitem a nuvem estão no escopo e são obrigatórios (`R113`, `R119`, `D93`). |
+| Cobrança, planos, limites comerciais e medição para cobrança | O **preparo estrutural** de titular, usuário, posse, permissões e isolamento lógico está no escopo e é `P0` (`R118`, `D96`). O modelo comercial não entra nesta versão. |
+| Entrega de notificação por canal externo — correio eletrônico, mensageria, notificação de dispositivo | A notificação local e o contrato único de canal estão no escopo (`R121.1`, `R121.2`). A entrega externa é `P1` (`R121.4`). |
+| Modelo de linguagem executado localmente | O contrato de provedor já o admite sem alteração do núcleo (`R98.8`). A implementação local é `P1`. |
+| Tecnologia assistiva verificada por auditoria de acessibilidade externa | As exigências de acessibilidade de `R125` estão no escopo e são verificáveis sobre a declaração e a renderização. A validação com tecnologia assistiva real e a auditoria especializada permanecem verificação manual, fora do teste automatizado. |
 | Venda direta da instituição vendedora | Fora do MVP por `D56` e `D82`. O modelo de dados nasce extensível à modalidade, e nenhuma regra do MVP depende dela. |
 | Leilão judicial, execução judicial e arrematação judicial | Fora do MVP por `D56` e `D82`. As regras do MVP são as da execução extrajudicial regida pela Lei nº 9.514/97. |
 | Integração automática com bases de processos judiciais | No MVP o processo judicial é importado manualmente conforme `R90`. |
-| Documentos derivados de arquitetura técnica | Os artefatos de `architecture/backend/` são derivados e não normativos (`D86`); divergência entre eles e esta spec resolve-se a favor desta spec. |
+| Documentos derivados de arquitetura técnica | Os dezesseis artefatos de arquitetura descritos em `D73` são derivados e não normativos (`D86`); divergência entre eles e esta spec resolve-se a favor desta spec. Nenhuma regra, valor ou critério deste documento depende de lê-los. |
