@@ -1,0 +1,24 @@
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    container_name: radar_db
+    environment:
+      POSTGRES_USER: radar
+      POSTGRES_PASSWORD: radar
+      POSTGRES_DB: radar
+    ports:
+      - "5432:5432"
+    volumes:
+      - radar_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U radar -d radar"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  radar_pgdata:
+
+# O schema NÃO é aplicado por bind mount (o Docker via snap é confinado e não
+# acessa /mnt/c). Depois de subir o container, aplique com:
+#     python scripts/db_setup.py
