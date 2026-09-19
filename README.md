@@ -10,14 +10,22 @@ seguindo o Método Jabes e a arquitetura de IA (LangChain, LangGraph, RAG, MCP).
 
 ## Documentos de especificação
 
-A fonte única de verdade vive em `spec/`:
+A fonte única de verdade é a spec `radar-imobiliario-especificacao-completa`, em
+`.kiro/specs/`, composta de três documentos:
 
-- `spec/00_ESPECIFICACAO_CANONICA.md` — reconcilia os conflitos da documentação v1.1
-  (bandas de score, thresholds, escalas de confiança/liquidez, Investor Fit, fórmulas).
-- `spec/01_MAQUINA_DE_ESTADOS.md` — máquina de estados única (fase de pipeline ×
-  estado de decisão), resolvendo os três vocabulários de estado divergentes.
+- **requirements.md** — princípios invioláveis, glossário, os 83 requisitos com
+  critérios de aceitação, o catálogo de regras, os parâmetros e thresholds, os
+  Golden Cases e os testes de regressão.
+- **design.md** — arquitetura, componentes com assinaturas, modelo físico de dados
+  e as 149 propriedades de correção executáveis.
+- **tasks.md** — plano de implementação incremental.
 
-O código em `src/radar/domain` deve refletir exatamente essas specs.
+A spec é autocontida e reconcilia as três camadas de documentação anteriores. Os
+arquivos em `spec/` foram reduzidos a redirecionamentos, e os documentos de negócio
+em `docs/` não são mais fonte de trabalho. Onde houver divergência, a spec prevalece.
+
+O código em `src/radar/domain` deve refletir exatamente a spec, citando requisitos
+pelo número.
 
 ## Estrutura
 
@@ -48,7 +56,7 @@ tests/             # 18 testes; Golden Cases (Método Jabes item 227, BLOCK jur�
 
 ## Modelo de dados
 
-Especificação em `spec/02_MODELO_DE_DADOS.md` (22+ entidades da arquitetura §19).
+A especificação do modelo físico está na seção *Data Models* do `design.md` da spec.
 O schema físico está em `db/schema.sql` e os modelos ORM em `src/radar/db/models.py`.
 Embeddings ficam em `document_chunks.embedding` (pgvector, dim 1536); a verdade
 estruturada e o histórico ficam nas tabelas relacionais.
