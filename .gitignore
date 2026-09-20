@@ -10,9 +10,6 @@ __pycache__/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
-# Cache interno do hypothesis. O banco de exemplos fica em `testes/banco_de_exemplos/`
-# e é versionado de propósito: contraexemplo achado é regressão permanente.
-.hypothesis/
 .venv/
 venv/
 

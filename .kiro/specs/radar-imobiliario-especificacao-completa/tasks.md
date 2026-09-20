@@ -22,7 +22,7 @@ toma como fonte.
 | Testes de regressão | **60**, `REG-001` a `REG-060`, um por linha do Anexo E |
 | Golden Cases | **4**, dos Anexos E e F |
 | Componentes | **49** |
-| Entidades de negócio | **63** · entidades de infraestrutura e de plataforma: **15** |
+| Entidades de negócio | **61** · entidades de infraestrutura e de plataforma: **15** |
 | Enums de negócio | **60** · enums de infraestrutura: **7** |
 | Itens de integridade | **24** |
 | Passos da ordem de construção | **20** (`D91`, que substitui `D88`) |
@@ -43,7 +43,7 @@ antes?". Nenhuma das duas se deduz da outra.
 **O preparo estrutural é exceção deliberada a essa distinção, e vem no começo.** Identificador de
 correlação, identificador de titular, versão do motor, data de corte, catálogo de erros, contratos
 de provedor e separação entre núcleo, adaptadores e infraestrutura entram nos passos 1 a 3,
-**antes** de as 63 entidades de negócio estarem gravadas. O motivo é aritmético, não estético:
+**antes** de as 61 entidades de negócio estarem gravadas. O motivo é aritmético, não estético:
 retroajustá-los depois é **migração**, não ajuste (`D96`, `R118.9`).
 
 **As duas invariantes preservadas.** O **primeiro marco funcional** é a análise manual real de um
@@ -82,81 +82,81 @@ iterações**. Arquivo por propriedade é o que torna essas tarefas independente
 
 ## Tasks
 
-- [x] 1. Passo 1 de `D91` · bloco `1.1` — Fundação de tipos e infraestrutura de teste
+- [ ] 1. Passo 1 de `D91` · bloco `1.1` — Fundação de tipos e infraestrutura de teste
 
-  - [x] 1.1 Implementar o valor com estado de informação
+  - [ ] 1.1 Implementar o valor com estado de informação
     - Criar `src/radar/nucleo/informado.py` com `Informado[T]` congelado — valor, estado da informação, fonte, data de observação, confiança e qualidade da evidência — e o sentinela explícito `Desconhecido`
     - Nenhum campo de domínio recebe default permissivo: ausência é `Desconhecido`, nunca zero, string vazia ou valor neutro
     - Declarar a métrica provisória que carrega o motivo da provisoriedade, usada quando componente de custo é `DESCONHECIDO` de impacto alto ou crítico
     - _Requisitos: 3.2, 10.2, 26.7, 26.10, 26.12_
 
-  - [x] 1.2 Declarar os 60 enums de negócio e os 7 enums de infraestrutura
+  - [ ] 1.2 Declarar os 60 enums de negócio e os 7 enums de infraestrutura
     - Criar `src/radar/nucleo/enumeracoes.py` com os **60 enums de negócio** e as contagens que são contrato: `FaseDoPipeline` 16, `EstadoDeDecisao` 6, `CamadaDeDecisao` 11, `Estrategia` 6, `PerfilDeAtivo` 9, `EstadoDeOcupacao` 7, `CategoriaDeLiquidez` 7, `NivelDeConfianca` 6, `EstadoDaInformacao` 6, `QualidadeDaEvidencia` 5, `OrigemDeEvidencia` 5, `TipoDeSegmentoDeConhecimento` 15, `ClasseDeUrgencia` 6, `ClasseDeAtratividade` 5, `SituacaoJuridica` 3, `ResultadoP0` 5, `ResultadoDeVerificacao` 5, `NivelDeIdentidade` 5, `ForcaDeSinal` 6, `VeredictoDeIdentidade` 3, `ClasseDeLocalizacao` 5, `ClasseDeComparavel` 6, `TipoDeArea` 5, `MetodoDeValuation` 7, `CategoriaDeRisco` 10, `Probabilidade` 3, `Impacto` 4, `Severidade` 4, `Mitigacao` 6, `FaseDeDiligencia` 8, `ResultadoDeItemDeChecklist` 6, `PrioridadeDePendencia` 4, `TipoDeCenario` 4, `Robustez` 6, `NivelDeReforma` 5, `EstadoDeMonitoramento` 10, `Materialidade` 5, `TipoDeRegra` 6, `GrupoDePerfil` 9, `GateDeDados` 8, `PotencialPreliminar` 5, `PublicoAlvo` 7, `EstadoDaCaptura` 10, `EstadoDoImovel` 8, `ClasseDeConfiabilidadeDeFonte` 6, `SituacaoDeGovernanca` 6, `FormatoNumerico` 3, `UnidadeDePercentual` 2, `EstadoDeAverbacaoDeLeilaoNegativo` 4, `ResultadoDeEviccao` 3, `ImpactoDeProcesso` 4, `TipoDeDocumento` 9, `OrigemDeDocumento` 3, `TipoDeDebito` 4, `SituacaoDeDebito` 5, `ResponsabilidadePeloDebito` 3, `SituacaoDeProcesso` 5, `PortaDeEntrada` 2, `ResultadoDeTriagem` 2 e `CategoriaDeDiferenca` 5
     - Criar `src/radar/nucleo/enumeracoes_de_infraestrutura.py` com os **7 enums de infraestrutura**: `SituacaoDeExecucaoDoRadar` 6, `EstadoDaOfertaNaFonte` 6, `EstrategiaDeCaptura` 4, `CategoriaDeErro` 15, `SituacaoDeTrabalhoAssincrono` 6, `EstadoDeTela` 9 e `NaturezaDaInformacao` 4
     - Aplicar a tabela de correspondência de rótulos normativos de `D72` e as correspondências obrigatórias de `D103`, um para um; sinônimo novo para termo já nomeado é defeito
     - _Requisitos: 53.1, 53.5, 56.5, 62.4, 86.4, 91.2, 91.4, 93.3, 101.5, 106.4, 108.2, 114.2, 115.4, 122.1_
 
-  - [x] 1.3 Implementar a classificação por faixa única
+  - [ ] 1.3 Implementar a classificação por faixa única
     - Criar `src/radar/motores/faixas.py` com `classificar_por_faixa`, por limite inferior, comparação `>=` e avaliação em ordem decrescente, total sobre `[0, 100]` e sem lacuna para valores não inteiros
     - Toda faixa do produto — escore, confiança, liquidez, materialidade — passa a usar esta função única, corrigindo `D.1.5`
     - _Requisitos: 40.2, 49.6, 50.3, 50.4_
 
-  - [x] 1.4 Configurar a infraestrutura de teste de propriedade
+  - [ ] 1.4 Configurar a infraestrutura de teste de propriedade
     - Fixar `hypothesis` com pino exato em `pyproject.toml`, ao lado de `pytest`, `pytest-cov`, `ruff` e `mypy` já configurados (linha 100, alvo `py312`, modo estrito)
     - Declarar os perfis `dev` (100), `ci` (500), `noturno` (5.000) e `regressao` (banco de exemplos persistido), com `deadline` desativado apenas onde houver justificativa no próprio teste
     - Criar `testes/propriedades/` com **um arquivo por propriedade**, `test_propriedade_NNN.py`, e a etiqueta obrigatória `Feature: radar-imobiliario-especificacao-completa, Property {n}: {texto}` em cada teste
     - _Requisitos: 73.1, 73.2, 73.7_
 
-  - [x] 1.5 Criar os geradores compartilhados
+  - [ ] 1.5 Criar os geradores compartilhados
     - Criar `testes/geradores/`, um módulo por domínio, todos nomeados em português: escalas e escalares (`dinheiro`, `area`, `percentual`, `data_hora_br`, `informado`); captura e identidade; jurídico e evidência; mercado e economia; risco, liquidez e escore; decisão e lance; governança; Domínio O; mercado e valuation; infraestrutura de IA; aquisição resiliente; plataforma; experiência
     - Injetar em cada gerador de escala os valores de fronteira obrigatórios: 89,5 · 79,5 · 74,5 · 69,5 · 59,5 · 49,5 · 39,5, `"47.76"`, `"191651.31"`, `"2,5%"`, `"2.5%"`, 1 com unidade `PORCENTO`, o valor exato de cada limiar de `MON-001` a `MON-017` e de `STR`, versão 1 de documento e de análise, par de versões idênticas e documento com hash divergente
     - Provedor de modelo e provedor de embedding entram nas propriedades **apenas** por dublê: `dubla_de_provedor_de_modelo()` e `dubla_de_provedor_de_embedding()`; `nome_de_arquivo_hostil()` injeta travessia relativa, caminho absoluto, separadores mistos, unicode e nome vazio
     - _Requisitos: 73.1, 73.2_
 
-  - [x] 1.6 Criar o esqueleto dos dezesseis meta-testes
+  - [ ] 1.6 Criar o esqueleto dos dezesseis meta-testes
     - Criar `testes/meta/test_mt_01.py` a `test_mt_10.py` e `test_mt_12.py` a `test_mt_16.py`, executáveis e falhando por conteúdo ausente, nunca por erro de importação
     - Cada esqueleto declara o que verifica e a condição de falha: rastreabilidade das 262 propriedades, um teste por propriedade, cobertura de checklist em qualquer versão, 55 regras, disciplina de lance, prioridade dos 126 requisitos com 112/13/1, ponto único de verdade de `STR`, soma de pesos, contagem de enums, isolamento do núcleo, quarenta perguntas de fechamento, titular em toda entidade, catálogo de erros, identificador de correlação e nove estados por tela
     - _Requisitos: 73.1, 73.3, 73.10_
 
-  - [x] 1.7 Implementar `MT-11` — convenção de idioma na barreira de integração
+  - [ ] 1.7 Implementar `MT-11` — convenção de idioma na barreira de integração
     - Criar `testes/meta/test_mt_11.py` percorrendo a árvore sintática dos módulos Python de `src/radar/**` e de `scripts/**` e o esquema de `db/schema.sql`: módulos, pacotes, classes, funções, parâmetros, tabelas, colunas, índices, enums e valores de enum têm de estar em português
     - Falhar **apontando o identificador, o arquivo e a linha**; o dicionário de exceções é dado versionado e acrescentar entrada a ele é mudança revisável, não escape silencioso
     - Colocar `MT-11` na mesma barreira de integração que `ruff` e `mypy --strict`, **desde o passo 1**, e cobrir também as correspondências obrigatórias de `D103`
     - _Requisitos: 94.2, 97.3_
 
-  - [x] 1.8 Declarar as três marcas de dependência externa, desabilitadas por default
+  - [ ] 1.8 Declarar as três marcas de dependência externa, desabilitadas por default
     - Registrar em `testes/conftest.py` as marcas `@pytest.mark.db`, `@pytest.mark.fonte_externa` e `@pytest.mark.provedor_de_modelo`, com `--strict-markers` e `addopts` que as desabilita por default, habilitadas explicitamente na integração contínua
     - A consequência é verificável: as 262 propriedades rodam sem banco, sem rede e sem crédito de provedor
     - _Requisitos: 73.2, 73.7_
 
-  - [x]* 1.9 Escrever testes unitários da fundação de tipos
+  - [ ]* 1.9 Escrever testes unitários da fundação de tipos
     - Criar `testes/unidade/test_fundacao_de_tipos.py` cobrindo `Informado[T]` e `Desconhecido` na fronteira, a totalidade de `classificar_por_faixa` nos limites inteiros e fracionários, e as contagens declaradas de cada enum
     - _Requisitos: 3.2, 26.7, 49.6_
 
 - [ ] 2. Passo 1 de `D91` · bloco `1.1-A` — Preparo estrutural
 
-  - [x] 2.1 Implementar o identificador de correlação
+  - [ ] 2.1 Implementar o identificador de correlação
     - Criar `src/radar/nucleo/correlacao.py` com `IdentificadorDeCorrelacao` gerado na borda de entrada e propagado por todo o caminho de execução, como valor imutável do núcleo
     - Exceção deliberada de ordem: entra no passo 1 porque é **coluna em toda entidade**, e acrescentá-lo depois das 61 tabelas gravadas é migração (`D96`)
     - _Requisitos: 111.1, 111.3_
 
-  - [x] 2.2 Implementar a versão do motor e a data de corte
+  - [ ] 2.2 Implementar a versão do motor e a data de corte
     - Criar `src/radar/nucleo/versao_do_motor.py` com `VersaoDoMotor` e `DataDeCorte` como valores registrados em toda execução relevante
     - Nenhuma evidência com data de observação posterior à `DataDeCorte` é admitida na versão de análise que a declara
     - _Requisitos: 120.1, 120.2, 120.4_
 
-  - [x] 2.3 Declarar o catálogo de erros com as quinze categorias
+  - [ ] 2.3 Declarar o catálogo de erros com as quinze categorias
     - Criar `src/radar/nucleo/erros.py` (componente 44, catálogo) com `ErroDoRadar` como raiz, carregando código estável, mensagem amigável em português e contexto estruturado sem segredo e sem payload íntegro de terceiro
     - Declarar as três famílias: entrada e contrato; evidência e governança; capacidade e infraestrutura — com as **15 categorias** de `CategoriaDeErro` mapeadas uma a uma
     - Declarar `RejeicaoDeCaptura` como **resultado registrado, não exceção**: payload reprovado em `G0` vira captura com estado `REJEITADA` e causa nomeada, sem criar oportunidade
     - _Requisitos: 114.1, 114.2, 114.5, 114.7, 114.9_
 
-  - [x] 2.4 Declarar os contratos de provedor no núcleo
+  - [ ] 2.4 Declarar os contratos de provedor no núcleo
     - Criar `src/radar/nucleo/contratos/provedor_de_modelo_de_linguagem.py` e `src/radar/nucleo/contratos/provedor_de_embedding.py` como `Protocol` — componente 28, lado do núcleo
     - Declarar no mesmo diretório os contratos `IndiceVetorial`, `ArmazenamentoDeArquivo`, `Agendador`, `CanalDeNotificacao`, `ConectorDeFonte` e `EstrategiaDeCaptura`
     - _Requisitos: 98.1, 98.2, 98.5_
 
-  - [x] 2.5 Declarar as três camadas e o grafo de importação proibida
+  - [ ] 2.5 Declarar as três camadas e o grafo de importação proibida
     - Criar a estrutura `src/radar/nucleo/**`, `src/radar/adaptadores/**` e `src/radar/plataforma/**`, com `radar/motores/**`, `radar/pipeline/**`, `radar/regras/**` e `radar/radar/**` pertencendo ao núcleo
     - Declarar em `src/radar/nucleo/camadas.py` o grafo de importação proibida: o fechamento transitivo do núcleo não contém cliente de modelo de linguagem, biblioteca de orquestração de IA, cliente de embedding, cliente de armazenamento externo nem cliente de agendamento
     - _Requisitos: 119.1, 119.2, 119.3_
@@ -1282,11 +1282,11 @@ iterações**. Arquivo por propriedade é o que torna essas tarefas independente
 
   - [ ] 14.6 Criar a migração das quinze entidades de infraestrutura e de plataforma
     - Criar `db/migracoes/006_infraestrutura.sql` com `execucoes_do_radar`, `trabalhos_assincronos`, `prompts_versionados`, `colecoes_do_indice_vetorial`, `representacoes_vetoriais`, `configuracoes_de_agendamento`, `capacidades_declaradas_de_fonte`, `sinalizadores_de_recurso`, `erros_catalogados`, `notificacoes`, `acompanhamentos`, `politicas_de_processamento_de_documento`, `chaves_de_idempotencia`, `registros_de_chamada_a_provedor` e `eventos_de_dominio`
-    - Estas quinze **não** integram o dicionário de `R74`: a contagem de 63 entidades de negócio permanece inalterada
+    - Estas quinze **não** integram o dicionário de `R74`: a contagem de 61 entidades de negócio permanece inalterada
     - _Requisitos: 98.11, 100.1, 102.6, 102.9, 106.1, 109.1, 110.2, 110.6, 112.10, 113.6, 114.1, 115.3, 117.2, 121.2, 121.6_
 
   - [ ] 14.7 Criar a migração de titular e usuário responsável em toda entidade de negócio
-    - Criar `db/migracoes/007_titular.sql` com `tenant_id UUID NOT NULL` e `usuario_responsavel_id UUID NOT NULL` nas **63** tabelas de entidade de negócio, com chave estrangeira, índice por `tenant_id` e índice composto `(tenant_id, <chave de acesso>)`
+    - Criar `db/migracoes/007_titular.sql` com `tenant_id UUID NOT NULL` e `usuario_responsavel_id UUID NOT NULL` nas **61** tabelas de entidade de negócio, com chave estrangeira, índice por `tenant_id` e índice composto `(tenant_id, <chave de acesso>)`
     - Declarar a política de isolamento no banco: consulta sem o predicado de titular é rejeitada informando a causa, sem retornar dado; operação de titular único registra o titular padrão do ambiente e mantém a verificação ativa
     - _Requisitos: 118.1, 118.2, 118.3, 118.5, 118.6, 118.7, 118.9, 118.10_
 
@@ -1322,7 +1322,7 @@ iterações**. Arquivo por propriedade é o que torna essas tarefas independente
     - _Requisitos: 62.4, 73.3_
 
   - [ ] 14.15 Implementar `MT-13` — titular em toda entidade de negócio
-    - Criar `testes/meta/test_mt_13.py` percorrendo as **63** entidades do dicionário e falhando **nomeando a entidade** que não declara `tenant_id` e `usuario_responsavel_id` com índice por `tenant_id`
+    - Criar `testes/meta/test_mt_13.py` percorrendo as **61** entidades do dicionário e falhando **nomeando a entidade** que não declara `tenant_id` e `usuario_responsavel_id` com índice por `tenant_id`
     - _Requisitos: 118.1, 118.10_
 
   - [ ] 14.16 Renomear o esquema existente por migração versionada (`D72`)
@@ -2638,7 +2638,7 @@ iterações**. Arquivo por propriedade é o que torna essas tarefas independente
   barreira integralmente. As demais tarefas de topo são **checkpoints**.
 - **Ordem de construção e prioridade de requisito são dimensões distintas.** Um `P0` construído no
   passo 18 continua `P0`. O **preparo estrutural** é exceção deliberada e vem nos passos 1 a 3,
-  porque retroajustá-lo depois das 63 entidades gravadas é migração (`D96`, `R118.9`).
+  porque retroajustá-lo depois das 61 entidades gravadas é migração (`D96`, `R118.9`).
 - **O primeiro marco funcional fecha no checkpoint da tarefa 24, ao fim do passo 8**: análise manual
   real de um imóvel da CAIXA, do documento à decisão apresentada na interface. E **a construção não
   começa pelo coletor**: framework de conector, conector CAIXA e Radar são os passos 13 a 15.

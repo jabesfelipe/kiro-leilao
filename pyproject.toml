@@ -17,63 +17,20 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-# Pino exato em toda ferramenta de desenvolvimento: a barreira de qualidade precisa
-# produzir o mesmo veredicto em qualquer máquina. Versão nova entra por decisão
-# explícita, nunca por resolução de dependência.
 dev = [
-    "pytest==9.1.1",
-    "pytest-cov==7.1.0",
-    "ruff==0.16.8",
-    "mypy==2.3.1",
-    "hypothesis==6.168.0",
+    "pytest>=8.2",
+    "pytest-cov>=5.0",
+    "ruff>=0.5",
+    "mypy>=1.10",
 ]
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]
-# `testes/` é o diretório vigente; `tests/` subsiste enquanto os módulos legados em
-# inglês não forem reescritos e renomeados (tarefa 4.1).
-testpaths = ["testes", "tests"]
-# Duas decisões, e nada mais:
-#   `--strict-markers` — marca não declarada é erro, não aviso.
-#   `-m "not db and not fonte_externa and not provedor_de_modelo"` — as três marcas de
-#   dependência externa saem **desabilitadas por default**, de modo que `python -m pytest`
-#   puro não toca banco, não abre rede e não consome crédito de provedor.
-# A lista das marcas não é repetida aqui: ela é declarada em `testes/conftest.py`, ponto
-# único, que também honra a variável `MARCAS_HABILITADAS` da integração contínua. `-m` na
-# linha de comando vem depois do `addopts` e vence este default.
-addopts = [
-    "--strict-markers",
-    "-m",
-    "not db and not fonte_externa and not provedor_de_modelo",
-]
+testpaths = ["tests"]
 
 [tool.ruff]
 line-length = 100
 target-version = "py312"
-
-[tool.ruff.lint]
-# Seleção declarada em lugar do default implícito da ferramenta: o conjunto de regras
-# passa a ser contrato do projeto, não consequência da versão instalada.
-select = [
-    "E",    # pycodestyle — erros
-    "W",    # pycodestyle — avisos
-    "F",    # Pyflakes
-    "I",    # isort — ordem de importação
-    "N",    # pep8-naming
-    "UP",   # pyupgrade — alvo py312
-    "B",    # flake8-bugbear
-    "C4",   # flake8-comprehensions
-    "SIM",  # flake8-simplify
-    "DTZ",  # flake8-datetimez — data e hora sem fuso é defeito de domínio
-    "RUF",  # regras próprias do ruff
-]
-ignore = [
-    # O projeto é escrito em português, com pontuação tipográfica (`—`, `×`, `º`).
-    # As três regras de caractere ambíguo acusariam o idioma, não um defeito (`D72`).
-    "RUF001",
-    "RUF002",
-    "RUF003",
-]
 
 [tool.mypy]
 python_version = "3.12"
