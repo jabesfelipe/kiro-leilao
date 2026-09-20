@@ -10,22 +10,31 @@ seguindo o Método Jabes e a arquitetura de IA (LangChain, LangGraph, RAG, MCP).
 
 ## Documentos de especificação
 
-A fonte única de verdade é a spec `radar-imobiliario-especificacao-completa`, em
-`.kiro/specs/`, composta de três documentos:
+A especificação está **congelada**. A fonte única de verdade é a spec
+`radar-imobiliario-especificacao-completa`, em `.kiro/specs/`, composta de três documentos:
 
-- **requirements.md** — princípios invioláveis, glossário, os 83 requisitos com
-  critérios de aceitação, o catálogo de regras, os parâmetros e thresholds, os
-  Golden Cases e os testes de regressão.
-- **design.md** — arquitetura, componentes com assinaturas, modelo físico de dados
-  e as 149 propriedades de correção executáveis.
-- **tasks.md** — plano de implementação incremental.
+- **requirements.md** — fonte normativa de **negócio**: princípios invioláveis, glossário,
+  os **126 requisitos** (`R1`–`R126`) com critérios de aceitação, as **104 decisões** de
+  consolidação, o catálogo de 55 regras, os parâmetros e limiares, os 234 itens de checklist,
+  os 4 Golden Cases e os 60 testes de regressão.
+- **design.md** — fonte normativa de **engenharia**: arquitetura em núcleo, adaptadores e
+  infraestrutura, os 49 componentes com assinaturas, o modelo físico de dados completo e as
+  **262 propriedades** de correção executáveis, em 22 famílias.
+- **tasks.md** — plano de execução: 46 tarefas de topo, 523 folhas executáveis e grafo de
+  77 ondas, com 15 checkpoints como barreira de qualidade.
 
-A spec é autocontida e reconcilia as três camadas de documentação anteriores. Os
-arquivos em `spec/` foram reduzidos a redirecionamentos, e os documentos de negócio
-em `docs/` não são mais fonte de trabalho. Onde houver divergência, a spec prevalece.
+A spec é **autocontida**: nenhum artefato depende de leitura de documento fora dela. Todo o
+material de origem — os 34 documentos de negócio, o Checklist Mestre, as matrizes de regras, a
+Base de Conhecimento de IA, a planilha do Método Jabes, as especificações internas anteriores e
+as revisões de arquitetura — foi auditado, absorvido e arquivado em `arquivo/`, que é memória
+histórica e **não é fonte de trabalho**. Onde houver divergência, a spec prevalece.
 
-O código em `src/radar/domain` deve refletir exatamente a spec, citando requisitos
-pelo número.
+O produto é **integralmente em português** (`D72`, `D103`), inclusive os identificadores de
+implementação: módulos, tipos, funções, variáveis, tabelas, colunas e enums. Os módulos atuais
+em inglês são renomeados pelas primeiras tarefas do plano. O meta-teste `MT-11` impede a
+reintrodução de identificador em inglês.
+
+O código deve refletir exatamente a spec, citando requisitos pelo número.
 
 ## Estrutura
 

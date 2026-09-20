@@ -3114,7 +3114,7 @@ nada neste domínio emite decisão.
 
 Este domínio é o preparo estrutural da plataforma. É `P0` por um motivo aritmético, não por
 zelo: retroajustar identificador de correlação, identificador de titular, versão do motor, data
-de corte, catálogo de erros e provedor abstraído depois de as 61 entidades de negócio estarem
+de corte, catálogo de erros e provedor abstraído depois de as 63 entidades de negócio estarem
 gravadas é **migração**, não ajuste (`D96`). O domínio **estende** `R64`, `R79`, `R97`, `R59` e
 `R57`, e não cria catálogo paralelo de auditoria, de erro, de alerta nem de monitoramento.
 

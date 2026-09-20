@@ -69,7 +69,7 @@ verificado por meta-teste e não por leitura.
 | Testes de regressão | **60**, `REG-001` a `REG-060`, um por linha do Anexo E | `R73.8`, `D101` |
 | Passos da ordem de construção | **20** | `D91`, que substitui `D88` |
 | Domínios de requisito | **20**, A a T | seção *Requirements* |
-| Entidades de negócio | **61**, inalteradas | `R74`, `D96` |
+| Entidades de negócio | **63**, inalteradas em conteúdo | `R74`, `D96`, verificado por `MT-13` |
 | Entidades de infraestrutura e de plataforma | **15**, fora do conjunto de `R74` | `D96` |
 | Enums de negócio | **60**, inalterados | *Data Models*, verificado por `MT-09` |
 | Enums de infraestrutura | **7** | *Data Models*, verificado por `MT-09` |
@@ -406,14 +406,31 @@ e é obrigatória desde a primeira versão (`D92`, `R124`). O **provisionamento*
 de nuvem continua fora; os **adaptadores** e a **configuração por ambiente** que o admitem estão
 dentro (`D93`, `R119`, `R113`). **Cobrança, planos, limites comerciais e medição para cobrança**
 permanecem fora; o **preparo estrutural multi-titular** é `P0`, porque retroajustá-lo depois das
-61 entidades de negócio gravadas é migração, não ajuste (`D96`, `R118`).
+63 entidades de negócio gravadas é migração, não ajuste (`D96`, `R118`).
 
-### Defeito de contagem registrado
+### Defeitos de contagem registrados
 
-`R72.2` enuncia "exatamente um dos **doze** tipos" e enumera **quinze** nomes. A enumeração é
-a verdade: `TipoDeSegmentoDeConhecimento` tem **15** valores neste design. O numeral "doze" de
-`R72.2` é defeito de redação a corrigir no requirements, e fica registrado aqui para que a
-divergência não seja reintroduzida como se fosse decisão de projeto.
+Os dois defeitos abaixo são de **redação de numeral derivado**, não de conteúdo. Em nenhum dos
+dois caso houve entidade, tipo, regra ou requisito acrescentado, removido ou alterado: o que
+divergia era o número escrito em prosa contra a enumeração que o sustenta. Nos dois, a
+**enumeração prevalece** — é o mesmo princípio que resolveu `D89` — e o numeral foi corrigido.
+Ficam registrados aqui para que a divergência não seja reintroduzida como se fosse decisão de
+projeto.
+
+**Tipos de segmento de conhecimento — corrigido.** `R72.2` enunciava "exatamente um dos **doze**
+tipos" e enumerava **quinze** nomes. A enumeração é a verdade:
+`TipoDeSegmentoDeConhecimento` tem **15** valores, `MT-09` fixa 15, e o numeral de `R72.2` no
+requirements já está em "quinze".
+
+**Dicionário de entidades de negócio — corrigido de 61 para 63.** O dicionário declarava **61**
+entidades e tabulava **63**: o bloco *Oportunidade, triagem, análise e comparação* escrevia "27
+entidades" no título e enumerava **29** linhas. Os outros três blocos batiam (11, 10, 13). A
+tabulação enumera sem lacuna e sem duplicata, e cada uma das 29 tem requisito que a origina —
+inclusive as duas que produziam a diferença, `analises_documentos` (`R87.4`) e
+`diferencas_de_comparacao` (`R88`), ambas do Domínio O. Corrigidos o título do bloco para **29**
+e a contagem global para **63**, em todos os pontos dos três documentos da spec. Nenhuma entidade
+foi criada nem removida, e as **15** entidades de infraestrutura e de plataforma continuam fora
+do dicionário de `R74` por `D96`. `MT-13` percorre as **63**.
 
 ---
 
@@ -4847,7 +4864,7 @@ erDiagram
 
 ### Dicionário de entidades
 
-São **61 entidades**. As marcadas **nova** vêm do Domínio O ou do dicionário de `R74`.
+São **63 entidades**. As marcadas **nova** vêm do Domínio O ou do dicionário de `R74`.
 
 **Aquisição, fonte, captura e documentos — 11 entidades**
 
@@ -4880,7 +4897,7 @@ São **61 entidades**. As marcadas **nova** vêm do Domínio O ou do dicionário
 | `divergencias` | **Nova** (`R74.6`): data, fonte A, informação A, fonte B, informação B, dimensão afetada, materialidade, impacto na decisão, situação. | Sustenta `R6`, `R15.7` e a parada absoluta de `R82.9`; permanece aberta até confirmação oficial. |
 | `portas_de_entrada` | **Nova** (`R84.1`): catálogo de exatamente **duas** linhas — `ANALISE_MANUAL` e `RADAR_AUTOMATICO` — com rótulo, descrição e situação. | `CHECK` que impede uma terceira porta. Referenciada por `oportunidades` (`R84.10`). |
 
-**Oportunidade, triagem, análise e comparação — 27 entidades**
+**Oportunidade, triagem, análise e comparação — 29 entidades**
 
 | Entidade | Conteúdo | Chaves e notas |
 |----------|----------|----------------|
@@ -4935,8 +4952,8 @@ São **61 entidades**. As marcadas **nova** vêm do Domínio O ou do dicionário
 ### Entidades de infraestrutura e de plataforma — 15 entidades, **fora** do conjunto de `R74`
 
 As entidades abaixo vêm dos Domínios P a T e são **entidades de infraestrutura e de plataforma**.
-Elas **não integram** o dicionário de entidades de negócio de `R74`, e a contagem de **61 entidades
-de negócio permanece inalterada** (`D96`). A distinção não é cosmética: entidade de negócio carrega
+Elas **não integram** o dicionário de entidades de negócio de `R74`, e o conjunto de **63 entidades
+de negócio permanece inalterado** (`D96`). A distinção não é cosmética: entidade de negócio carrega
 `tenant_id` e `usuario_responsavel_id` por `R118.1` e é objeto de `MT-13`; entidade de
 infraestrutura carrega titular apenas quando o dado é do titular, e nunca participa de cálculo de
 negócio, de escore, de decisão nem de precedência.
@@ -4973,7 +4990,7 @@ recontadas** entre as quinze acima:
 
 **Toda** entidade de negócio do dicionário declara `tenant_id` e `usuario_responsavel_id`
 (`R118.1`). Não é campo opcional acrescentado por conveniência: é a condição para que abrir o
-produto a outros investidores **não exija migração** das 61 entidades já gravadas (`R118.9`,
+produto a outros investidores **não exija migração** das 63 entidades já gravadas (`R118.9`,
 `D96`).
 
 | Consequência física | Declaração |
@@ -7245,7 +7262,7 @@ a partir da declaração.**
 | `MT-11` | **Convenção de idioma** (`D72`): percorre os identificadores de implementação — módulos, pacotes, classes, funções, parâmetros, tabelas, colunas, índices, enums e valores de enum — em `src/radar/**`, `db/schema.sql` e `scripts/**`, e exige que estejam em português | identificador em inglês fora da lista de exceções permitidas |
 
 | `MT-12` | **Cobertura das quarenta perguntas de fechamento**: cada um dos critérios `R126.1` a `R126.40` possui requisito numerado que o satisfaça, e todo identificador citado existe (`R126.41`, `R126.42`, `P22.12`) | pergunta órfã, nomeada pela falha; ou identificador citado inexistente |
-| `MT-13` | **Titular em toda entidade de negócio**: cada uma das **61** entidades do dicionário declara `tenant_id` e `usuario_responsavel_id`, com índice por `tenant_id` (`R118.1`, `R118.10`) | entidade sem os dois identificadores, nomeada pela falha |
+| `MT-13` | **Titular em toda entidade de negócio**: cada uma das **63** entidades do dicionário declara `tenant_id` e `usuario_responsavel_id`, com índice por `tenant_id` (`R118.1`, `R118.10`) | entidade sem os dois identificadores, nomeada pela falha |
 | `MT-14` | **Catálogo de erros completo e sem detalhe técnico**: cada uma das **15** categorias de `R114.2` tem código, mensagem amigável em português e mapeamento declarados; e nenhuma mensagem apresentada ao usuário contém rastro de execução, consulta ao banco, caminho interno ou mensagem de biblioteca (`R114.9`) | categoria sem código, sem mensagem ou sem mapeamento; ou mensagem com detalhe técnico, nomeada pela falha |
 | `MT-15` | **Identificador de correlação em toda execução relevante**: cada uma das treze espécies de `R111.3` registra identificador de correlação e os treze atributos de `R111.2` (`R111.10`) | execução relevante sem identificador, nomeada pela falha |
 | `MT-16` | **Nove estados por tela**: cada `DeclaracaoDeTela` declara os nove valores de `EstadoDeTela` (`R122.1`, `R122.10`) | tela com estado ausente, nomeando a tela e o estado (`REG-054`) |
@@ -7331,7 +7348,7 @@ antes?". Nenhuma das duas se deduz da outra.
 **O preparo estrutural é exceção deliberada a essa distinção, e vem no começo.** Identificador de
 correlação, identificador de titular, versão do motor, data de corte, catálogo de erros, contratos
 de provedor e separação entre núcleo, adaptadores e infraestrutura são executados nos passos 1 a 3,
-**antes** de as 61 entidades de negócio estarem gravadas. O motivo é aritmético, não estético:
+**antes** de as 63 entidades de negócio estarem gravadas. O motivo é aritmético, não estético:
 retroajustá-los depois é **migração**, não ajuste (`D96`, `R118.9`).
 
 ### Os vinte passos (`D91`)
@@ -7340,7 +7357,7 @@ retroajustá-los depois é **migração**, não ajuste (`D96`, `R118.9`).
 |---|-----------------------------|------------------------|-----------------------|
 | 1 | Fundação do projeto | Fundação de tipos e infraestrutura de teste — `Informado[T]`, `Desconhecido`, enums fechados, `classificar_por_faixa`, geradores compartilhados, perfis do `hypothesis`, esqueleto de `MT-01` a `MT-16`; e o **preparo estrutural**: `IdentificadorDeCorrelacao`, `VersaoDoMotor`, `DataDeCorte`, catálogo de erros, contratos de provedor, três camadas declaradas com o grafo de importação proibida, e configuração por ambiente que falha fechada | transversal · `R111` (identificador), `R113`, `R114`, `R119`, `R120` |
 | 2 | Domínio determinístico | Correções numéricas verificadas; captura, identidade, perfil e localização; gate jurídico de 19 verificações; mercado, comparáveis, valuation e revaluation; economia, preço máximo e cenários; risco, liquidez, estratégia, portfólio, escore e ranqueamento; decisão de onze camadas e explicabilidade; due diligence, análise profunda e disciplina de lance; orquestração e catálogos como dados. Detalhamento na tabela seguinte | `R1` a `R4`, `R6` a `R30`, `R32` a `R41`, `R44` a `R47`, `R49` a `R56`, `R70`, `R71`, `R73` a `R78`, `R82`, `R83`, `R96` (fórmulas) |
-| 3 | Persistência | Modelo físico das **61 entidades de negócio** e das **15 entidades de infraestrutura**; os **24** itens de integridade; `tenant_id` e `usuario_responsavel_id` em toda entidade de negócio, com índice e política de isolamento; ORM de todas as tabelas; migrações versionadas com seed **gerado** a partir de `STR`; gatilhos que rejeitam `UPDATE` e `DELETE` nas tabelas append-only; `Gestor_de_Parametros` com hierarquia de escopo e vigência temporal; chave de idempotência como tabela | `R2`, `R61`, `R62`, `R64`, `R74`, `R109`, `R118` · `D.9.1` a `D.9.11` |
+| 3 | Persistência | Modelo físico das **63 entidades de negócio** e das **15 entidades de infraestrutura**; os **24** itens de integridade; `tenant_id` e `usuario_responsavel_id` em toda entidade de negócio, com índice e política de isolamento; ORM de todas as tabelas; migrações versionadas com seed **gerado** a partir de `STR`; gatilhos que rejeitam `UPDATE` e `DELETE` nas tabelas append-only; `Gestor_de_Parametros` com hierarquia de escopo e vigência temporal; chave de idempotência como tabela | `R2`, `R61`, `R62`, `R64`, `R74`, `R109`, `R118` · `D.9.1` a `D.9.11` |
 | 4 | Documentos e evidências | `Gestor_de_Documentos` com arquivo original imutável, versões de documento, extração derivada e verificação de integridade com pendência crítica; `Camada_de_Evidencia` append-only com proveniência obrigatória; evidência de origem manual; processo judicial e andamentos; débito como entidade que compõe `CUS-005` e `CUS-006` | `R20`, `R86`, `R87`, `R89`, `R90`, `R91` |
 | 5 | Análise manual ponta a ponta | **Primeiro marco funcional.** Porta 1 de `R84`; criação de imóvel com identificação mínima de `G0`; cadastro da oportunidade da CAIXA; envio de edital e matrícula; registro de IPTU, condomínio e processos; execução da análise sobre evidência real; decisão, custo econômico total decomposto, valuation, riscos e pendências | `R84`, `R95` (passos 1 a 13), `R96` |
 | 6 | Versionamento e reanálise | Nova versão de análise sem sobrescrita; `Comparador_de_Versoes` com as cinco categorias de `R88.5` e motivo obrigatório em `decisao_alterada`; reexecução sem mudança de entrada que não versiona e é registrada na trilha; independência entre versão de documento e versão de análise; data de corte por versão | `R61`, `R87`, `R88`, `R120`, `R95` (passos 14 a 18) |
